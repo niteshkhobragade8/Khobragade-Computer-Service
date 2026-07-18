@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Khobragade Computer Service Centre</title>
 
-<meta name="description" content="CSC Digital Seva, Maha ID, eShram, Ayushman Card, ABHA Card, PAN Card, Voter ID, Maharashtra Government Schemes">
+<title>Khobragade Computer Service Centre | CSC Digital Seva</title>
+
+<meta name="description" content="CSC Services, Maha ID, Ayushman Card, ABHA Card, e-Shram, Maharashtra Government Schemes, Divyang Services">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -19,248 +20,138 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#f5f7fb;
+background:#f4f7fb;
 color:#222;
 }
 
 header{
-
-background:linear-gradient(90deg,#006400,#009688,#4CAF50);
-
-padding:15px 8%;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
 position:sticky;
-
 top:0;
-
+background:#0b7a33;
+padding:15px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
 z-index:999;
-
-box-shadow:0 4px 15px rgba(0,0,0,.2);
-
 }
 
 .logo{
-
-font-size:28px;
-
-font-weight:bold;
-
 color:#fff;
-
+font-size:28px;
+font-weight:700;
 }
 
 nav a{
-
 color:#fff;
-
 text-decoration:none;
-
-margin-left:25px;
-
-font-size:16px;
-
+margin-left:20px;
 font-weight:500;
-
 transition:.3s;
-
 }
 
 nav a:hover{
-
-color:yellow;
-
+color:#FFD600;
 }
 
 .hero{
-
-background:linear-gradient(135deg,#009688,#4CAF50,#8BC34A);
-
-padding:70px 20px;
-
+background:linear-gradient(135deg,#0b7a33,#1bb65e);
+padding:80px 8%;
 text-align:center;
-
 color:white;
-
 }
 
 .hero h1{
-
 font-size:42px;
-
 margin-bottom:15px;
-
 }
 
 .hero p{
-
 font-size:18px;
-
 margin-bottom:25px;
-
 }
 
-.search{
-
+.search-box{
 max-width:700px;
-
 margin:auto;
-
 display:flex;
-
-background:white;
-
+background:#fff;
 border-radius:50px;
-
 overflow:hidden;
-
-box-shadow:0 10px 30px rgba(0,0,0,.2);
-
 }
 
-.search input{
-
-width:100%;
-
+.search-box input{
+flex:1;
 padding:18px;
-
 border:none;
-
-font-size:18px;
-
 outline:none;
-
+font-size:17px;
 }
 
-.search button{
-
+.search-box button{
 background:#ff9800;
-
 color:white;
-
 border:none;
-
-padding:18px 35px;
-
-font-size:18px;
-
+padding:18px 30px;
 cursor:pointer;
-
+font-weight:bold;
 }
 
-.buttons{
-
+.btn-area{
 margin-top:30px;
-
 }
 
 .btn{
-
 display:inline-block;
-
-padding:15px 30px;
-
+padding:14px 28px;
 border-radius:40px;
-
 text-decoration:none;
-
-margin:10px;
-
 font-weight:bold;
-
-font-size:17px;
-
+margin:8px;
 }
 
 .whatsapp{
-
 background:#25D366;
-
 color:white;
-
 }
 
 .call{
-
 background:#ff5722;
-
 color:white;
-
 }
 
 .section{
-
 padding:70px 8%;
-
 }
 
 .title{
-
-font-size:35px;
-
 text-align:center;
-
+font-size:35px;
+color:#0b7a33;
 margin-bottom:40px;
-
-color:#006400;
-
 }
 
 .cards{
-
 display:grid;
-
 grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-
 gap:25px;
-
 }
 
 .card{
-
 background:white;
-
 padding:25px;
-
 border-radius:20px;
-
 box-shadow:0 8px 20px rgba(0,0,0,.1);
-
 transition:.3s;
-
 }
 
 .card:hover{
-
 transform:translateY(-8px);
-
 }
 
 .card h3{
-
+color:#0b7a33;
 margin-bottom:15px;
-
-color:#009688;
-
-}
-
-footer{
-
-background:#006400;
-
-color:white;
-
-padding:30px;
-
-text-align:center;
-
-margin-top:40px;
-
 }
 
 </style>
@@ -272,15 +163,13 @@ margin-top:40px;
 <header>
 
 <div class="logo">
-
-Khobragade Computer Service Centre
-
+Khobragade CSC
 </div>
 
 <nav>
 <a href="index.html">Home</a>
-<a href="services.html">CSC Services</a>
-<a href="maharashtra.html">Maharashtra Yojana</a>
+<a href="services.html">Services</a>
+<a href="maharashtra.html">Yojana</a>
 <a href="divyang.html">Divyang</a>
 <a href="documents.html">Documents</a>
 <a href="contact.html">Contact</a>
@@ -290,200 +179,30 @@ Khobragade Computer Service Centre
 
 <section class="hero">
 
-<h1>Welcome To Khobragade Computer Service Centre</h1>
+<h1>Khobragade Computer Service Centre</h1>
 
-<p>CSC Digital Seva | Maha ID | eShram | ABHA | Ayushman | PAN | Voter ID</p>
+<p>CSC Digital Seva | Maharashtra Government Schemes | Online Services</p>
 
-<div class="search">
+<div class="search-box">
 
-<input type="text" placeholder="Search Services...">
+<input type="text" placeholder="Search Service...">
 
 <button>Search</button>
 
 </div>
 
-<div class="buttons">
-
-<a class="btn whatsapp" href="https://wa.me/919637832490">
-
-WhatsApp
-
-</a>
-
-<a class="btn call" href="tel:+919637832490">
-
-Call Now
-
-</a>
-
-</div>
-
-</section>
-<section class="section">
-
-<h2 class="title">Popular CSC Services</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>Maha ID</h3>
-<p>Create Maha ID for Maharashtra Government Services.</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Maha%20ID%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>e-Shram Card</h3>
-<p>New Registration & Update.</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20eShram%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>ABHA Card</h3>
-<p>Create your Digital Health ID.</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20ABHA%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>Ayushman Card</h3>
-<p>Check Eligibility & Apply.</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Ayushman%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>PAN Card</h3>
-<p>New PAN & Correction.</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20PAN%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>Voter ID</h3>
-<p>New Registration, Correction & Download.</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Voter%20ID%20banana%20hai">Apply Now</a>
-</div>
-
-</div>
-
-</section>
-<section class="section">
-
-<h2 class="title">Why Choose Khobragade Computer Service Centre?</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>⚡ Fast Service</h3>
-<p>सभी ऑनलाइन सेवाएँ तेज़ और सुरक्षित तरीके से उपलब्ध।</p>
-</div>
-
-<div class="card">
-<h3>🔒 Secure Process</h3>
-<p>आपके दस्तावेज़ों की गोपनीयता और सुरक्षा हमारी प्राथमिकता है।</p>
-</div>
-
-<div class="card">
-<h3>💬 WhatsApp Support</h3>
-<p>सीधे WhatsApp पर संपर्क करें और आवेदन करें।</p>
-</div>
-
-<div class="card">
-<h3>🏛️ Government Services</h3>
-<p>CSC और महाराष्ट्र सरकार की प्रमुख सेवाएँ एक ही जगह।</p>
-</div>
-
-</div>
-
-</section>
-
-<section class="section">
-
-<h2 class="title">Contact Us</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>👤 Nitesh Khobragade</h3>
-
-<p><b>Khobragade Computer Service Centre</b></p>
-
-<p>📞 Mobile: 9637832490</p>
-
-<p>💬 WhatsApp: 9637832490</p>
-
-<p>📺 YouTube: Divyang Online Digital Seva & Yojna</p>
+<div class="btn-area">
 
 <a class="btn whatsapp"
-href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Online%20Service%20ki%20Jaankari%20Chahiye">
+href="https://wa.me/919637832490">
+WhatsApp
+</a>
 
-Apply on WhatsApp
-
+<a class="btn call"
+href="tel:+919637832490">
+Call Now
 </a>
 
 </div>
 
-</div>
-
 </section>
-
-<footer>
-
-<h2>Khobragade Computer Service Centre</h2>
-
-<p>One Stop Solution For All Digital & CSC Services</p>
-
-<p>© 2026 All Rights Reserved</p>
-
-</footer>
-<section class="section">
-
-<h2 class="title">CSC Digital Seva - Popular Services</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>🆔 Maha ID</h3>
-<p>Maha ID Registration, Login & Update</p>
-<p><b>Documents:</b> Aadhaar Card, Mobile Number, Email ID</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Maha%20ID%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>👷 e-Shram Card</h3>
-<p>New Registration & Update</p>
-<p><b>Documents:</b> Aadhaar, Mobile, Bank Passbook</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20eShram%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>🩺 ABHA Card</h3>
-<p>Digital Health ID Registration</p>
-<p><b>Documents:</b> Aadhaar & Mobile Number</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20ABHA%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>❤️ Ayushman Bharat Card</h3>
-<p>Eligibility Check & Registration</p>
-<p><b>Documents:</b> Aadhaar, Ration Card, Mobile</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Ayushman%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>🪪 PAN Card</h3>
-<p>New PAN / Correction / Reprint</p>
-<p><b>Documents:</b> Aadhaar, Photo, Signature</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20PAN%20Card%20banana%20hai">Apply Now</a>
-</div>
-
-<div class="card">
-<h3>🗳️ Voter ID</h3>
-<p>New Registration / Correction / Download</p>
-<p><b>Documents:</b> Aadhaar, Photo, Address Proof</p>
-<a class="btn whatsapp" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Voter%20ID%20banana%20hai">Apply Now</a>
-</div>
-
-</div>
-
-</section>
-</body>
-</html>
