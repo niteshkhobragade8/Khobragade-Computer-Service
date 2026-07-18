@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khobragade Computer Service Centre</title>
 
-<title>Khobragade Computer Service Centre | CSC Digital Seva</title>
+<meta name="description" content="CSC Digital Seva | Maharashtra Government Schemes | Divyang Services | Maha ID | Ayushman | eShram">
 
-<meta name="description" content="CSC Services, Maha ID, Ayushman Card, ABHA Card, e-Shram, Maharashtra Government Schemes, Divyang Services">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -20,20 +21,20 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#f4f7fb;
+background:#f5f7fb;
 color:#222;
 }
 
 header{
-position:sticky;
-top:0;
-background:#0b7a33;
-padding:15px 8%;
+background:linear-gradient(90deg,#0b7a33,#12a150);
+padding:15px 30px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-box-shadow:0 5px 15px rgba(0,0,0,.15);
+position:sticky;
+top:0;
 z-index:999;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
 }
 
 .logo{
@@ -46,19 +47,14 @@ nav a{
 color:#fff;
 text-decoration:none;
 margin-left:20px;
-font-weight:500;
-transition:.3s;
-}
-
-nav a:hover{
-color:#FFD600;
+font-weight:600;
 }
 
 .hero{
-background:linear-gradient(135deg,#0b7a33,#1bb65e);
-padding:80px 8%;
+background:linear-gradient(135deg,#0b7a33,#20c55a);
+padding:80px 20px;
 text-align:center;
-color:white;
+color:#fff;
 }
 
 .hero h1{
@@ -71,7 +67,7 @@ font-size:18px;
 margin-bottom:25px;
 }
 
-.search-box{
+.search{
 max-width:700px;
 margin:auto;
 display:flex;
@@ -80,7 +76,7 @@ border-radius:50px;
 overflow:hidden;
 }
 
-.search-box input{
+.search input{
 flex:1;
 padding:18px;
 border:none;
@@ -88,36 +84,32 @@ outline:none;
 font-size:17px;
 }
 
-.search-box button{
+.search button{
 background:#ff9800;
-color:white;
 border:none;
+color:#fff;
 padding:18px 30px;
 cursor:pointer;
 font-weight:bold;
 }
 
-.btn-area{
-margin-top:30px;
-}
-
 .btn{
 display:inline-block;
 padding:14px 28px;
+margin:10px;
 border-radius:40px;
 text-decoration:none;
 font-weight:bold;
-margin:8px;
 }
 
 .whatsapp{
 background:#25D366;
-color:white;
+color:#fff;
 }
 
 .call{
 background:#ff5722;
-color:white;
+color:#fff;
 }
 
 .section{
@@ -126,36 +118,25 @@ padding:70px 8%;
 
 .title{
 text-align:center;
-font-size:35px;
-color:#0b7a33;
+font-size:34px;
 margin-bottom:40px;
+color:#0b7a33;
 }
 
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 gap:25px;
 }
 
 .card{
-background:white;
+background:#fff;
 padding:25px;
 border-radius:20px;
-box-shadow:0 8px 20px rgba(0,0,0,.1);
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-8px);
-}
-
-.card h3{
-color:#0b7a33;
-margin-bottom:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.12);
 }
 
 </style>
-
 </head>
 
 <body>
@@ -167,12 +148,19 @@ Khobragade CSC
 </div>
 
 <nav>
+
 <a href="index.html">Home</a>
+
 <a href="services.html">Services</a>
+
 <a href="maharashtra.html">Yojana</a>
+
 <a href="divyang.html">Divyang</a>
+
 <a href="documents.html">Documents</a>
+
 <a href="contact.html">Contact</a>
+
 </nav>
 
 </header>
@@ -183,15 +171,15 @@ Khobragade CSC
 
 <p>CSC Digital Seva | Maharashtra Government Schemes | Online Services</p>
 
-<div class="search-box">
+<div class="search">
 
-<input type="text" placeholder="Search Service...">
+<input type="text" placeholder="Search Service">
 
 <button>Search</button>
 
 </div>
 
-<div class="btn-area">
+<br>
 
 <a class="btn whatsapp"
 href="https://wa.me/919637832490">
@@ -203,8 +191,6 @@ href="tel:+919637832490">
 Call Now
 </a>
 
-</div>
-
 </section>
 <section class="section">
 
@@ -214,64 +200,780 @@ Call Now
 
 <div class="card">
 <h3>🆔 Maha ID</h3>
-<p>Maha ID Registration & Update</p>
-<a class="btn whatsapp" href="services.html">View Service</a>
+<p>Maha ID Registration, Login & Update</p>
+<a class="btn whatsapp" href="services.html">Open</a>
 </div>
 
 <div class="card">
 <h3>👷 e-Shram Card</h3>
 <p>New Registration & Update</p>
-<a class="btn whatsapp" href="services.html">View Service</a>
+<a class="btn whatsapp" href="services.html">Open</a>
 </div>
 
 <div class="card">
 <h3>🩺 ABHA Health ID</h3>
-<p>Create Digital Health ID</p>
-<a class="btn whatsapp" href="services.html">View Service</a>
+<p>Digital Health ID Registration</p>
+<a class="btn whatsapp" href="services.html">Open</a>
 </div>
 
 <div class="card">
 <h3>❤️ Ayushman Card</h3>
-<p>Eligibility & Registration</p>
-<a class="btn whatsapp" href="services.html">View Service</a>
+<p>Eligibility Check & Registration</p>
+<a class="btn whatsapp" href="services.html">Open</a>
 </div>
 
 <div class="card">
 <h3>🪪 PAN Card</h3>
 <p>New PAN & Correction</p>
-<a class="btn whatsapp" href="services.html">View Service</a>
+<a class="btn whatsapp" href="services.html">Open</a>
 </div>
 
 <div class="card">
 <h3>🗳️ Voter ID</h3>
 <p>Registration & Correction</p>
-<a class="btn whatsapp" href="services.html">View Service</a>
+<a class="btn whatsapp" href="services.html">Open</a>
 </div>
 
 <div class="card">
 <h3>♿ Divyang Services</h3>
-<p>UDID Card & Pension</p>
-<a class="btn whatsapp" href="divyang.html">View Service</a>
+<p>UDID Card, Pension & Schemes</p>
+<a class="btn whatsapp" href="divyang.html">Open</a>
 </div>
 
 <div class="card">
 <h3>🏛️ Maharashtra Yojana</h3>
-<p>Government Schemes</p>
-<a class="btn whatsapp" href="maharashtra.html">View Details</a>
-</div>
-
-<div class="card">
-<h3>📄 Documents</h3>
-<p>Required Document List</p>
-<a class="btn whatsapp" href="documents.html">Open</a>
-</div>
-
-<div class="card">
-<h3>📞 Contact</h3>
-<p>WhatsApp & Call Support</p>
-<a class="btn whatsapp" href="contact.html">Contact</a>
+<p>Government Schemes & Benefits</p>
+<a class="btn whatsapp" href="maharashtra.html">Open</a>
 </div>
 
 </div>
 
 </section>
+<section class="section">
+
+<h2 class="title">Why Choose Us?</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>⚡ Fast Service</h3>
+<p>सभी CSC और ऑनलाइन सेवाएँ तेज़ व सुरक्षित तरीके से उपलब्ध।</p>
+</div>
+
+<div class="card">
+<h3>🔒 Secure Process</h3>
+<p>आपके दस्तावेज़ों की सुरक्षा हमारी पहली प्राथमिकता है।</p>
+</div>
+
+<div class="card">
+<h3>📱 WhatsApp Support</h3>
+<p>9637832490 पर सीधे संपर्क करके आवेदन करें।</p>
+</div>
+
+<div class="card">
+<h3>🏛️ Government Services</h3>
+<p>CSC और महाराष्ट्र सरकार की प्रमुख सेवाएँ एक ही स्थान पर।</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2 class="title">Quick Links</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>📄 Documents</h3>
+<p>सभी सेवाओं के आवश्यक दस्तावेज़ देखें।</p>
+<a class="btn whatsapp" href="documents.html">Open</a>
+</div>
+
+<div class="card">
+<h3>📞 Contact Us</h3>
+<p>Call, WhatsApp और YouTube से संपर्क करें।</p>
+<a class="btn call" href="contact.html">Contact</a>
+</div>
+
+<div class="card">
+<h3>📺 YouTube Channel</h3>
+<p>लेटेस्ट सरकारी अपडेट और ऑनलाइन सेवाएँ।</p>
+<a class="btn whatsapp" href="https://youtube.com/@niteshkhobragade8">Visit</a>
+</div>
+
+<div class="card">
+<h3>💬 WhatsApp Apply</h3>
+<p>किसी भी सेवा के लिए सीधे आवेदन करें।</p>
+<a class="btn whatsapp" href="https://wa.me/919637832490">Apply Now</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">CSC Service Categories</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🪪 Identity Services</h3>
+<ul>
+<li>Maha ID</li>
+<li>Aadhaar Update</li>
+<li>PAN Card</li>
+<li>Voter ID</li>
+<li>Passport</li>
+</ul>
+<a class="btn whatsapp" href="services.html">View All</a>
+</div>
+
+<div class="card">
+<h3>❤️ Health Services</h3>
+<ul>
+<li>ABHA Card</li>
+<li>Ayushman Card</li>
+<li>Health Schemes</li>
+<li>Hospital Registration</li>
+</ul>
+<a class="btn whatsapp" href="services.html">View All</a>
+</div>
+
+<div class="card">
+<h3>👷 Labour Services</h3>
+<ul>
+<li>e-Shram Card</li>
+<li>PM Shram Yogi</li>
+<li>Labour Registration</li>
+</ul>
+<a class="btn whatsapp" href="services.html">View All</a>
+</div>
+
+<div class="card">
+<h3>♿ Divyang Services</h3>
+<ul>
+<li>UDID Card</li>
+<li>Divyang Pension</li>
+<li>Scholarship</li>
+<li>Bus Pass</li>
+</ul>
+<a class="btn whatsapp" href="divyang.html">View All</a>
+</div>
+
+<div class="card">
+<h3>📄 Certificate Services</h3>
+<ul>
+<li>Income Certificate</li>
+<li>Caste Certificate</li>
+<li>Domicile Certificate</li>
+<li>Birth Certificate</li>
+<li>Death Certificate</li>
+</ul>
+<a class="btn whatsapp" href="services.html">View All</a>
+</div>
+
+<div class="card">
+<h3>🏦 Banking Services</h3>
+<ul>
+<li>AEPS</li>
+<li>Money Transfer</li>
+<li>Mini Statement</li>
+<li>Cash Withdrawal</li>
+</ul>
+<a class="btn whatsapp" href="services.html">View All</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">More CSC Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🚆 Railway Ticket</h3>
+<p>IRCTC Train Ticket Booking</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🚌 Bus Ticket</h3>
+<p>Online Bus Ticket Booking</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>✈️ Flight Booking</h3>
+<p>Domestic & International Flight</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🏨 Hotel Booking</h3>
+<p>Hotel Reservation Service</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>💡 Electricity Bill</h3>
+<p>Electricity Bill Payment</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>💧 Water Bill</h3>
+<p>Water Bill Payment</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🔥 Gas Booking</h3>
+<p>LPG Cylinder Booking</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🚘 FASTag</h3>
+<p>FASTag Apply & Recharge</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>📂 DigiLocker</h3>
+<p>Digital Document Services</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🛡 Insurance</h3>
+<p>Life & General Insurance</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🌾 PM Kisan</h3>
+<p>Registration & eKYC</p>
+<a class="btn whatsapp" href="maharashtra.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🛠 PM Vishwakarma</h3>
+<p>Registration Service</p>
+<a class="btn whatsapp" href="maharashtra.html">Open</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">Digital & Certificate Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>☀️ PM Surya Ghar</h3>
+<p>Free Solar Rooftop Registration</p>
+<a class="btn whatsapp" href="maharashtra.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🎓 Scholarship</h3>
+<p>School & College Scholarship</p>
+<a class="btn whatsapp" href="maharashtra.html">Open</a>
+</div>
+
+<div class="card">
+<h3>💍 Marriage Certificate</h3>
+<p>Apply & Required Documents</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>👶 Birth Certificate</h3>
+<p>New Birth Registration</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>⚰️ Death Certificate</h3>
+<p>Death Registration Service</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🚗 Driving Licence</h3>
+<p>LL, DL & Renewal</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🚘 Vehicle RC</h3>
+<p>RC Transfer & Duplicate RC</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>💻 Online Form</h3>
+<p>All Government Online Forms</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>🖨️ Print / Scan</h3>
+<p>Print, Scan, Xerox, Lamination</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+<div class="card">
+<h3>📧 Email & Resume</h3>
+<p>Email ID, Resume & Online Services</p>
+<a class="btn whatsapp" href="services.html">Open</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">Maharashtra Government Yojana</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>👩 Ladki Bahin Yojana</h3>
+<p>Registration, Status, Documents</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>👨‍🌾 PM Kisan Samman Nidhi</h3>
+<p>Registration, eKYC & Beneficiary Status</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🌱 Namo Shetkari Yojana</h3>
+<p>Farmer Financial Assistance</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🎓 MahaDBT Scholarship</h3>
+<p>All Scholarship Schemes</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🏠 PM Awas Yojana</h3>
+<p>Housing Scheme Registration</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>☀️ PM Surya Ghar</h3>
+<p>Solar Rooftop Scheme</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🛠 PM Vishwakarma</h3>
+<p>Artisan Registration</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>👵 Sanjay Gandhi Pension</h3>
+<p>Pension Scheme Information</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>👴 Shravan Bal Pension</h3>
+<p>Senior Citizen Pension</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>👩 Widow Pension</h3>
+<p>Widow Assistance Scheme</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">More Maharashtra Government Schemes</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🎓 मुख्यमंत्री युवा कार्य प्रशिक्षण योजना</h3>
+<p>Registration, Eligibility & Documents</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🙏 मुख्यमंत्री तीर्थ दर्शन योजना</h3>
+<p>Senior Citizen Scheme</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>👩 महिला सशक्तिकरण योजना</h3>
+<p>Government Benefits for Women</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>👨‍🎓 Student Scholarship</h3>
+<p>State & Central Scholarships</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🌾 Farmer Schemes</h3>
+<p>Crop, Irrigation & Financial Assistance</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>💼 Employment Schemes</h3>
+<p>Job & Skill Development Programs</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🏠 Housing Schemes</h3>
+<p>Home & Rural Development Schemes</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>💳 MahaDBT Services</h3>
+<p>All MahaDBT Online Services</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🧑‍💼 Self Employment</h3>
+<p>Loan & Business Support Schemes</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>📋 All Government Schemes</h3>
+<p>Latest Maharashtra Scheme Updates</p>
+<a class="btn whatsapp" href="maharashtra.html">View Details</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">♿ Divyang Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🪪 UDID Card</h3>
+<p>New Registration, Renewal & Correction</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>💰 Divyang Pension</h3>
+<p>Apply, Status & Documents</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🎓 Divyang Scholarship</h3>
+<p>School, College & Higher Education</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🚌 Bus Pass</h3>
+<p>State Transport Bus Pass Service</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🚆 Railway Concession</h3>
+<p>Rail Travel Concession</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🦽 Assistive Devices</h3>
+<p>Wheelchair, Hearing Aid & Other Devices</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>💼 Self Employment</h3>
+<p>Loan & Business Support</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>📄 Required Documents</h3>
+<p>Documents for All Divyang Services</p>
+<a class="btn whatsapp" href="documents.html">Open</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">More Divyang Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>📋 Disability Certificate</h3>
+<p>New Certificate, Renewal & Update</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>💼 Skill Development</h3>
+<p>Training & Employment Programs</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🏢 Employment Assistance</h3>
+<p>Government & Private Job Support</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🏥 Health Assistance</h3>
+<p>Medical Help & Rehabilitation Services</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🎓 Education Support</h3>
+<p>Scholarship, Hostel & Study Benefits</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>🏦 Loan Assistance</h3>
+<p>Self Employment & Business Loan</p>
+<a class="btn whatsapp" href="divyang.html">View Details</a>
+</div>
+
+<div class="card">
+<h3>📱 Online Registration</h3>
+<p>Apply Online for Divyang Services</p>
+<a class="btn whatsapp" href="https://wa.me/919637832490">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>📞 Help & Support</h3>
+<p>WhatsApp & Phone Assistance</p>
+<a class="btn call" href="contact.html">Contact</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">📄 Required Documents</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🆔 Maha ID</h3>
+<ul>
+<li>Aadhaar Card</li>
+<li>Mobile Number</li>
+<li>Email ID</li>
+</ul>
+<a class="btn whatsapp" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Maha%20ID">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>👷 e-Shram Card</h3>
+<ul>
+<li>Aadhaar Card</li>
+<li>Bank Passbook</li>
+<li>Mobile Number</li>
+</ul>
+<a class="btn whatsapp" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20eShram%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>❤️ Ayushman Card</h3>
+<ul>
+<li>Aadhaar Card</li>
+<li>Ration Card</li>
+<li>Mobile Number</li>
+</ul>
+<a class="btn whatsapp" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Ayushman%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🩺 ABHA Card</h3>
+<ul>
+<li>Aadhaar Card</li>
+<li>Mobile Number</li>
+</ul>
+<a class="btn whatsapp" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20ABHA%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🪪 PAN Card</h3>
+<ul>
+<li>Aadhaar Card</li>
+<li>Photo</li>
+<li>Signature</li>
+</ul>
+<a class="btn whatsapp" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20PAN%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>♿ UDID Card</h3>
+<ul>
+<li>Aadhaar Card</li>
+<li>Disability Certificate</li>
+<li>Photo</li>
+</ul>
+<a class="btn whatsapp" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20UDID%20Card">Apply Now</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">📞 Contact Us</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🏢 Khobragade Computer Service Centre</h3>
+
+<p>👤 Nitesh Khobragade</p>
+
+<p>📱 Mobile: 9637832490</p>
+
+<p>💬 WhatsApp Support Available</p>
+
+<a class="btn whatsapp"
+href="https://wa.me/919637832490">
+WhatsApp Now
+</a>
+
+<a class="btn call"
+href="tel:+919637832490">
+Call Now
+</a>
+
+</div>
+
+<div class="card">
+
+<h3>📺 YouTube Channel</h3>
+
+<p>Government Schemes, CSC Services & Live Updates</p>
+
+<a class="btn whatsapp"
+href="https://youtube.com/@niteshkhobragade8">
+Visit Channel
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<footer style="background:#0b7a33;color:#fff;text-align:center;padding:30px;margin-top:50px;">
+
+<h3>Khobragade Computer Service Centre</h3>
+
+<p>CSC Digital Seva | Maharashtra Government Schemes | Divyang Services</p>
+
+<p>© 2026 All Rights Reserved</p>
+
+</footer>
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/919637832490"
+style="position:fixed;bottom:20px;right:20px;
+background:#25D366;color:white;
+padding:15px 18px;
+border-radius:50%;
+font-size:24px;
+text-decoration:none;
+box-shadow:0 5px 15px rgba(0,0,0,.3);
+z-index:9999;">
+💬
+</a>
+
+<!-- Back To Top -->
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})"
+style="position:fixed;
+bottom:90px;
+right:20px;
+padding:12px 16px;
+border:none;
+border-radius:50%;
+background:#0b7a33;
+color:white;
+font-size:20px;
+cursor:pointer;">
+↑
+</button>
+
+<script>
+function searchServices(){
+
+let input=document.querySelector(".search input");
+
+if(!input) return;
+
+let filter=input.value.toLowerCase();
+
+let cards=document.querySelectorAll(".card");
+
+cards.forEach(card=>{
+
+if(card.innerText.toLowerCase().indexOf(filter)>-1){
+
+card.style.display="block";
+
+}else{
+
+card.style.display="none";
+
+}
+
+});
+
+}
+
+let btn=document.querySelector(".search button");
+
+if(btn){
+
+btn.onclick=searchServices;
+
+}
+</script>
+
+</body>
+</html>
