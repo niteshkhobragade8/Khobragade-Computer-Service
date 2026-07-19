@@ -3,72 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>CSC Services | Khobragade Computer Service Centre</title>
 
+<meta name="description" content="CSC Services - Maha ID, PAN Card, Ayushman Card, ABHA, e-Shram, Voter ID, Passport, AEPS Banking">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#f5f5f5;
+background:#f5f7fb;
+color:#222;
 }
 
 header{
-background:#008000;
-color:#fff;
-padding:20px;
+background:#0b7a33;
+padding:15px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:999;
+}
+
+.logo{
+color:white;
+font-size:28px;
+font-weight:bold;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+margin-left:18px;
+font-weight:600;
+}
+
+.hero{
+background:linear-gradient(135deg,#0b7a33,#20c55a);
+padding:70px 20px;
 text-align:center;
+color:white;
 }
 
-.search{
-width:90%;
-max-width:700px;
-margin:25px auto;
+.hero h1{
+font-size:40px;
+margin-bottom:15px;
 }
 
-.search input{
-width:100%;
-padding:15px;
+.hero p{
 font-size:18px;
-border-radius:10px;
-border:1px solid #ccc;
 }
 
-.container{
-width:90%;
-margin:auto;
+.section{
+padding:60px 8%;
+}
+
+.title{
+text-align:center;
+font-size:34px;
+color:#0b7a33;
+margin-bottom:40px;
+}
+
+.cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:20px;
-padding-bottom:40px;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
 }
 
 .card{
-background:#fff;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.15);
-}
-
-.card h2{
-color:#008000;
-margin-bottom:10px;
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
 }
 
 .btn{
 display:inline-block;
-margin-top:15px;
-padding:12px 20px;
+padding:12px 22px;
 background:#25D366;
 color:white;
 text-decoration:none;
-border-radius:8px;
+border-radius:30px;
+margin-top:15px;
 font-weight:bold;
 }
+
 </style>
 
 </head>
@@ -77,304 +110,372 @@ font-weight:bold;
 
 <header>
 
-<h1>CSC Digital Services</h1>
+<div class="logo">
+Khobragade CSC
+</div>
 
-<p>Khobragade Computer Service Centre</p>
+<nav>
+
+<a href="index.html">Home</a>
+
+<a href="services.html">Services</a>
+
+<a href="maharashtra.html">Yojana</a>
+
+<a href="divyang.html">Divyang</a>
+
+<a href="documents.html">Documents</a>
+
+<a href="contact.html">Contact</a>
+
+</nav>
 
 </header>
 
-<div class="search">
+<section class="hero">
 
-<input type="text" placeholder="Search Service...">
+<h1>CSC Digital Services</h1>
+
+<p>All CSC Services Available at One Place</p>
+
+</section>
+<section class="section">
+
+<h2 class="title">Popular CSC Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🆔 Maha ID</h3>
+<p>New Registration, Login, Profile Update</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Maha%20ID">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>👷 e-Shram Card</h3>
+<p>Registration, Update & Download</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20e-Shram%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🩺 ABHA Card</h3>
+<p>Create Your Digital Health ID</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20ABHA%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>❤️ Ayushman Card</h3>
+<p>Registration, Eligibility & Download</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Ayushman%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🪪 PAN Card</h3>
+<p>New PAN & PAN Correction</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20PAN%20Card">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🗳️ Voter ID</h3>
+<p>New Registration & Correction</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Voter%20ID">Apply Now</a>
+</div>
 
 </div>
 
-<div class="container">
+</section>
+<section class="section">
+
+<h2 class="title">Certificates & ID Services</h2>
+
+<div class="cards">
 
 <div class="card">
+<h3>🛂 Passport</h3>
+<p>New Passport & Renewal</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Passport">Apply Now</a>
+</div>
 
-<h2>Maha ID</h2>
+<div class="card">
+<h3>🚗 Driving Licence</h3>
+<p>Learning Licence, DL & Renewal</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Driving%20Licence">Apply Now</a>
+</div>
 
-<p><b>Documents</b></p>
+<div class="card">
+<h3>🚘 Vehicle RC</h3>
+<p>RC Transfer, Duplicate RC & NOC</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Vehicle%20RC">Apply Now</a>
+</div>
 
+<div class="card">
+<h3>💰 Income Certificate</h3>
+<p>New Application & Download</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Income%20Certificate">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🏷️ Caste Certificate</h3>
+<p>New Application & Update</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Caste%20Certificate">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🏠 Domicile Certificate</h3>
+<p>Residence Certificate Service</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Domicile%20Certificate">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>👶 Birth Certificate</h3>
+<p>Birth Registration & Certificate</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Birth%20Certificate">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>⚫ Death Certificate</h3>
+<p>Death Registration Service</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Death%20Certificate">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>💍 Marriage Certificate</h3>
+<p>Marriage Registration Service</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20to%20apply%20for%20Marriage%20Certificate">Apply Now</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">Banking & Digital Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🏦 AEPS Banking</h3>
+<p>Cash Withdrawal, Balance Enquiry & Mini Statement</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20AEPS%20Banking%20Service">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>💸 Money Transfer</h3>
+<p>Domestic Money Transfer (DMT)</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20Money%20Transfer">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>💡 Electricity Bill</h3>
+<p>Pay Electricity Bill Online</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20Electricity%20Bill%20Payment">Pay Now</a>
+</div>
+
+<div class="card">
+<h3>💧 Water Bill</h3>
+<p>Online Water Bill Payment</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20Water%20Bill%20Payment">Pay Now</a>
+</div>
+
+<div class="card">
+<h3>🔥 Gas Booking</h3>
+<p>LPG Gas Cylinder Booking</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20Gas%20Booking">Book Now</a>
+</div>
+
+<div class="card">
+<h3>📱 Mobile Recharge</h3>
+<p>All Mobile Recharge Services</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20Mobile%20Recharge">Recharge</a>
+</div>
+
+<div class="card">
+<h3>📺 DTH Recharge</h3>
+<p>All DTH Recharge Services</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20DTH%20Recharge">Recharge</a>
+</div>
+
+<div class="card">
+<h3>📂 DigiLocker</h3>
+<p>Create & Download Digital Documents</p>
+<a class="btn" href="https://wa.me/919637832490?text=I%20want%20DigiLocker%20Service">Apply Now</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">Travel & Online Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🚆 Railway Ticket</h3>
+<p>IRCTC Train Ticket Booking</p>
+<a class="btn" href="https://wa.me/919637832490?text=Railway%20Ticket%20Booking">Book Now</a>
+</div>
+
+<div class="card">
+<h3>🚌 Bus Ticket</h3>
+<p>Online Bus Ticket Booking</p>
+<a class="btn" href="https://wa.me/919637832490?text=Bus%20Ticket%20Booking">Book Now</a>
+</div>
+
+<div class="card">
+<h3>✈️ Flight Booking</h3>
+<p>Domestic & International Flights</p>
+<a class="btn" href="https://wa.me/919637832490?text=Flight%20Booking">Book Now</a>
+</div>
+
+<div class="card">
+<h3>🏨 Hotel Booking</h3>
+<p>Hotel Reservation Service</p>
+<a class="btn" href="https://wa.me/919637832490?text=Hotel%20Booking">Book Now</a>
+</div>
+
+<div class="card">
+<h3>🛡️ Insurance</h3>
+<p>Life, Health & Vehicle Insurance</p>
+<a class="btn" href="https://wa.me/919637832490?text=Insurance%20Service">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>🚘 FASTag</h3>
+<p>New FASTag & Recharge</p>
+<a class="btn" href="https://wa.me/919637832490?text=FASTag%20Service">Apply Now</a>
+</div>
+
+<div class="card">
+<h3>📦 Courier Service</h3>
+<p>Speed Post & Courier Booking</p>
+<a class="btn" href="https://wa.me/919637832490?text=Courier%20Service">Book Now</a>
+</div>
+
+<div class="card">
+<h3>💻 Online Form</h3>
+<p>All Government & Private Online Forms</p>
+<a class="btn" href="https://wa.me/919637832490?text=Online%20Form%20Service">Apply Now</a>
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">📄 Required Documents</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🆔 Maha ID</h3>
 <ul>
-<li>Aadhaar Card</li>
-<li>Mobile Number</li>
-<li>Email ID</li>
+<li>✔ Aadhaar Card</li>
+<li>✔ Mobile Number</li>
+<li>✔ Email ID</li>
 </ul>
+</div>
 
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Maha%20ID%20banana%20hai">
+<div class="card">
+<h3>👷 e-Shram Card</h3>
+<ul>
+<li>✔ Aadhaar Card</li>
+<li>✔ Bank Passbook</li>
+<li>✔ Mobile Number</li>
+</ul>
+</div>
 
-Apply Now
+<div class="card">
+<h3>🪪 PAN Card</h3>
+<ul>
+<li>✔ Aadhaar Card</li>
+<li>✔ Passport Size Photo</li>
+<li>✔ Signature</li>
+</ul>
+</div>
 
+<div class="card">
+<h3>❤️ Ayushman Card</h3>
+<ul>
+<li>✔ Aadhaar Card</li>
+<li>✔ Ration Card (if applicable)</li>
+<li>✔ Mobile Number</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>♿ UDID Card</h3>
+<ul>
+<li>✔ Aadhaar Card</li>
+<li>✔ Disability Certificate</li>
+<li>✔ Passport Size Photo</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>📱 Quick Apply</h3>
+<p>किसी भी CSC सेवा के लिए सीधे WhatsApp पर संपर्क करें।</p>
+
+<a class="btn"
+href="https://wa.me/919637832490">
+Apply on WhatsApp
+</a>
+
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">📞 Contact & Support</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🏢 Khobragade Computer Service Centre</h3>
+
+<p><strong>👤 Name:</strong> Nitesh Khobragade</p>
+<p><strong>📱 Mobile:</strong> 9637832490</p>
+
+<a class="btn"
+href="https://wa.me/919637832490">
+WhatsApp
 </a>
 
 </div>
 
 <div class="card">
+<h3>📺 YouTube Channel</h3>
 
-<h2>e-Shram Card</h2>
+<p>Government Schemes, CSC Services & Live Updates</p>
 
-<p><b>Documents</b></p>
-
-<ul>
-<li>Aadhaar Card</li>
-<li>Mobile Number</li>
-<li>Bank Passbook</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20eShram%20Card%20banana%20hai">
-
-Apply Now
-
+<a class="btn"
+href="https://youtube.com/@niteshkhobragade8">
+Visit Channel
 </a>
 
 </div>
 
 </div>
-<div class="card">
 
-<h2>🩺 ABHA Health ID</h2>
+</section>
 
-<p><b>Documents</b></p>
-
-<ul>
-<li>Aadhaar Card</li>
-<li>Mobile Number</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20ABHA%20Health%20ID%20banana%20hai">
-Apply Now
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/919637832490"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:#fff;padding:15px 18px;border-radius:50%;text-decoration:none;font-size:24px;box-shadow:0 5px 15px rgba(0,0,0,.3);z-index:9999;">
+💬
 </a>
 
-</div>
+<footer style="background:#0b7a33;color:#fff;text-align:center;padding:30px;margin-top:50px;">
 
-<div class="card">
+<h3>Khobragade Computer Service Centre</h3>
 
-<h2>❤️ Ayushman Bharat Card</h2>
+<p>CSC Digital Seva | Maharashtra Government Schemes | Divyang Services</p>
 
-<p><b>Documents</b></p>
+<p>© 2026 All Rights Reserved</p>
 
-<ul>
-<li>Aadhaar Card</li>
-<li>Ration Card (यदि लागू हो)</li>
-<li>Mobile Number</li>
-</ul>
+</footer>
 
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Ayushman%20Card%20banana%20hai">
-Apply Now
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>🪪 PAN Card</h2>
-
-<p><b>Documents</b></p>
-
-<ul>
-<li>Aadhaar Card</li>
-<li>Photo</li>
-<li>Signature</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20PAN%20Card%20banana%20hai">
-Apply Now
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>🗳️ Voter ID</h2>
-
-<p><b>Documents</b></p>
-
-<ul>
-<li>Aadhaar Card</li>
-<li>Address Proof</li>
-<li>Passport Size Photo</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Voter%20ID%20banana%20hai">
-Apply Now
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>♿ UDID Card</h2>
-
-<p><b>Documents</b></p>
-
-<ul>
-<li>Disability Certificate</li>
-<li>Aadhaar Card</li>
-<li>Photo</li>
-<li>Mobile Number</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20UDID%20Card%20banana%20hai">
-Apply Now
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>👩 Ladki Bahin Yojana</h2>
-
-<p><b>Documents</b></p>
-
-<ul>
-<li>Aadhaar Card</li>
-<li>Bank Passbook</li>
-<li>Income Certificate (यदि आवश्यक हो)</li>
-<li>Mobile Number</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Ladki%20Bahin%20Yojana%20ke%20liye%20Apply%20karna%20hai">
-Apply Now
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>🌾 PM Kisan</h2>
-
-<p><b>Documents</b></p>
-
-<ul>
-<li>Aadhaar Card</li>
-<li>Bank Passbook</li>
-<li>Land Record</li>
-<li>Mobile Number</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20PM%20Kisan%20ke%20liye%20Apply%20karna%20hai">
-Apply Now
-</a>
-
-</div>
-
-<div class="card">
-
-<h2>♿ Divyang Pension</h2>
-
-<p><b>Documents</b></p>
-
-<ul>
-<li>Disability Certificate</li>
-<li>Aadhaar Card</li>
-<li>Bank Passbook</li>
-<li>Income Certificate</li>
-</ul>
-
-<a class="btn" href="https://wa.me/919637832490?text=Namaste%20Mujhe%20Divyang%20Pension%20ke%20liye%20Apply%20karna%20hai">
-Apply Now
-</a>
-
-</div>
-  <div class="card">
-<h2>📄 Income Certificate</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Aadhaar Card</li>
-<li>Ration Card</li>
-<li>Photo</li>
-<li>Mobile Number</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Income%20Certificate%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>🏠 Domicile Certificate</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Aadhaar Card</li>
-<li>Address Proof</li>
-<li>Photo</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Domicile%20Certificate%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>🧾 Caste Certificate</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Aadhaar Card</li>
-<li>Caste Proof</li>
-<li>School Leaving Certificate</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Caste%20Certificate%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>👶 Birth Certificate</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Hospital Record</li>
-<li>Parents Aadhaar</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Birth%20Certificate%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>⚰️ Death Certificate</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Hospital Certificate</li>
-<li>Aadhaar Card</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Death%20Certificate%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>💍 Marriage Certificate</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Bride Aadhaar</li>
-<li>Groom Aadhaar</li>
-<li>Wedding Photo</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Marriage%20Certificate%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>🛂 Passport Service</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Aadhaar Card</li>
-<li>PAN Card</li>
-<li>Address Proof</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Passport%20Service">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>🚗 Driving Licence</h2>
-<p><b>Documents</b></p>
-<ul>
-<li>Aadhaar Card</li>
-<li>Age Proof</li>
-<li>Address Proof</li>
-</ul>
-<a class="btn" href="https://wa.me/919637832490?text=Driving%20Licence%20Apply">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>🏦 AEPS Banking</h2>
-<p>Cash Withdrawal, Balance Enquiry, Mini Statement</p>
-<a class="btn" href="https://wa.me/919637832490?text=AEPS%20Banking">Apply Now</a>
-</div>
-
-<div class="card">
-<h2>💸 Money Transfer</h2>
-<p>Domestic Money Transfer Service</p>
-<a class="btn" href="https://wa.me/919637832490?text=Money%20Transfer">Apply Now</a>
-</div>
 </body>
 </html>
