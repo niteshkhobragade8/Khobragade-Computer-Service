@@ -1,37 +1,246 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact Us</title>
+
+<title>Contact Us | Khobragade Computer Service Centre</title>
+
+<meta name="description" content="Contact Khobragade Computer Service Centre for CSC Services, Government Schemes and Divyang Services">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f5f7fb;
+color:#222;
+}
+
+header{
+background:#0b7a33;
+padding:15px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+color:#fff;
+font-size:28px;
+font-weight:bold;
+}
+
+nav a{
+color:#fff;
+text-decoration:none;
+margin-left:18px;
+font-weight:600;
+}
+
+.hero{
+background:linear-gradient(135deg,#0b7a33,#20c55a);
+padding:70px 20px;
+text-align:center;
+color:#fff;
+}
+
+.hero h1{
+font-size:40px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:18px;
+}
+
+.section{
+padding:60px 8%;
+}
+
+.title{
+text-align:center;
+font-size:34px;
+color:#0b7a33;
+margin-bottom:40px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
+}
+
+.card{
+background:#fff;
+padding:25px;
+border-radius:18px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.btn{
+display:inline-block;
+padding:12px 22px;
+background:#25D366;
+color:#fff;
+text-decoration:none;
+border-radius:30px;
+margin-top:15px;
+font-weight:bold;
+}
+
+</style>
+
 </head>
+
 <body>
 
-<h1>Khobragade Computer Service Centre</h1>
+<header>
 
-<h2>📞 Contact</h2>
+<div class="logo">Khobragade CSC</div>
 
-<p><b>Mobile:</b> 9637832490</p>
+<nav>
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="maharashtra.html">Yojana</a>
+<a href="divyang.html">Divyang</a>
+<a href="documents.html">Documents</a>
+<a href="contact.html">Contact</a>
+</nav>
 
-<p>
-<a href="tel:+919637832490">📞 Call Now</a>
-</p>
+</header>
 
-<p>
-<a href="https://wa.me/919637832490">
+<section class="hero">
+
+<h1>📞 Contact Us</h1>
+
+<p>We're here to help with CSC & Government Services</p>
+
+</section>
+<section class="section">
+
+<h2 class="title">📞 Contact Information</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>🏢 Khobragade Computer Service Centre</h3>
+
+<p><strong>👤 Name:</strong> Nitesh Khobragade</p>
+
+<p><strong>📱 Mobile:</strong> +91 9637832490</p>
+
+<p><strong>📧 Email:</strong> youremail@gmail.com</p>
+
+<p><strong>📍 Address:</strong> Gondia, Maharashtra, India</p>
+
+<a class="btn" href="https://wa.me/919637832490">
 💬 WhatsApp Now
 </a>
-</p>
 
-<p>
-<a href="https://youtube.com/@niteshkhobragade8">
-📺 YouTube Channel
+</div>
+
+<div class="card">
+
+<h3>📺 YouTube Channel</h3>
+
+<p>Government Schemes, CSC Services & Divyang Updates</p>
+
+<a class="btn" href="https://youtube.com/@niteshkhobragade8">
+Visit YouTube
 </a>
-</p>
 
-<p>
-<a href="index.html">⬅ Back to Home</a>
-</p>
+</div>
+
+<div class="card">
+
+<h3>🌐 Website Services</h3>
+
+<p>✔ CSC Services</p>
+<p>✔ Maharashtra Yojana</p>
+<p>✔ Divyang Services</p>
+<p>✔ Online Documents</p>
+
+<a class="btn" href="services.html">
+View Services
+</a>
+
+</div>
+
+</div>
+
+</section>
+<section class="section">
+
+<h2 class="title">📝 Send Us a Message</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<form>
+
+<input type="text" placeholder="Your Name" style="width:100%;padding:12px;margin-bottom:12px;">
+
+<input type="email" placeholder="Your Email" style="width:100%;padding:12px;margin-bottom:12px;">
+
+<input type="tel" placeholder="Mobile Number" style="width:100%;padding:12px;margin-bottom:12px;">
+
+<textarea placeholder="Your Message" rows="5" style="width:100%;padding:12px;margin-bottom:12px;"></textarea>
+
+<button type="submit" class="btn">Send Message</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h3>📍 Location</h3>
+
+<p>Gondia, Maharashtra, India</p>
+
+<iframe
+src="https://maps.google.com/maps?q=Gondia%20Maharashtra&t=&z=13&ie=UTF8&iwloc=&output=embed"
+width="100%"
+height="250"
+style="border:0;border-radius:10px;"
+loading="lazy">
+</iframe>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/919637832490"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:#fff;padding:15px 18px;border-radius:50%;font-size:24px;text-decoration:none;box-shadow:0 5px 15px rgba(0,0,0,.3);z-index:9999;">
+💬
+</a>
+
+<footer style="background:#0b7a33;color:#fff;text-align:center;padding:30px;margin-top:50px;">
+
+<h3>Khobragade Computer Service Centre</h3>
+
+<p>CSC Digital Seva | Maharashtra Government Schemes | Divyang Services</p>
+
+<p>© 2026 All Rights Reserved</p>
+
+</footer>
 
 </body>
 </html>
