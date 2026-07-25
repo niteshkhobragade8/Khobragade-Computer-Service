@@ -100,7 +100,6 @@ saveBtn.addEventListener("click", async () => {
 
 }
 
-    alert("Update Saved Successfully");
 
     document.getElementById("updateTitle").value="";
     document.getElementById("updateDescription").value="";
