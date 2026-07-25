@@ -24,17 +24,23 @@ async function loadUpdates() {
 
         updatesList.innerHTML += `
 
-        <div class="card">
+<div class="card">
 
-        <h3>${data.title}</h3>
+<h3>${data.title}</h3>
 
-        <p>${data.description}</p>
+<p>${data.description}</p>
 
-        <small>${data.category}</small>
+<small>${data.category}</small>
 
-        </div>
+<br><br>
 
-        `;
+<button onclick="deleteUpdate('${doc.id}')">
+🗑 Delete
+</button>
+
+</div>
+
+`;
 
     });
 
