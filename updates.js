@@ -34,6 +34,11 @@ async function loadUpdates() {
 <small>${data.category}</small>
 
 <br><br>
+<button onclick="editUpdate('${doc.id}','${data.title}','${data.description}','${data.category}')">
+✏️ Edit
+</button>
+
+&nbsp;
 
 <button onclick="deleteUpdate('${doc.id}')">
 🗑 Delete
