@@ -3,7 +3,9 @@ import { db } from "./firebase-config.js";
 import {
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const saveBtn = document.getElementById("saveUpdate");
