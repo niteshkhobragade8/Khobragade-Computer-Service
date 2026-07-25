@@ -109,3 +109,16 @@ window.deleteUpdate = async function(id){
     }
 
 }
+let editId = null;
+
+window.editUpdate = function(id, title, description, category) {
+
+    editId = id;
+
+    document.getElementById("updateTitle").value = title;
+    document.getElementById("updateDescription").value = description;
+    document.getElementById("updateCategory").value = category;
+
+    document.getElementById("saveUpdate").innerText = "Update";
+
+}
