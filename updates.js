@@ -82,3 +82,24 @@ saveBtn.addEventListener("click", async () => {
 });
 
 loadUpdates();
+window.deleteUpdate = async function(id){
+
+    if(!confirm("Are you sure you want to delete this update?")){
+        return;
+    }
+
+    try{
+
+        await deleteDoc(doc(db,"updates",id));
+
+        alert("Update Deleted Successfully");
+
+        loadUpdates();
+
+    }catch(error){
+
+        alert(error.message);
+
+    }
+
+}
