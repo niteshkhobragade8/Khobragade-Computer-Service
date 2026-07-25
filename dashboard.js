@@ -1,43 +1,44 @@
-import { auth } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
 
 import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-// Login Check
-onAuthStateChanged(auth, (user) => {
+const saveBtn = document.getElementById("saveUpdate");
 
-    if (!user) {
+saveBtn.addEventListener("click", async () => {
 
-        window.location.href = "admin.html";
+    const title = document.getElementById("updateTitle").value;
+    const description = document.getElementById("updateDescription").value;
+    const category = document.getElementById("updateCategory").value;
 
-    } else {
-
-        console.log("Welcome :", user.email);
-
+    if(title === "" || description === ""){
+        alert("Please fill all fields");
+        return;
     }
 
-});
+    try{
 
-// Logout
+        await addDoc(collection(db,"updates"),{
 
-const logoutBtn = document.getElementById("logoutBtn");
+            title:title,
+            description:description,
+            category:category,
+            status:"Published",
+            createdAt:new Date()
 
-logoutBtn.addEventListener("click", () => {
+        });
 
-    signOut(auth)
-    .then(() => {
+        alert("Update Saved Successfully");
 
-        alert("Logout Successful");
+        document.getElementById("updateTitle").value="";
+        document.getElementById("updateDescription").value="";
 
-        window.location.href = "admin.html";
-
-    })
-    .catch((error) => {
+    }catch(error){
 
         alert(error.message);
 
-    });
+    }
 
 });
