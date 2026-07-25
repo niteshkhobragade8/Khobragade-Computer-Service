@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-
+alert("services.js loaded");
 import {
   collection,
   addDoc,
