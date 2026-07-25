@@ -68,15 +68,37 @@ saveBtn.addEventListener("click", async () => {
 
     }
 
-    await addDoc(collection(db,"updates"),{
+    if (editId) {
+
+    await updateDoc(doc(db, "updates", editId), {
+
+        title,
+        description,
+        category
+
+    });
+
+    alert("Update Successfully");
+
+    editId = null;
+
+    document.getElementById("saveUpdate").innerText = "Save Update";
+
+} else {
+
+    await addDoc(collection(db, "updates"), {
 
         title,
         description,
         category,
-        status:"Published",
-        createdAt:new Date()
+        status: "Published",
+        createdAt: new Date()
 
     });
+
+    alert("Update Saved Successfully");
+
+}
 
     alert("Update Saved Successfully");
 
