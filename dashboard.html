@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Admin Dashboard | Khobragade CSC</title>
 
 <link rel="stylesheet" href="dashboard.css">
+
 </head>
 
 <body>
@@ -22,11 +27,15 @@
 
 <li>🛠 Services</li>
 
+<li>📂 Categories</li>
+
+<li>🖼 Images</li>
+
 <li>📄 Documents</li>
 
-<li>📞 Contact</li>
-
 <li>📺 YouTube</li>
+
+<li>📊 Analytics</li>
 
 <li>⚙️ Settings</li>
 
@@ -49,30 +58,39 @@
 <div class="cards">
 
 <div class="card">
-<h2>Government Updates</h2>
-<p>0</p>
+
+<h2>Total Updates</h2>
+
+<p id="totalUpdates">0</p>
+
 </div>
 
 <div class="card">
-<h2>Services</h2>
-<p>0</p>
+
+<h2>Total Services</h2>
+
+<p id="totalServices">0</p>
+
 </div>
 
 <div class="card">
-<h2>Documents</h2>
-<p>0</p>
+
+<h2>Total Visitors</h2>
+
+<p id="totalVisitors">0</p>
+
 </div>
 
 <div class="card">
+
 <h2>Website Status</h2>
+
 <p>🟢 Live</p>
-</div>
 
 </div>
 
 </div>
-  <div class="content">
-<hr style="margin:30px 0;">
+<hr>
 
 <h2>📢 Government Updates</h2>
 
@@ -85,73 +103,168 @@ placeholder="Update Title">
 
 <textarea
 id="updateDescription"
-placeholder="Update Description"></textarea>
+placeholder="Update Description">
+</textarea>
 
 <select id="updateCategory">
+
 <option>Government Update</option>
+
 <option>Maha ID</option>
+
 <option>Ayushman Card</option>
+
 <option>PAN Card</option>
+
 <option>Divyang</option>
+
 </select>
 
-<button id="saveUpdate" type="button">
+<button
+id="saveUpdate"
+type="button">
+
 Save Update
+
 </button>
 
 </div>
 
-<h3 style="margin-top:30px;">All Updates</h3>
+<h3>All Updates</h3>
 
 <div id="updatesList">
 
 No Updates Available
 
 </div>
-  <hr>
+<hr>
 
-<h2>Services Management</h2>
+<h2>🛠 Services Management</h2>
 
-<input type="text" id="serviceName" placeholder="Service Name">
+<div class="service-form">
 
-<input type="text" id="serviceIcon" placeholder="Icon (Example: 📄)">
-
-<button id="saveService">Save Service</button>
-<br><br>
-
-<label>Service Description</label>
+<input
+type="text"
+id="serviceName"
+placeholder="Service Name">
 
 <textarea
 id="serviceDescription"
 placeholder="Service Description">
 </textarea>
 
-<br><br>
-
-<label>Category</label>
-
 <select id="serviceCategory">
 
-<option value="Government">Government</option>
+<option>Government</option>
 
-<option value="PAN Card">PAN Card</option>
+<option>PAN Card</option>
 
-<option value="Aadhaar">Aadhaar</option>
+<option>Aadhaar</option>
 
-<option value="Divyang">Divyang</option>
+<option>Divyang</option>
 
-<option value="Ayushman">Ayushman</option>
+<option>Ayushman</option>
 
-<option value="Maha ID">Maha ID</option>
+<option>Maha ID</option>
 
 </select>
 
-<br><br>
-<div id="servicesList">
-No Services Available
+<input
+type="text"
+id="serviceIcon"
+placeholder="Service Icon (📄)">
+
+<button
+id="saveService"
+type="button">
+
+Save Service
+
+</button>
+
 </div>
+
+<h3>All Services</h3>
+
+<div id="servicesList">
+
+No Services Available
+
+</div>
+<hr>
+
+<h2>📂 Categories</h2>
+
+<div class="category-form">
+
+<input
+type="text"
+id="categoryName"
+placeholder="Category Name">
+
+<button
+id="saveCategory"
+type="button">
+
+Save Category
+
+</button>
+
+</div>
+
+<h3>All Categories</h3>
+
+<div id="categoriesList">
+
+No Categories Available
+
+</div>
+
+<hr>
+
+<h2>📊 Dashboard Analytics</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h2>Total Categories</h2>
+
+<p id="totalCategories">0</p>
+
+</div>
+
+<div class="card">
+
+<h2>Published Updates</h2>
+
+<p id="publishedUpdates">0</p>
+
+</div>
+
+<div class="card">
+
+<h2>Published Services</h2>
+
+<p id="publishedServices">0</p>
+
+</div>
+
+</div>
+<script type="module" src="firebase-config.js"></script>
+
 <script type="module" src="dashboard.js"></script>
+
 <script type="module" src="updates.js"></script>
-  <script type="module" src="services.js"></script>
+
+<script type="module" src="services.js"></script>
+
+<script type="module" src="categories.js"></script>
+
+<script type="module" src="analytics.js"></script>
+
+</div>
+
 </body>
+
 </html>
