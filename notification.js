@@ -3,179 +3,125 @@ import { db } from "./firebase-config.js";
 import {
 
 collection,
-query,
-orderBy,
-limit,
-onSnapshot
+addDoc,
+getDocs,
+deleteDoc,
+updateDoc,
+doc
 
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-const latestQuery=query(
+const saveNotification=document.getElementById("saveNotification");
 
-collection(db,"updates"),
+let editNotificationId=null;
 
-orderBy("createdAt","desc"),
+async function loadNotifications(){
 
-limit(1)
+const notificationList=document.getElementById("notificationList");
 
-);
-onSnapshot(latestQuery,(snapshot)=>{
+notificationList.innerHTML="";
 
-snapshot.forEach((doc)=>{
+const snapshot=await getDocs(collection(db,"notifications"));
 
-const data=doc.data();
+document.getElementById("totalNotifications").innerText=snapshot.size;
 
-showNotification(
+snapshot.forEach((item)=>{
 
-data.title,
+const data=item.data();
 
-data.description
+notificationList.innerHTML+=`
 
-);
+<div class="notification-card">
 
-});
+<h3>${data.title}</h3>
 
-});
+<p>${data.description}</p>
 
-function showNotification(title,message){
+<small>${data.type}</small>
 
-const notify=document.createElement("div");
+<div class="actions">
 
-notify.className="live-notification";
+<button onclick="editNotification('${item.id}')">
 
-notify.innerHTML=`
+✏️ Edit
 
-<h3>🔔 ${title}</h3>
+</button>
 
-<p>${message}</p>
+<button onclick="deleteNotification('${item.id}')">
 
-`;
+🗑 Delete
 
-document.body.appendChild(notify);
+</button>
 
-setTimeout(()=>{
+</div>
 
-notify.remove();
-
-},5000);
-
-}
-const style=document.createElement("style");
-
-style.innerHTML=`
-
-.live-notification{
-
-position:fixed;
-
-top:20px;
-
-right:20px;
-
-width:320px;
-
-background:linear-gradient(135deg,#00C853,#2979FF,#FF4081);
-
-color:#fff;
-
-padding:18px;
-
-border-radius:15px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.25);
-
-z-index:99999;
-
-animation:slideIn .5s ease;
-
-}
-
-.live-notification h3{
-
-margin-bottom:8px;
-
-font-size:18px;
-
-}
-
-.live-notification p{
-
-font-size:14px;
-
-line-height:1.5;
-
-}
-
-@keyframes slideIn{
-
-from{
-
-transform:translateX(400px);
-
-opacity:0;
-
-}
-
-to{
-
-transform:translateX(0);
-
-opacity:1;
-
-}
-
-}
+</div>
 
 `;
 
-document.head.appendChild(style);
-if("Notification" in window){
-
-Notification.requestPermission();
-
-}
-
-function browserNotification(title,message){
-
-if(Notification.permission==="granted"){
-
-new Notification(title,{
-
-body:message,
-
-icon:"favicon.png"
-
 });
 
 }
+saveNotification.addEventListener("click",async()=>{
+
+const title=document.getElementById("notificationTitle").value;
+
+const description=document.getElementById("notificationDescription").value;
+
+const type=document.getElementById("notificationType").value;
+
+const priority=document.getElementById("notificationPriority").value;
+
+if(title===""||description===""){
+
+alert("Fill all fields");
+
+return;
 
 }
-window.addEventListener("load",()=>{
 
-onSnapshot(latestQuery,(snapshot)=>{
+if(editNotificationId){
 
-snapshot.forEach((doc)=>{
+await updateDoc(doc(db,"notifications",editNotificationId),{
 
-const data=doc.data();
-
-browserNotification(
-
-data.title,
-
-data.description
-
-);
+title,
+description,
+type,
+priority
 
 });
 
-});
+alert("Notification Updated");
+
+editNotificationId=null;
+
+saveNotification.innerText="Save Notification";
+
+}else{
+
+await addDoc(collection(db,"notifications"),{
+
+title,
+description,
+type,
+priority,
+status:"Published",
+createdAt:new Date()
 
 });
 
-export{
+alert("Notification Saved");
 
-showNotification,
+}
 
-browserNotification
+document.getElementById("notificationTitle").value="";
 
-};
+document.getElementById("notificationDescription").value="";
+
+document.getElementById("notificationType").selectedIndex=0;
+
+document.getElementById("notificationPriority").selectedIndex=0;
+
+loadNotifications();
+
+});
