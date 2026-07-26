@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notification Manager</title>
+
+<link rel="stylesheet" href="notification.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔔 Notification Management</h1>
+
+<div class="notification-form">
+
+<input
+type="text"
+id="notificationTitle"
+placeholder="Notification Title">
+
+<textarea
+id="notificationDescription"
+placeholder="Notification Description">
+</textarea>
+
+<select id="notificationType">
+
+<option value="popup">Popup</option>
+
+<option value="breaking">Breaking News</option>
+
+<option value="push">Browser Push</option>
+
+</select>
+
+<select id="notificationPriority">
+
+<option value="normal">Normal</option>
+
+<option value="important">Important</option>
+
+<option value="urgent">Urgent</option>
+
+</select>
+
+<button id="saveNotification">
+
+Save Notification
+
+</button>
+
+</div>
+<h2>📋 All Notifications</h2>
+
+<div id="notificationList">
+
+No Notifications Available
+
+</div>
+
+<hr>
+
+<div class="notification-stats">
+
+<div class="stat-card">
+
+<h3>Total Notifications</h3>
+
+<p id="totalNotifications">0</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Published</h3>
+
+<p id="publishedNotifications">0</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Draft</h3>
+
+<p id="draftNotifications">0</p>
+
+</div>
+
+</div>
+<h2>⚡ Quick Actions</h2>
+
+<div class="quick-actions">
+
+<button id="publishAll">
+
+🚀 Publish All
+
+</button>
+
+<button id="deleteAll">
+
+🗑 Delete All
+
+</button>
+
+<button id="refreshNotifications">
+
+🔄 Refresh
+
+</button>
+
+</div>
+
+<hr>
+
+<div id="notificationPreview">
+
+<h2>👁 Live Preview</h2>
+
+<p>
+
+Notification Preview will appear here...
+
+</p>
+
+</div>
+<hr>
+
+<h2>📊 Notification History</h2>
+
+<div id="notificationHistory">
+
+No History Available
+
+</div>
+
+<hr>
+
+<h2>⚙ Notification Settings</h2>
+
+<div class="notification-settings">
+
+<label>
+
+<input
+type="checkbox"
+id="enablePopup"
+checked>
+
+Enable Popup Notification
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="enableBreaking"
+checked>
+
+Enable Breaking News
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="enablePush"
+checked>
+
+Enable Browser Push
+
+</label>
+
+</div>
+<script type="module" src="firebase-config.js"></script>
+
+<script type="module" src="notification.js"></script>
+
+</div>
+
+</body>
+
+</html>
