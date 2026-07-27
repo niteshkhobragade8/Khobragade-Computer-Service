@@ -37,7 +37,16 @@ document.getElementById("totalNotifications").innerText=snapshot.size;
 snapshot.forEach((item)=>{
 
 const data=item.data();
+if(latestNotifications){
 
+latestNotifications.innerHTML+=`
+<div class="notification-item">
+<b>${data.title}</b><br>
+<small>${data.type}</small>
+</div>
+`;
+
+}
 notificationList.innerHTML+=`
 
 <div class="notification-card">
