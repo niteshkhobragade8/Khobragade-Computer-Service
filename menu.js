@@ -16,7 +16,17 @@ menuItems.forEach(item => {
         const page=item.dataset.page;
 
         const target=document.getElementById(page+"Page");
+if(page==="images"){
+console.log("Images Page Opened");
+}
 
+if(page==="documents"){
+console.log("Documents Page Opened");
+}
+
+if(page==="youtube"){
+console.log("YouTube Page Opened");
+}
         if(target){
 
             target.classList.add("active");
