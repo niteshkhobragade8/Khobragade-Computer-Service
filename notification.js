@@ -196,7 +196,26 @@ window.addEventListener("DOMContentLoaded",()=>{
 loadNotifications();
 
 });
+const bell=document.getElementById("notificationBell");
+const dropdown=document.getElementById("notificationDropdown");
 
+if(bell && dropdown){
+
+bell.addEventListener("click",()=>{
+
+if(dropdown.style.display==="block"){
+
+dropdown.style.display="none";
+
+}else{
+
+dropdown.style.display="block";
+
+}
+
+});
+
+}
 window.refreshNotificationPanel=function(){
 
 loadNotifications();
