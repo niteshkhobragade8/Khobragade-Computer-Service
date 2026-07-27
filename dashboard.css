@@ -688,3 +688,26 @@ text-align:center;
 }
 
 }
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
+
+#sidebarMenu li.active{
+background:#0d6efd;
+color:#fff;
+border-radius:8px;
+}
+
+#sidebarMenu li{
+cursor:pointer;
+transition:.3s;
+}
+
+#sidebarMenu li:hover{
+background:#e9ecef;
+border-radius:8px;
+}
