@@ -7,90 +7,218 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard | Khobragade CSC</title>
+<title>Khobragade CSC Admin Dashboard</title>
 
 <link rel="stylesheet" href="dashboard.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
 <body>
 
+<!-- Breaking News -->
+
+<div class="breaking-news">
+
+<div class="breaking-label">
+
+🔴 BREAKING NEWS
+
+</div>
+
+<div class="breaking-text">
+
+<marquee id="breakingNews">
+
+Welcome to Khobragade Computer Service Centre Admin Dashboard
+
+</marquee>
+
+</div>
+
+</div>
+
+<div class="dashboard">
+
+<!-- Sidebar -->
+
 <div class="sidebar">
+
+<div class="logo">
 
 <h2>Khobragade CSC</h2>
 
-<ul>
+<p>Admin Panel</p>
 
-<li>🏠 Dashboard</li>
+</div>
 
-<li>📢 Government Updates</li>
+<ul id="sidebarMenu">
 
-<li>🛠 Services</li>
+<li class="active"
+data-page="dashboard">
 
-<li>📂 Categories</li>
+<i class="fa-solid fa-house"></i>
 
-<li>🖼 Images</li>
+<span>Dashboard</span>
 
-<li>📄 Documents</li>
+</li>
 
-<li>📺 YouTube</li>
+<li data-page="updates">
 
-<li>📊 Analytics</li>
+<i class="fa-solid fa-bullhorn"></i>
 
-<li>⚙️ Settings</li>
+<span>Government Updates</span>
 
-<li id="logoutBtn">🚪 Logout</li>
+</li>
+
+<li data-page="services">
+
+<i class="fa-solid fa-toolbox"></i>
+
+<span>Services</span>
+
+</li>
+
+<li data-page="categories">
+
+<i class="fa-solid fa-folder"></i>
+
+<span>Categories</span>
+
+</li>
+
+<li data-page="notifications">
+
+<i class="fa-solid fa-bell"></i>
+
+<span>Notifications</span>
+
+</li>
+
+<li data-page="analytics">
+
+<i class="fa-solid fa-chart-line"></i>
+
+<span>Analytics</span>
+
+</li>
+
+<li data-page="settings">
+
+<i class="fa-solid fa-gear"></i>
+
+<span>Settings</span>
+
+</li>
+
+<li id="logoutBtn">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+<span>Logout</span>
+
+</li>
 
 </ul>
 
 </div>
 
-<div class="main">
+<!-- Main -->
 
-<div class="header">
+<div class="main-content">
 
-<h1>Welcome Admin</h1>
+<div class="topbar">
 
-<p>Khobragade Computer Service Centre</p>
+<h1>Dashboard</h1>
+
+<div class="top-right">
+
+<button id="notificationBell">
+
+🔔
+
+<span id="notificationCount">0</span>
+
+</button>
 
 </div>
+
+</div>
+<!-- Dashboard Section -->
+
+<section id="dashboardPage" class="page active">
 
 <div class="cards">
 
 <div class="card">
 
-<h2>Total Updates</h2>
+<h3>Total Updates</h3>
 
-<p id="totalUpdates">0</p>
-
-</div>
-
-<div class="card">
-
-<h2>Total Services</h2>
-
-<p id="totalServices">0</p>
+<h2 id="totalUpdates">0</h2>
 
 </div>
 
 <div class="card">
 
-<h2>Total Visitors</h2>
+<h3>Total Services</h3>
 
-<p id="totalVisitors">0</p>
+<h2 id="totalServices">0</h2>
 
 </div>
 
 <div class="card">
 
-<h2>Website Status</h2>
+<h3>Total Categories</h3>
 
-<p>🟢 Live</p>
+<h2 id="totalCategories">0</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Total Visitors</h3>
+
+<h2 id="totalVisitors">0</h2>
 
 </div>
 
 </div>
-<hr>
+
+<div class="dashboard-grid">
+
+<div class="dashboard-box">
+
+<h2>Latest Notifications</h2>
+
+<div id="latestNotifications">
+
+No Notifications
+
+</div>
+
+</div>
+
+<div class="dashboard-box">
+
+<h2>Recent Government Updates</h2>
+
+<div id="latestUpdates">
+
+No Updates Available
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- Government Updates -->
+
+<section id="updatesPage" class="page">
 
 <h2>📢 Government Updates</h2>
 
@@ -120,9 +248,7 @@ placeholder="Update Description">
 
 </select>
 
-<button
-id="saveUpdate"
-type="button">
+<button id="saveUpdate">
 
 Save Update
 
@@ -130,14 +256,16 @@ Save Update
 
 </div>
 
-<h3>All Updates</h3>
-
 <div id="updatesList">
 
 No Updates Available
 
 </div>
-<hr>
+
+</section>
+<!-- Services -->
+
+<section id="servicesPage" class="page">
 
 <h2>🛠 Services Management</h2>
 
@@ -161,9 +289,9 @@ placeholder="Service Description">
 
 <option>Aadhaar</option>
 
-<option>Divyang</option>
-
 <option>Ayushman</option>
+
+<option>Divyang</option>
 
 <option>Maha ID</option>
 
@@ -174,9 +302,7 @@ type="text"
 id="serviceIcon"
 placeholder="Service Icon (📄)">
 
-<button
-id="saveService"
-type="button">
+<button id="saveService">
 
 Save Service
 
@@ -184,14 +310,17 @@ Save Service
 
 </div>
 
-<h3>All Services</h3>
-
 <div id="servicesList">
 
 No Services Available
 
 </div>
-<hr>
+
+</section>
+
+<!-- Categories -->
+
+<section id="categoriesPage" class="page">
 
 <h2>📂 Categories</h2>
 
@@ -202,9 +331,7 @@ type="text"
 id="categoryName"
 placeholder="Category Name">
 
-<button
-id="saveCategory"
-type="button">
+<button id="saveCategory">
 
 Save Category
 
@@ -212,45 +339,137 @@ Save Category
 
 </div>
 
-<h3>All Categories</h3>
-
 <div id="categoriesList">
 
 No Categories Available
 
 </div>
 
-<hr>
+</section>
+<!-- Notifications -->
 
-<h2>📊 Dashboard Analytics</h2>
+<section id="notificationsPage" class="page">
+
+<h2>🔔 Notifications</h2>
+
+<div class="notification-form">
+
+<input
+type="text"
+id="notificationTitle"
+placeholder="Notification Title">
+
+<textarea
+id="notificationMessage"
+placeholder="Notification Message">
+</textarea>
+
+<select id="notificationType">
+
+<option value="breaking">Breaking News</option>
+
+<option value="popup">Popup Notification</option>
+
+<option value="normal">Normal Notification</option>
+
+</select>
+
+<button id="saveNotification">
+
+Publish Notification
+
+</button>
+
+</div>
+
+<div id="notificationList">
+
+No Notifications Available
+
+</div>
+
+</section>
+
+<!-- Analytics -->
+
+<section id="analyticsPage" class="page">
+
+<h2>📊 Analytics</h2>
 
 <div class="cards">
 
 <div class="card">
 
-<h2>Total Categories</h2>
+<h3>Published Updates</h3>
 
-<p id="totalCategories">0</p>
-
-</div>
-
-<div class="card">
-
-<h2>Published Updates</h2>
-
-<p id="publishedUpdates">0</p>
+<h2 id="publishedUpdates">0</h2>
 
 </div>
 
 <div class="card">
 
-<h2>Published Services</h2>
+<h3>Published Services</h3>
 
-<p id="publishedServices">0</p>
+<h2 id="publishedServices">0</h2>
+
+</div>
+
+<div class="card">
+
+<h3>Published Notifications</h3>
+
+<h2 id="publishedNotifications">0</h2>
 
 </div>
 
 </div>
+
+</section>
+<!-- Settings -->
+
+<section id="settingsPage" class="page">
+
+<h2>⚙️ Settings</h2>
+
+<div class="settings-box">
+
+<h3>Website Settings</h3>
+
+<label>Website Name</label>
+
+<input
+type="text"
+id="websiteName"
+value="Khobragade Computer Service Centre">
+
+<label>Admin Name</label>
+
+<input
+type="text"
+id="adminName"
+value="Nitesh Khobragade">
+
+<label>Mobile Number</label>
+
+<input
+type="text"
+id="mobileNumber"
+value="9637832490">
+
+<button id="saveSettings">
+
+Save Settings
+
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+</div>
+
 <script type="module" src="firebase-config.js"></script>
 
 <script type="module" src="dashboard.js"></script>
@@ -261,13 +480,11 @@ No Categories Available
 
 <script type="module" src="categories.js"></script>
 
+<script type="module" src="notification.js"></script>
+
 <script type="module" src="analytics.js"></script>
 
 <script type="module" src="menu.js"></script>
-
-<script type="module" src="notification.js"></script>
-  
-</div>
 
 </body>
 
