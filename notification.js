@@ -20,7 +20,16 @@ async function loadNotifications(){
 const notificationList=document.getElementById("notificationList");
 
 notificationList.innerHTML="";
+const latestNotifications=document.getElementById("latestNotifications");
+const notificationCount=document.getElementById("notificationCount");
 
+if(latestNotifications){
+latestNotifications.innerHTML="";
+}
+
+if(notificationCount){
+notificationCount.innerText=snapshot.size;
+}
 const snapshot=await getDocs(collection(db,"notifications"));
 
 document.getElementById("totalNotifications").innerText=snapshot.size;
