@@ -125,3 +125,86 @@ document.getElementById("notificationPriority").selectedIndex=0;
 loadNotifications();
 
 });
+window.deleteNotification=async function(id){
+
+if(!confirm("Delete this notification?")){
+
+return;
+
+}
+
+await deleteDoc(doc(db,"notifications",id));
+
+alert("Notification Deleted");
+
+loadNotifications();
+
+}
+
+window.editNotification=async function(id){
+
+const snapshot=await getDocs(collection(db,"notifications"));
+
+snapshot.forEach((item)=>{
+
+if(item.id===id){
+
+const data=item.data();
+
+editNotificationId=id;
+
+document.getElementById("notificationTitle").value=data.title;
+
+document.getElementById("notificationDescription").value=data.description;
+
+document.getElementById("notificationType").value=data.type;
+
+document.getElementById("notificationPriority").value=data.priority;
+
+saveNotification.innerText="Update Notification";
+
+}
+
+});
+
+}
+document.getElementById("publishAll").addEventListener("click",()=>{
+
+alert("All Notifications Published");
+
+});
+
+document.getElementById("deleteAll").addEventListener("click",()=>{
+
+if(confirm("Delete All Notifications?")){
+
+document.getElementById("notificationList").innerHTML="";
+
+document.getElementById("totalNotifications").innerText="0";
+
+}
+
+});
+
+document.getElementById("refreshNotifications").addEventListener("click",()=>{
+
+loadNotifications();
+
+});
+window.addEventListener("DOMContentLoaded",()=>{
+
+loadNotifications();
+
+});
+
+window.refreshNotificationPanel=function(){
+
+loadNotifications();
+
+};
+
+export{
+
+loadNotifications
+
+};
