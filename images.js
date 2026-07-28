@@ -1,24 +1,30 @@
-const uploadBtn = document.getElementById("uploadImage");
-const imageInput = document.getElementById("imageUpload");
-const imagesList = document.getElementById("imagesList");
+async function loadImages() {
+    const imagesList = document.getElementById("imagesList");
 
-if (uploadBtn) {
-  uploadBtn.addEventListener("click", () => {
+    try {
+        const response = await fetch("./images/images.json");
+        const images = await response.json();
 
-    if (!imageInput.files.length) {
-      alert("Please select an image.");
-      return;
+        if (images.length === 0) {
+            imagesList.innerHTML = "<p>No Images Available</p>";
+            return;
+        }
+
+        imagesList.innerHTML = "";
+
+        images.forEach(img => {
+            imagesList.innerHTML += `
+                <div class="image-card">
+                    <img src="${img.url}" alt="${img.name}" width="180">
+                    <p>${img.name}</p>
+                </div>
+            `;
+        });
+
+    } catch (e) {
+        imagesList.innerHTML = "<p>Failed to load images.</p>";
+        console.error(e);
     }
-
-    const file = imageInput.files[0];
-
-    imagesList.innerHTML = `
-      <div class="card">
-        <img src="./images/${file.name}"
-        style="width:100%;max-width:300px;border-radius:10px;">
-        <h3>${file.name}</h3>
-      </div>
-    `;
-
-  });
 }
+
+document.addEventListener("DOMContentLoaded", loadImages);
