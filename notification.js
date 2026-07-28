@@ -187,29 +187,6 @@ saveNotification.innerText="Update Notification";
 });
 
 }
-document.getElementById("publishAll").addEventListener("click",()=>{
-
-alert("All Notifications Published");
-
-});
-
-document.getElementById("deleteAll").addEventListener("click",()=>{
-
-if(confirm("Delete All Notifications?")){
-
-document.getElementById("notificationList").innerHTML="";
-
-document.getElementById("totalNotifications").innerText="0";
-
-}
-
-});
-
-document.getElementById("refreshNotifications").addEventListener("click",()=>{
-
-loadNotifications();
-
-});
 window.addEventListener("DOMContentLoaded",()=>{
 
 loadNotifications();
