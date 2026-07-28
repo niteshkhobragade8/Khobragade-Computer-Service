@@ -27,10 +27,11 @@ if(latestNotifications){
 latestNotifications.innerHTML="";
 }
 
+const snapshot = await getDocs(collection(db,"notifications"));
+
 if(notificationCount){
-notificationCount.innerText=snapshot.size;
+notificationCount.innerText = snapshot.size;
 }
-const snapshot=await getDocs(collection(db,"notifications"));
 
 document.getElementById("totalNotifications").innerText=snapshot.size;
 
