@@ -488,25 +488,15 @@ No Notifications Available
 
 <section id="imagesPage" class="page">
 
-<h2>🖼 Images Manager</h2>
+    <h2>🖼️ Images Manager</h2>
 
-<div class="image-form">
+    <div class="image-form">
+        <input type="file" id="imageUpload" accept="image/*">
+        <button id="uploadImage">Upload Image</button>
+        <input type="text" id="searchImage" placeholder="Search image...">
+    </div>
 
-<input type="file" id="imageUpload">
-
-<button id="uploadImage">
-
-Upload Image
-
-</button>
-
-</div>
-
-<div id="imagesList">
-
-No Images Available
-
-</div>
+    <div id="imagesList" class="images-grid"></div>
 
 </section>
 
