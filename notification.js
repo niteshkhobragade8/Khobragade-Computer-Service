@@ -7,36 +7,68 @@ import {
     deleteDoc,
     updateDoc,
     doc,
-    serverTimestamp
+    serverTimestamp,
+    writeBatch,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
-const saveButton =
-    document.getElementById("saveNotificationFinal");
+const saveNotificationButton =
+    document.getElementById("saveNotification");
 
 const notificationList =
-    document.getElementById("notificationListFinal");
+    document.getElementById("notificationList");
 
-const titleInput =
+const notificationTitle =
     document.getElementById("notificationTitle");
 
-const descriptionInput =
+const notificationDescription =
     document.getElementById("notificationDescription");
 
-const typeInput =
+const notificationType =
     document.getElementById("notificationType");
 
-const priorityInput =
+const notificationPriority =
     document.getElementById("notificationPriority");
 
+const totalNotifications =
+    document.getElementById("totalNotifications");
 
-let editId = null;
-let notifications = [];
+const publishedNotifications =
+    document.getElementById("publishedNotifications");
+
+const draftNotifications =
+    document.getElementById("draftNotifications");
+
+const notificationPreview =
+    document.getElementById("notificationPreview");
+
+const notificationHistory =
+    document.getElementById("notificationHistory");
+
+const publishAllButton =
+    document.getElementById("publishAll");
+
+const deleteAllButton =
+    document.getElementById("deleteAll");
+
+const refreshNotificationsButton =
+    document.getElementById("refreshNotifications");
 
 
-function safeText(value) {
+const notificationsCollection =
+    collection(db, "notifications");
 
-    return String(value || "")
+let allNotifications = [];
+
+let editNotificationId = null;
+
+let unsubscribeNotifications = null;
+
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -46,272 +78,592 @@ function safeText(value) {
 }
 
 
-async function loadNotifications() {
+function formatNotificationDate(value) {
 
-    if (!notificationList) {
-        return;
+    if (!value) {
+        return "Date not available";
     }
-
-    notificationList.innerHTML =
-        "<p>Loading Notifications...</p>";
 
     try {
 
-        const snapshot =
-            await getDocs(
-                collection(db, "notifications")
-            );
+        if (typeof value.toDate === "function") {
 
-        notifications = [];
-
-        snapshot.forEach(function (documentItem) {
-
-            notifications.push({
-                id: documentItem.id,
-                ...documentItem.data()
-            });
-
-        });
-
-        displayNotifications();
-
-        const total =
-            document.getElementById(
-                "totalNotifications"
-            );
-
-        const published =
-            document.getElementById(
-                "publishedNotifications"
-            );
-
-        const draft =
-            document.getElementById(
-                "draftNotifications"
-            );
-
-        if (total) {
-            total.textContent =
-                notifications.length;
-        }
-
-        if (published) {
-
-            published.textContent =
-                notifications.filter(function (item) {
-
-                    return item.status === "Published";
-
-                }).length;
+            return value
+                .toDate()
+                .toLocaleString();
 
         }
 
-        if (draft) {
+        if (value.seconds) {
 
-            draft.textContent =
-                notifications.filter(function (item) {
-
-                    return item.status === "Draft";
-
-                }).length;
+            return new Date(
+                value.seconds * 1000
+            ).toLocaleString();
 
         }
+
+        return new Date(value)
+            .toLocaleString();
 
     } catch (error) {
 
-        console.error(
-            "Notification Load Error:",
-            error
-        );
-
-        notificationList.innerHTML = `
-            <div class="notification-card">
-                <h3>Notifications Load Failed</h3>
-                <p>${safeText(error.message)}</p>
-            </div>
-        `;
+        return "Date not available";
 
     }
 
 }
 
 
-function displayNotifications() {
+function sortNotifications(notifications) {
+
+    return notifications.sort(
+        function (first, second) {
+
+            const firstTime =
+                first.createdAt?.seconds ||
+                first.updatedAt?.seconds ||
+                0;
+
+            const secondTime =
+                second.createdAt?.seconds ||
+                second.updatedAt?.seconds ||
+                0;
+
+            return secondTime - firstTime;
+
+        }
+    );
+
+}
+
+
+function displayNotifications(notifications) {
+
+    if (!notificationList) {
+        return;
+    }
 
     notificationList.innerHTML = "";
 
     if (notifications.length === 0) {
 
         notificationList.innerHTML = `
+
             <div class="notification-card">
+
                 <h3>No Notifications Available</h3>
-                <p>Create your first notification.</p>
+
+                <p>
+                    Publish your first notification.
+                </p>
+
             </div>
+
         `;
 
         return;
 
     }
 
-    notifications.forEach(function (item) {
+    notifications.forEach(
+        function (notification) {
 
-        const card =
-            document.createElement("div");
+            const card =
+                document.createElement("div");
 
-        card.className = "notification-card";
+            card.className =
+                "notification-card";
 
-        card.innerHTML = `
+            card.innerHTML = `
 
-            <h3>${safeText(item.title)}</h3>
+                <h3>
+                    ${escapeHTML(notification.title)}
+                </h3>
 
-            <p>
-                ${safeText(item.description)}
-            </p>
+                <p>
+                    ${escapeHTML(notification.description)}
+                </p>
 
-            <small>
-                ${safeText(item.type)}
-                |
-                ${safeText(item.priority)}
-                |
-                ${safeText(item.status)}
-            </small>
+                <small>
 
-            <div class="actions">
+                    ${escapeHTML(
+                        notification.type || "popup"
+                    )}
 
-                <button
-                    type="button"
-                    data-action="edit"
-                    data-id="${item.id}">
+                    |
 
-                    ✏️ Edit
+                    ${escapeHTML(
+                        notification.priority || "normal"
+                    )}
 
-                </button>
+                    |
 
-                <button
-                    type="button"
-                    data-action="delete"
-                    data-id="${item.id}">
+                    ${escapeHTML(
+                        notification.status || "Published"
+                    )}
 
-                    🗑 Delete
+                </small>
 
-                </button>
+                <p>
+
+                    <small>
+
+                        ${escapeHTML(
+                            formatNotificationDate(
+                                notification.createdAt
+                            )
+                        )}
+
+                    </small>
+
+                </p>
+
+                <div class="actions">
+
+                    <button
+                        type="button"
+                        data-action="edit"
+                        data-id="${notification.id}">
+
+                        ✏️ Edit
+
+                    </button>
+
+                    <button
+                        type="button"
+                        data-action="delete"
+                        data-id="${notification.id}">
+
+                        🗑 Delete
+
+                    </button>
+
+                </div>
+
+            `;
+
+            notificationList.appendChild(card);
+
+        }
+    );
+
+}
+function updateNotificationCounters() {
+
+    if (totalNotifications) {
+        totalNotifications.textContent =
+            allNotifications.length;
+    }
+
+    if (publishedNotifications) {
+
+        publishedNotifications.textContent =
+            allNotifications.filter(function (item) {
+
+                return (
+                    item.status || "Published"
+                ) === "Published";
+
+            }).length;
+
+    }
+
+    if (draftNotifications) {
+
+        draftNotifications.textContent =
+            allNotifications.filter(function (item) {
+
+                return item.status === "Draft";
+
+            }).length;
+
+    }
+
+}
+
+
+function displayNotificationHistory() {
+
+    if (!notificationHistory) {
+        return;
+    }
+
+    notificationHistory.innerHTML = "";
+
+    if (allNotifications.length === 0) {
+
+        notificationHistory.innerHTML =
+            "<p>No History Available</p>";
+
+        return;
+
+    }
+
+    allNotifications.forEach(function (item) {
+
+        notificationHistory.innerHTML += `
+
+            <div class="notification-card">
+
+                <h3>
+                    ${escapeHTML(item.title)}
+                </h3>
+
+                <p>
+                    Status :
+                    ${escapeHTML(item.status || "Published")}
+                </p>
+
+                <small>
+                    ${formatNotificationDate(item.createdAt)}
+                </small>
 
             </div>
 
         `;
-
-        notificationList.appendChild(card);
 
     });
 
 }
 
 
-async function saveNotification() {
+function renderNotifications() {
 
-    const title =
-        titleInput.value.trim();
+    displayNotifications(allNotifications);
 
-    const description =
-        descriptionInput.value.trim();
+    updateNotificationCounters();
 
-    const type =
-        typeInput.value;
+    displayNotificationHistory();
 
-    const priority =
-        priorityInput.value;
+}
 
-    if (
-        title === "" ||
-        description === ""
-    ) {
 
-        alert("Title and Description भरें");
+async function loadNotifications() {
 
-        return;
+    if (notificationList) {
+
+        notificationList.innerHTML = `
+
+            <div class="notification-card">
+
+                <h3>Loading...</h3>
+
+            </div>
+
+        `;
 
     }
 
-    saveButton.disabled = true;
-
     try {
 
-        if (editId) {
+        const snapshot =
+            await getDocs(notificationsCollection);
 
-            await updateDoc(
-                doc(
-                    db,
-                    "notifications",
-                    editId
-                ),
-                {
-                    title,
-                    description,
-                    type,
-                    priority,
-                    status: "Published",
-                    updatedAt: serverTimestamp()
-                }
-            );
+        allNotifications = [];
 
-            alert("Notification Updated");
+        snapshot.forEach(function (item) {
 
-        } else {
+            allNotifications.push({
 
-            await addDoc(
-                collection(
-                    db,
-                    "notifications"
-                ),
-                {
-                    title,
-                    description,
-                    type,
-                    priority,
-                    status: "Published",
-                    createdAt: serverTimestamp()
-                }
-            );
+                id: item.id,
 
-            alert("Notification Saved");
+                ...item.data()
 
-        }
+            });
 
-        editId = null;
+        });
 
-        titleInput.value = "";
-        descriptionInput.value = "";
-        typeInput.selectedIndex = 0;
-        priorityInput.selectedIndex = 0;
+        allNotifications =
+            sortNotifications(allNotifications);
 
-        saveButton.textContent =
-            "Save Notification";
-
-        await loadNotifications();
+        renderNotifications();
 
     } catch (error) {
 
-        console.error(
-            "Notification Save Error:",
-            error
-        );
+        console.error(error);
 
-        alert(
-            "Save Failed: " + error.message
-        );
+        notificationList.innerHTML = `
 
-    } finally {
+            <div class="notification-card">
 
-        saveButton.disabled = false;
+                <h3>Failed To Load Notifications</h3>
+
+                <p>${escapeHTML(error.message)}</p>
+
+            </div>
+
+        `;
 
     }
 
 }
 
 
+function startRealtimeNotifications() {
+
+    if (unsubscribeNotifications) {
+
+        unsubscribeNotifications();
+
+    }
+
+    unsubscribeNotifications =
+        onSnapshot(
+
+            notificationsCollection,
+
+            function (snapshot) {
+
+                allNotifications = [];
+
+                snapshot.forEach(function (item) {
+
+                    allNotifications.push({
+
+                        id: item.id,
+
+                        ...item.data()
+
+                    });
+
+                });
+
+                allNotifications =
+                    sortNotifications(allNotifications);
+
+                renderNotifications();
+
+            }
+
+        );
+
+}
+function updateLivePreview() {
+
+    if (!notificationPreview) {
+        return;
+    }
+
+    const title =
+        notificationTitle?.value.trim() ||
+        "Notification Title";
+
+    const description =
+        notificationDescription?.value.trim() ||
+        "Notification Preview";
+
+    const type =
+        notificationType?.value ||
+        "popup";
+
+    const priority =
+        notificationPriority?.value ||
+        "normal";
+
+    notificationPreview.innerHTML = `
+
+        <h2>👁 Live Preview</h2>
+
+        <h3>${escapeHTML(title)}</h3>
+
+        <p>${escapeHTML(description)}</p>
+
+        <small>
+
+            ${escapeHTML(type)}
+
+            |
+
+            ${escapeHTML(priority)}
+
+        </small>
+
+    `;
+
+}
+
+
+function resetNotificationForm() {
+
+    notificationTitle.value = "";
+
+    notificationDescription.value = "";
+
+    notificationType.selectedIndex = 0;
+
+    notificationPriority.selectedIndex = 0;
+
+    editNotificationId = null;
+
+    saveNotificationButton.textContent =
+        "Publish Notification";
+
+    saveNotificationButton.disabled = false;
+
+    updateLivePreview();
+
+}
+
+
+async function saveOrUpdateNotification() {
+
+    const title =
+        notificationTitle.value.trim();
+
+    const description =
+        notificationDescription.value.trim();
+
+    const type =
+        notificationType.value;
+
+    const priority =
+        notificationPriority.value;
+
+    if (!title || !description) {
+
+        alert(
+            "Notification Title aur Description bhariye."
+        );
+
+        return;
+
+    }
+
+    saveNotificationButton.disabled = true;
+
+    saveNotificationButton.textContent =
+        editNotificationId
+            ? "Updating..."
+            : "Publishing...";
+
+    try {
+
+        if (editNotificationId) {
+
+            await updateDoc(
+
+                doc(
+                    db,
+                    "notifications",
+                    editNotificationId
+                ),
+
+                {
+
+                    title,
+
+                    description,
+
+                    type,
+
+                    priority,
+
+                    status: "Published",
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+
+            );
+
+            alert(
+                "Notification Updated Successfully"
+            );
+
+        } else {
+
+            await addDoc(
+
+                notificationsCollection,
+
+                {
+
+                    title,
+
+                    description,
+
+                    type,
+
+                    priority,
+
+                    status: "Published",
+
+                    createdAt:
+                        serverTimestamp()
+
+                }
+
+            );
+
+            alert(
+                "Notification Published Successfully"
+            );
+
+        }
+
+        resetNotificationForm();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Error : " +
+            error.message
+        );
+
+        saveNotificationButton.disabled = false;
+
+        saveNotificationButton.textContent =
+            editNotificationId
+                ? "Update Notification"
+                : "Publish Notification";
+
+    }
+
+}
+function editNotification(id) {
+
+    const notification =
+        allNotifications.find(function (item) {
+
+            return item.id === id;
+
+        });
+
+    if (!notification) {
+        return;
+    }
+
+    editNotificationId = id;
+
+    notificationTitle.value =
+        notification.title || "";
+
+    notificationDescription.value =
+        notification.description || "";
+
+    notificationType.value =
+        notification.type || "popup";
+
+    notificationPriority.value =
+        notification.priority || "normal";
+
+    saveNotificationButton.textContent =
+        "Update Notification";
+
+    updateLivePreview();
+
+}
+
+
 async function deleteNotification(id) {
 
-    if (!confirm("Delete this notification?")) {
+    const ok =
+        confirm("Delete this notification?");
+
+    if (!ok) {
         return;
     }
 
@@ -321,121 +673,236 @@ async function deleteNotification(id) {
             doc(db, "notifications", id)
         );
 
-        alert("Notification Deleted");
-
-        await loadNotifications();
+        alert(
+            "Notification Deleted Successfully"
+        );
 
     } catch (error) {
 
-        console.error(
-            "Delete Error:",
-            error
-        );
+        console.error(error);
 
-        alert(
-            "Delete Failed: " + error.message
-        );
+        alert(error.message);
 
     }
 
 }
 
 
-function editNotification(id) {
+async function publishAllNotifications() {
 
-    const selected =
-        notifications.find(function (item) {
+    if (allNotifications.length === 0) {
 
-            return item.id === id;
+        alert("No Notifications Available");
+
+        return;
+
+    }
+
+    try {
+
+        const batch =
+            writeBatch(db);
+
+        allNotifications.forEach(function (item) {
+
+            batch.update(
+
+                doc(
+                    db,
+                    "notifications",
+                    item.id
+                ),
+
+                {
+
+                    status: "Published",
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+
+            );
 
         });
 
-    if (!selected) {
+        await batch.commit();
+
+        alert(
+            "All Notifications Published"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
+}
+
+
+async function deleteAllNotifications() {
+
+    if (allNotifications.length === 0) {
+
+        alert("No Notifications Available");
+
+        return;
+
+    }
+
+    const ok =
+        confirm(
+            "Delete All Notifications?"
+        );
+
+    if (!ok) {
         return;
     }
 
-    editId = id;
+    try {
 
-    titleInput.value =
-        selected.title || "";
+        const batch =
+            writeBatch(db);
 
-    descriptionInput.value =
-        selected.description || "";
+        allNotifications.forEach(function (item) {
 
-    typeInput.value =
-        selected.type || "popup";
+            batch.delete(
 
-    priorityInput.value =
-        selected.priority || "normal";
+                doc(
+                    db,
+                    "notifications",
+                    item.id
+                )
 
-    saveButton.textContent =
-        "Update Notification";
+            );
 
-    titleInput.scrollIntoView({
-        behavior: "smooth"
-    });
+        });
+
+        await batch.commit();
+
+        alert(
+            "All Notifications Deleted"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
 
 }
 
 
-if (saveButton) {
+saveNotificationButton?.addEventListener(
 
-    saveButton.addEventListener(
-        "click",
-        saveNotification
-    );
+    "click",
 
-}
+    saveOrUpdateNotification
+
+);
 
 
-if (notificationList) {
+notificationList?.addEventListener(
 
-    notificationList.addEventListener(
-        "click",
-        function (event) {
+    "click",
 
-            const button =
-                event.target.closest(
-                    "button[data-action]"
-                );
+    function (event) {
 
-            if (!button) {
-                return;
-            }
+        const button =
+            event.target.closest(
+                "button[data-action]"
+            );
 
-            const id =
-                button.dataset.id;
+        if (!button) {
+            return;
+        }
 
-            const action =
-                button.dataset.action;
+        const action =
+            button.dataset.action;
 
-            if (action === "edit") {
-                editNotification(id);
-            }
+        const id =
+            button.dataset.id;
 
-            if (action === "delete") {
-                deleteNotification(id);
-            }
+        if (action === "edit") {
+
+            editNotification(id);
 
         }
+
+        if (action === "delete") {
+
+            deleteNotification(id);
+
+        }
+
+    }
+
+);
+
+
+publishAllButton?.addEventListener(
+
+    "click",
+
+    publishAllNotifications
+
+);
+
+
+deleteAllButton?.addEventListener(
+
+    "click",
+
+    deleteAllNotifications
+
+);
+
+
+refreshNotificationsButton?.addEventListener(
+
+    "click",
+
+    loadNotifications
+
+);
+
+
+[
+    notificationTitle,
+    notificationDescription,
+    notificationType,
+    notificationPriority
+
+].forEach(function (element) {
+
+    if (!element) {
+        return;
+    }
+
+    element.addEventListener(
+        "input",
+        updateLivePreview
     );
 
-}
-
-
-const refreshButton =
-    document.getElementById(
-        "refreshNotifications"
+    element.addEventListener(
+        "change",
+        updateLivePreview
     );
 
-if (refreshButton) {
-
-    refreshButton.addEventListener(
-        "click",
-        loadNotifications
-    );
-
-}
+});
 
 
-loadNotifications();
+updateLivePreview();
+
+startRealtimeNotifications();
+
+export {
+
+    loadNotifications
+
+};
