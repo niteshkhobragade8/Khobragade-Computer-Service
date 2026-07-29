@@ -401,4 +401,261 @@
 
                 <button id="saveNotification">
                     Publish Notification
-                </
+                </button>
+
+</div>
+
+<div id="notificationsList">
+    No Notifications Available
+</div>
+
+</section>
+
+<!-- Analytics -->
+
+<section id="analyticsPage" class="page">
+
+    <h2>📊 Analytics</h2>
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>Total Visitors</h3>
+
+            <h2 id="analyticsVisitors">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Today Visitors</h3>
+
+            <h2 id="todayVisitors">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Total Updates</h3>
+
+            <h2 id="analyticsUpdates">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Total Services</h3>
+
+            <h2 id="analyticsServices">0</h2>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-box">
+
+        <h2>Website Statistics</h2>
+
+        <div id="analyticsData">
+
+            Analytics Loading...
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Images -->
+
+<section id="imagesPage" class="page">
+
+    <h2>🖼️ Images Manager</h2>
+
+    <div class="image-form">
+
+        <input
+            type="file"
+            id="imageUpload"
+            accept="image/*">
+
+        <button id="uploadImage">
+            Upload Image
+        </button>
+
+        <input
+            type="text"
+            id="searchImage"
+            placeholder="Search image...">
+
+        <button id="searchImageBtn">
+            Search
+        </button>
+
+    </div>
+
+    <div id="imagesList"
+         class="images-grid">
+
+    </div>
+
+</section>
+        <!-- Documents -->
+
+<section id="documentsPage" class="page">
+
+    <h2>📄 Documents Manager</h2>
+
+    <div class="document-form">
+
+        <input
+            type="text"
+            id="documentTitle"
+            placeholder="Document Title">
+
+        <input
+            type="file"
+            id="documentFile"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+        <select id="documentCategory">
+
+            <option>Government</option>
+
+            <option>PAN Card</option>
+
+            <option>Aadhaar</option>
+
+            <option>Ayushman</option>
+
+            <option>Maha ID</option>
+
+            <option>Other</option>
+
+        </select>
+
+        <button id="uploadDocument">
+            Upload Document
+        </button>
+
+    </div>
+
+    <div id="documentsList">
+
+        No Documents Available
+
+    </div>
+
+</section>
+
+<!-- YouTube -->
+
+<section id="youtubePage" class="page">
+
+    <h2>▶️ YouTube Manager</h2>
+
+    <div class="youtube-form">
+
+        <input
+            type="text"
+            id="youtubeTitle"
+            placeholder="Video Title">
+
+        <input
+            type="text"
+            id="youtubeLink"
+            placeholder="https://youtube.com/...">
+
+        <textarea
+            id="youtubeDescription"
+            placeholder="Video Description"></textarea>
+
+        <button id="saveYoutube">
+            Save Video
+        </button>
+
+    </div>
+
+    <div id="youtubeList">
+
+        No Videos Available
+
+    </div>
+
+</section>
+<!-- Settings -->
+
+<section id="settingsPage" class="page">
+
+    <h2>⚙️ Settings</h2>
+
+    <div class="settings-form">
+
+        <label>Website Name</label>
+
+        <input
+            type="text"
+            id="siteName"
+            placeholder="Khobragade Computer Service Centre">
+
+        <label>Admin Email</label>
+
+        <input
+            type="email"
+            id="adminEmail"
+            placeholder="admin@example.com">
+
+        <label>Contact Number</label>
+
+        <input
+            type="text"
+            id="contactNumber"
+            placeholder="9637832490">
+
+        <label>YouTube Channel</label>
+
+        <input
+            type="text"
+            id="youtubeChannel"
+            placeholder="https://youtube.com/@yourchannel">
+
+        <button id="saveSettings">
+            Save Settings
+        </button>
+
+    </div>
+
+</section>
+
+</div>
+
+</div>
+
+<!-- JavaScript -->
+
+<script type="module" src="firebase-config.js"></script>
+
+<script type="module" src="dashboard.js"></script>
+
+<script type="module" src="updates.js"></script>
+
+<script type="module" src="services.js"></script>
+
+<script type="module" src="categories.js"></script>
+
+<script type="module" src="notification.js"></script>
+
+<script type="module" src="analytics.js"></script>
+
+<script type="module" src="menu.js"></script>
+
+<script src="images.js"></script>
+
+<script type="module" src="documents.js"></script>
+
+<script type="module" src="youtube.js"></script>
+
+</body>
+
+</html>
