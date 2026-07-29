@@ -29,14 +29,20 @@ function displayImages(images) {
 
     imagesList.innerHTML = "";
 
-    images.forEach(function(img) {
-        imagesList.innerHTML += `
-            <div class="image-card">
-                <img src="${img.url}" alt="${img.name}">
-                <p>${img.name}</p>
-            </div>
-        `;
-    });
+    function previewImage(url) {
+    window.open(url, "_blank");
+}
+
+function copyImageLink(url) {
+    const fullUrl = new URL(url, window.location.href).href;
+
+    navigator.clipboard.writeText(fullUrl)
+        .then(function() {
+            alert("Image Link Copied");
+        })
+        .catch(function() {
+            alert("Link Copy Failed");
+        });
 }
 
 function searchImages() {
