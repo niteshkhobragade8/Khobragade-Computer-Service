@@ -1,26 +1,61 @@
 const menuItems = document.querySelectorAll("#sidebarMenu li");
 const pages = document.querySelectorAll(".page");
 
-menuItems.forEach((item) => {
+function openPage(pageName) {
+
+    pages.forEach(page => {
+
+        page.classList.remove("active");
+
+    });
+
+    menuItems.forEach(item => {
+
+        item.classList.remove("active");
+
+    });
+
+    const targetPage =
+        document.getElementById(pageName + "Page");
+
+    if (targetPage) {
+
+        targetPage.classList.add("active");
+
+    }
+
+    const activeMenu =
+        document.querySelector(
+            `[data-page="${pageName}"]`
+        );
+
+    if (activeMenu) {
+
+        activeMenu.classList.add("active");
+
+    }
+
+}
+
+menuItems.forEach(item => {
 
     item.addEventListener("click", () => {
 
-        // Logout dashboard.js handle karega
-        if (item.id === "logoutBtn") return;
+        if (item.id === "logoutBtn") {
 
-        menuItems.forEach(i => i.classList.remove("active"));
-        item.classList.add("active");
+            // Logout dashboard.js handle karega
+            return;
 
-        pages.forEach(p => p.classList.remove("active"));
+        }
 
         const page = item.dataset.page;
 
-        const target = document.getElementById(page + "Page");
+        if (!page) return;
 
-        if (target) {
-            target.classList.add("active");
-        }
+        openPage(page);
 
     });
 
 });
+
+window.openDashboardPage = openPage;
