@@ -7,7 +7,7 @@ async function loadImages() {
         const response = await fetch("./images/images.json");
 
         if (!response.ok) {
-            throw new Error("images.json load नहीं हुई");
+            throw new Error("images.json load nahi hui");
         }
 
         allImages = await response.json();
@@ -29,7 +29,22 @@ function displayImages(images) {
 
     imagesList.innerHTML = "";
 
-    function previewImage(url) {
+    images.forEach(function(img) {
+        imagesList.innerHTML += `
+            <div class="image-card">
+                <img src="${img.url}" alt="${img.name}">
+                <p>${img.name}</p>
+
+                <div class="image-actions">
+                    <button onclick="previewImage('${img.url}')">👁 Preview</button>
+                    <button onclick="copyImageLink('${img.url}')">📋 Copy Link</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function previewImage(url) {
     window.open(url, "_blank");
 }
 
@@ -67,11 +82,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchButton = document.getElementById("searchImageBtn");
     const searchBox = document.getElementById("searchImage");
 
-    searchButton.addEventListener("click", searchImages);
+    if (searchButton) {
+        searchButton.addEventListener("click", searchImages);
+    }
 
-    searchBox.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            searchImages();
-        }
-    });
+    if (searchBox) {
+        searchBox.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                searchImages();
+            }
+        });
+    }
 });
