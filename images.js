@@ -38,13 +38,20 @@ function displayImages(images) {
 document.addEventListener("DOMContentLoaded", () => {
     loadImages();
 
-    document.getElementById("searchImage").addEventListener("input", function () {
-        const text = this.value.toLowerCase();
+    function searchImages() {
+    const text = document.getElementById("searchImage").value.toLowerCase();
 
-        const filtered = allImages.filter(img =>
-            img.name.toLowerCase().includes(text)
-        );
+    const filtered = allImages.filter(img =>
+        img.name.toLowerCase().includes(text)
+    );
 
-        displayImages(filtered);
-    });
+    displayImages(filtered);
+}
+
+document.getElementById("searchImageBtn").addEventListener("click", searchImages);
+
+document.getElementById("searchImage").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        searchImages();
+    }
 });
