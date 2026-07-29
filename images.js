@@ -5,13 +5,17 @@ async function loadImages() {
 
     try {
         const response = await fetch("./images/images.json");
-        allImages = await response.json();
 
+        if (!response.ok) {
+            throw new Error("images.json load नहीं हुई");
+        }
+
+        allImages = await response.json();
         displayImages(allImages);
 
-    } catch (e) {
+    } catch (error) {
         imagesList.innerHTML = "<p>Failed to load images.</p>";
-        console.error(e);
+        console.error(error);
     }
 }
 
@@ -25,7 +29,7 @@ function displayImages(images) {
 
     imagesList.innerHTML = "";
 
-    images.forEach(img => {
+    images.forEach(function(img) {
         imagesList.innerHTML += `
             <div class="image-card">
                 <img src="${img.url}" alt="${img.name}">
@@ -35,23 +39,33 @@ function displayImages(images) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadImages();
+function searchImages() {
+    const searchBox = document.getElementById("searchImage");
+    const text = searchBox.value.trim().toLowerCase();
 
-    function searchImages() {
-    const text = document.getElementById("searchImage").value.toLowerCase();
+    if (text === "") {
+        displayImages(allImages);
+        return;
+    }
 
-    const filtered = allImages.filter(img =>
-        img.name.toLowerCase().includes(text)
-    );
+    const filteredImages = allImages.filter(function(img) {
+        return img.name.toLowerCase().includes(text);
+    });
 
-    displayImages(filtered);
+    displayImages(filteredImages);
 }
 
-document.getElementById("searchImageBtn").addEventListener("click", searchImages);
+document.addEventListener("DOMContentLoaded", function() {
+    loadImages();
 
-document.getElementById("searchImage").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        searchImages();
-    }
+    const searchButton = document.getElementById("searchImageBtn");
+    const searchBox = document.getElementById("searchImage");
+
+    searchButton.addEventListener("click", searchImages);
+
+    searchBox.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            searchImages();
+        }
+    });
 });
