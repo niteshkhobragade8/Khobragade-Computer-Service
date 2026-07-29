@@ -3,153 +3,188 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Admin Login</title>
+    <title>Admin Login | Khobragade CSC</title>
 
-<link rel="stylesheet" href="login.css">
+    <link rel="stylesheet"
+          href="login.css">
 
 </head>
 
 <body>
 
-<div class="login-container">
+    <main class="login-container">
 
-<div class="login-box">
+        <section class="login-box">
 
-<h1>🔐 Admin Login</h1>
+            <h1>🔐 Admin Login</h1>
 
-<p>Khobragade Computer Service Centre</p>
+            <p class="login-subtitle">
+                Khobragade Computer Service Centre
+            </p>
 
-<input
-type="email"
-id="username"
-placeholder="Enter Admin Email"
-autocomplete="email">
+            <form id="loginForm"
+                  novalidate>
 
-<input
-type="password"
-id="password"
-placeholder="Password"
-autocomplete="current-password">
+                <label for="email">
+                    Admin Email
+                </label>
 
-<button id="loginBtn">
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter Admin Email"
+                    autocomplete="email"
+                    required>
 
-Login
+                <label for="password">
+                    Password
+                </label>
 
-</button>
+                <div class="password-wrapper">
 
-<p id="loginMessage"></p>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter Password"
+                        autocomplete="current-password"
+                        required>
 
-</div>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="toggle-password"
+                        aria-label="Show Password">
 
-</div>
+                        👁
 
-<div class="login-info">
+                    </button>
 
-<h2>Features</h2>
+                </div>
 
-<ul>
+                <button
+                    type="submit"
+                    id="loginBtn">
 
-<li>✅ Secure Admin Login</li>
+                    Login
 
-<li>✅ Dashboard Access</li>
+                </button>
 
-<li>✅ Firebase Integration</li>
+                <p
+                    id="loginMessage"
+                    role="alert"
+                    aria-live="polite">
+                </p>
 
-<li>✅ Notification Management</li>
+            </form>
 
-<li>✅ Government Updates</li>
+        </section>
 
-<li>✅ Services Management</li>
+        <section class="login-info">
 
-<li>✅ Analytics Dashboard</li>
+            <h2>Admin Panel Features</h2>
 
-</ul>
+            <ul>
 
-</div>
+                <li>✅ Secure Firebase Login</li>
 
-<hr>
+                <li>✅ Protected Dashboard</li>
 
-<div class="security-box">
+                <li>✅ Government Updates Management</li>
 
-<h2>Security</h2>
+                <li>✅ Services Management</li>
 
-<p>
+                <li>✅ Notification Management</li>
 
-Only authorized administrators can access the Dashboard.
+                <li>✅ Documents and Images Management</li>
 
-</p>
+                <li>✅ Analytics Dashboard</li>
 
-<div class="security-points">
+            </ul>
 
-<p>🔒 Secure Login</p>
+        </section>
 
-<p>🛡 Session Protection</p>
+        <section class="security-box">
 
-<p>⚡ Fast Access</p>
+            <h2>Security</h2>
 
-<p>☁ Firebase Authentication Ready</p>
+            <p>
+                Only authorized administrators can access the dashboard.
+            </p>
 
-</div>
+            <div class="security-points">
 
-</div>
+                <p>🔒 Firebase Authentication</p>
 
-<hr>
+                <p>🛡 Protected Dashboard</p>
 
-<div class="support-box">
+                <p>⚡ Secure Login Session</p>
 
-<h2>Support</h2>
+                <p>☁ Cloud Database Integration</p>
 
-<p>Need help? Contact Administrator.</p>
+            </div>
 
-<p>📞 Mobile: 9637832490</p>
+        </section>
 
-<p>📧 Email: admin@khobragade.online</p>
+        <section class="support-box">
 
-</div>
+            <h2>Support</h2>
 
-<hr>
+            <p>
+                Need help? Contact Administrator.
+            </p>
 
-<div class="status-box">
+            <p>
+                📞 Mobile: 9637832490
+            </p>
 
-<h3>System Status</h3>
+            <p>
+                📧 Email: admin@khobragade.online
+            </p>
 
-<p>🟢 Server Online</p>
+        </section>
 
-<p>🟢 Database Connected</p>
+        <section class="status-box">
 
-<p>🟢 Firebase Ready</p>
+            <h3>System Status</h3>
 
-</div>
+            <p>🟢 Admin Portal Online</p>
 
-<div class="version-info">
+            <p>🟢 Firebase Connected</p>
 
-<p>Version 6.0 Professional Admin Panel</p>
+            <p>🟢 Authentication Ready</p>
 
-</div>
+        </section>
 
-<div class="copyright">
+        <footer class="login-footer">
 
-<p>
+            <p>
+                Version 7.0 Firebase Admin Panel
+            </p>
 
-Designed & Developed by
+            <p>
+                Designed &amp; Developed by
+                <strong>Nitesh Khobragade</strong>
+            </p>
 
-<strong>Nitesh Khobragade</strong>
+            <p>
+                © 2026 Khobragade Computer Service Centre
+            </p>
 
-</p>
+        </footer>
 
-<p>
+    </main>
 
-Khobragade Computer Service Centre
-
-</p>
-
-</div>
-
-<script type="module" src="login.js"></script>
+    <script
+        type="module"
+        src="login.js">
+    </script>
 
 </body>
 
