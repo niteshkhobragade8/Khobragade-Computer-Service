@@ -3,16 +3,16 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Khobragade CSC Admin Dashboard</title>
+    <title>Khobragade CSC Admin Dashboard</title>
 
-<link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="dashboard.css">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
@@ -22,616 +22,383 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <div class="breaking-news">
 
-<div class="breaking-label">
+    <div class="breaking-label">
+        🔴 BREAKING NEWS
+    </div>
 
-🔴 BREAKING NEWS
+    <div class="breaking-text">
 
-</div>
+        <marquee id="breakingNews">
+            Welcome to Khobragade Computer Service Centre Admin Dashboard
+        </marquee>
 
-<div class="breaking-text">
-
-<marquee id="breakingNews">
-
-Welcome to Khobragade Computer Service Centre Admin Dashboard
-
-</marquee>
-
-</div>
+    </div>
 
 </div>
 
 <div class="dashboard">
 
-<!-- Sidebar -->
+    <!-- Sidebar -->
 
-<div class="sidebar">
+    <div class="sidebar">
 
-<div class="logo">
+        <div class="logo">
 
-<h2>Khobragade CSC</h2>
+            <h2>Khobragade CSC</h2>
 
-<p>Admin Panel</p>
+            <p>Admin Panel</p>
 
-</div>
+        </div>
 
-<ul id="sidebarMenu">
+        <ul id="sidebarMenu">
 
-<li class="active"
-data-page="dashboard">
+            <li class="active" data-page="dashboard">
 
-<i class="fa-solid fa-house"></i>
+                <i class="fa-solid fa-house"></i>
 
-<span>Dashboard</span>
+                <span>Dashboard</span>
 
-</li>
+            </li>
 
-<li data-page="updates">
+            <li data-page="updates">
 
-<i class="fa-solid fa-bullhorn"></i>
+                <i class="fa-solid fa-bullhorn"></i>
 
-<span>Government Updates</span>
+                <span>Government Updates</span>
 
-</li>
+            </li>
 
-<li data-page="services">
+            <li data-page="services">
 
-<i class="fa-solid fa-toolbox"></i>
+                <i class="fa-solid fa-toolbox"></i>
 
-<span>Services</span>
+                <span>Services</span>
 
-</li>
+            </li>
 
-<li data-page="categories">
+            <li data-page="categories">
 
-<i class="fa-solid fa-folder"></i>
+                <i class="fa-solid fa-folder"></i>
 
-<span>Categories</span>
+                <span>Categories</span>
 
-</li>
-<li data-page="images">
-<i class="fa-solid fa-image"></i>
-<span>Images</span>
-</li>
+            </li>
 
-<li data-page="documents">
-<i class="fa-solid fa-file-lines"></i>
-<span>Documents</span>
-</li>
+            <li data-page="images">
 
-<li data-page="youtube">
-<i class="fa-brands fa-youtube"></i>
-<span>YouTube</span>
-</li>
-<li data-page="notifications">
+                <i class="fa-solid fa-image"></i>
 
-<i class="fa-solid fa-bell"></i>
+                <span>Images</span>
 
-<span>Notifications</span>
+            </li>
 
-</li>
+            <li data-page="documents">
 
-<li data-page="analytics">
+                <i class="fa-solid fa-file-lines"></i>
 
-<i class="fa-solid fa-chart-line"></i>
+                <span>Documents</span>
 
-<span>Analytics</span>
+            </li>
 
-</li>
+            <li data-page="youtube">
 
-<li data-page="settings">
+                <i class="fa-brands fa-youtube"></i>
 
-<i class="fa-solid fa-gear"></i>
+                <span>YouTube</span>
 
-<span>Settings</span>
+            </li>
 
-</li>
+            <li data-page="notifications">
 
-<li id="logoutBtn">
+                <i class="fa-solid fa-bell"></i>
 
-<i class="fa-solid fa-right-from-bracket"></i>
+                <span>Notifications</span>
 
-<span>Logout</span>
+            </li>
 
-</li>
+            <li data-page="analytics">
 
-</ul>
+                <i class="fa-solid fa-chart-line"></i>
 
-</div>
+                <span>Analytics</span>
 
-<!-- Main -->
+            </li>
 
-<div class="main-content">
+            <li data-page="settings">
 
-<div class="topbar">
+                <i class="fa-solid fa-gear"></i>
 
-<h1>Dashboard</h1>
+                <span>Settings</span>
 
-<div class="top-right">
+            </li>
 
-<button id="notificationBell">
+            <li id="logoutBtn">
 
-🔔
+                <i class="fa-solid fa-right-from-bracket"></i>
 
-<span id="notificationCount">0</span>
+                <span>Logout</span>
 
-</button>
-<div id="notificationDropdown" style="display:none;" class="notification-dropdown">
+            </li>
 
-<h3>Latest Notifications</h3>
+        </ul>
 
-<div id="latestNotifications">
-
-No Notifications
-
-</div>
-
-</div>
-</div>
-
-</div>
-<!-- Dashboard Section -->
-
-<section id="dashboardPage" class="page active">
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Total Updates</h3>
-
-<h2 id="totalUpdates">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Total Services</h3>
-
-<h2 id="totalServices">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Total Categories</h3>
-
-<h2 id="totalCategories">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Total Visitors</h3>
-
-<h2 id="totalVisitors">0</h2>
-
-</div>
-
-</div>
-
-<div class="dashboard-grid">
-
-<div class="dashboard-box">
-
-<h2>Latest Notifications</h2>
-
-<div id="latestNotifications">
-
-No Notifications
-
-</div>
-
-</div>
-
-<div class="dashboard-box">
-
-<h2>Recent Government Updates</h2>
-
-<div id="latestUpdates">
-
-No Updates Available
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- Government Updates -->
-
-<section id="updatesPage" class="page">
-
-<h2>📢 Government Updates</h2>
-
-<div class="update-form">
-
-<input
-type="text"
-id="updateTitle"
-placeholder="Update Title">
-
-<textarea
-id="updateDescription"
-placeholder="Update Description">
-</textarea>
-
-<select id="updateCategory">
-
-<option>Government Update</option>
-
-<option>Maha ID</option>
-
-<option>Ayushman Card</option>
-
-<option>PAN Card</option>
-
-<option>Divyang</option>
-
-</select>
-
-<button id="saveUpdate">
-
-Save Update
-
-</button>
-
-</div>
-
-<div id="updatesList">
-
-No Updates Available
-
-</div>
-
-</section>
-<!-- Services -->
-
-<section id="servicesPage" class="page">
-
-<h2>🛠 Services Management</h2>
-
-<div class="service-form">
-
-<input
-type="text"
-id="serviceName"
-placeholder="Service Name">
-
-<textarea
-id="serviceDescription"
-placeholder="Service Description">
-</textarea>
-
-<select id="serviceCategory">
-
-<option>Government</option>
-
-<option>PAN Card</option>
-
-<option>Aadhaar</option>
-
-<option>Ayushman</option>
-
-<option>Divyang</option>
-
-<option>Maha ID</option>
-
-</select>
-
-<input
-type="text"
-id="serviceIcon"
-placeholder="Service Icon (📄)">
-
-<button id="saveService">
-
-Save Service
-
-</button>
-
-</div>
-
-<div id="servicesList">
-
-No Services Available
-
-</div>
-
-</section>
-
-<!-- Categories -->
-
-<section id="categoriesPage" class="page">
-
-<h2>📂 Categories</h2>
-
-<div class="category-form">
-
-<input
-type="text"
-id="categoryName"
-placeholder="Category Name">
-
-<button id="saveCategory">
-
-Save Category
-
-</button>
-
-</div>
-
-<div id="categoriesList">
-
-No Categories Available
-
-</div>
-
-</section>
-<!-- Notifications -->
-
-<section id="notificationsPage" class="page">
-
-<h2>🔔 Notifications</h2>
-
-<div class="notification-form">
-
-<input
-type="text"
-id="notificationTitle"
-placeholder="Notification Title">
-
-<textarea
-id="notificationDescription"
-placeholder="Notification Description">
-</textarea>
-
-<select id="notificationType">
-
-<option value="breaking">Breaking News</option>
-
-<option value="popup">Popup Notification</option>
-
-<option value="normal">Normal Notification</option>
-
-</select>
-<select id="notificationPriority">
-
-<option value="High">High</option>
-
-<option value="Medium">Medium</option>
-
-<option value="Low">Low</option>
-
-</select>
-
-<button id="saveNotification">
-
-Publish Notification
-
-</button>
-<div class="notification-actions">
-
-<button id="publishAll">
-
-Publish All
-
-</button>
-
-<button id="deleteAll">
-
-Delete All
-
-</button>
-
-<button id="refreshNotifications">
-
-Refresh
-
-</button>
-
-</div>
-
-<h3>
-
-Total Notifications :
-<span id="totalNotifications">0</span>
-
-</h3>
-</div>
-
-<div id="notificationList">
-
-No Notifications Available
-
-</div>
-
-</section>
-
-<!-- Analytics -->
-
-<section id="analyticsPage" class="page">
-
-<h2>📊 Analytics</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Published Updates</h3>
-
-<h2 id="publishedUpdates">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Published Services</h3>
-
-<h2 id="publishedServices">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Published Notifications</h3>
-
-<h2 id="publishedNotifications">0</h2>
-
-</div>
-
-</div>
-
-</section>
-<!-- Images -->
-
-<section id="imagesPage" class="page">
-
-    <h2>🖼️ Images Manager</h2>
-
-    <div class="image-form">
-        <input type="file" id="imageUpload" accept="image/*">
-        <button id="uploadImage">Upload Image</button>
-        <input type="text" id="searchImage" placeholder="Search image...">
-        <button id="searchImageBtn">Search</button>
     </div>
 
-    <div id="imagesList" class="images-grid"></div>
+    <!-- Main Content -->
 
-</section>
+    <div class="main-content">
 
-<!-- Documents -->
+        <div class="topbar">
 
-<section id="documentsPage" class="page">
+            <h1>Dashboard</h1>
 
-<h2>📄 Documents Manager</h2>
+            <div class="top-right">
 
-<div class="document-form">
+                <button id="notificationBell">
 
-<input type="text"
-id="documentTitle"
-placeholder="Document Title">
+                    🔔
 
-<input type="file"
-id="documentUpload">
+                    <span id="notificationCount">0</span>
 
-<button id="uploadDocument">
+                </button>
 
-Upload Document
+                <div id="notificationDropdown"
+                     style="display:none;"
+                     class="notification-dropdown">
 
-</button>
+                    <h3>Latest Notifications</h3>
 
-</div>
+                    <div id="notificationDropdownList">
+                        No Notifications
+                    </div>
 
-<div id="documentsList">
+                </div>
 
-No Documents Available
+            </div>
 
-</div>
+        </div>
 
-</section>
+        <!-- Dashboard Section -->
 
-<!-- YouTube -->
+        <section id="dashboardPage" class="page active">
 
-<section id="youtubePage" class="page">
+            <div class="cards">
 
-<h2>📺 YouTube Manager</h2>
+                <div class="card">
 
-<div class="youtube-form">
+                    <h3>Total Updates</h3>
 
-<input type="text"
-id="youtubeTitle"
-placeholder="Video Title">
+                    <h2 id="totalUpdates">0</h2>
 
-<input type="text"
-id="youtubeLink"
-placeholder="YouTube Link">
+                </div>
 
-<button id="saveYoutube">
+                <div class="card">
 
-Save Video
+                    <h3>Total Services</h3>
 
-</button>
+                    <h2 id="totalServices">0</h2>
 
-</div>
+                </div>
 
-<div id="youtubeList">
+                <div class="card">
 
-No Videos Available
+                    <h3>Total Categories</h3>
 
-</div>
+                    <h2 id="totalCategories">0</h2>
 
-</section>
-<!-- Settings -->
+                </div>
 
-<section id="settingsPage" class="page">
+                <div class="card">
 
-<h2>⚙️ Settings</h2>
+                    <h3>Total Visitors</h3>
 
-<div class="settings-box">
+                    <h2 id="totalVisitors">0</h2>
 
-<h3>Website Settings</h3>
+                </div>
 
-<label>Website Name</label>
+            </div>
 
-<input
-type="text"
-id="websiteName"
-value="Khobragade Computer Service Centre">
+            <div class="dashboard-grid">
 
-<label>Admin Name</label>
+                <div class="dashboard-box">
 
-<input
-type="text"
-id="adminName"
-value="Nitesh Khobragade">
+                    <h2>Latest Notifications</h2>
 
-<label>Mobile Number</label>
+                    <div id="latestNotifications">
+                        No Notifications
+                    </div>
 
-<input
-type="text"
-id="mobileNumber"
-value="9637832490">
+                </div>
 
-<button id="saveSettings">
+                <div class="dashboard-box">
 
-Save Settings
+                    <h2>Recent Government Updates</h2>
 
-</button>
+                    <div id="latestUpdates">
+                        No Updates Available
+                    </div>
 
-</div>
+                </div>
 
-</section>
+            </div>
 
-</div>
+        </section>
 
-</div>
+        <!-- Government Updates -->
 
-<script type="module" src="firebase-config.js"></script>
+        <section id="updatesPage" class="page">
 
-<script type="module" src="dashboard.js"></script>
+            <h2>📢 Government Updates</h2>
 
-<script type="module" src="updates.js"></script>
+            <div class="update-form">
 
-<script type="module" src="services.js"></script>
+                <input
+                    type="text"
+                    id="updateTitle"
+                    placeholder="Update Title">
 
-<script type="module" src="categories.js"></script>
+                <textarea
+                    id="updateDescription"
+                    placeholder="Update Description"></textarea>
 
-<script type="module" src="notification.js"></script>
+                <select id="updateCategory">
 
-<script type="module" src="analytics.js"></script>
+                    <option>Government Update</option>
 
-<script type="module" src="menu.js"></script>
+                    <option>Maha ID</option>
 
-<script type="module" src="images.js"></script>
-  
-<script type="module" src="documents.js"></script>
-  
-<script type="module" src="youtube.js"></script>
+                    <option>Ayushman Card</option>
 
-<script src="images.js"></script>
-    
-</body>
+                    <option>PAN Card</option>
 
-</html>
+                    <option>Divyang</option>
+
+                </select>
+
+                <button id="saveUpdate">
+                    Save Update
+                </button>
+
+            </div>
+
+            <div id="updatesList">
+                No Updates Available
+            </div>
+
+        </section>
+
+        <!-- Services -->
+
+        <section id="servicesPage" class="page">
+
+            <h2>🛠 Services Management</h2>
+
+            <div class="service-form">
+
+                <input
+                    type="text"
+                    id="serviceName"
+                    placeholder="Service Name">
+
+                <textarea
+                    id="serviceDescription"
+                    placeholder="Service Description"></textarea>
+
+                <select id="serviceCategory">
+
+                    <option>Government</option>
+
+                    <option>PAN Card</option>
+
+                    <option>Aadhaar</option>
+
+                    <option>Ayushman</option>
+
+                    <option>Divyang</option>
+
+                    <option>Maha ID</option>
+
+                </select>
+
+                <input
+                    type="text"
+                    id="serviceIcon"
+                    placeholder="Service Icon (📄)">
+
+                <button id="saveService">
+                    Save Service
+                </button>
+
+            </div>
+
+            <div id="servicesList">
+                No Services Available
+            </div>
+
+        </section>
+
+        <!-- Categories -->
+
+        <section id="categoriesPage" class="page">
+
+            <h2>📂 Categories</h2>
+
+            <div class="category-form">
+
+                <input
+                    type="text"
+                    id="categoryName"
+                    placeholder="Category Name">
+
+                <button id="saveCategory">
+                    Save Category
+                </button>
+
+            </div>
+
+            <div id="categoriesList">
+                No Categories Available
+            </div>
+
+        </section>
+
+        <!-- Notifications -->
+
+        <section id="notificationsPage" class="page">
+
+            <h2>🔔 Notifications</h2>
+
+            <div class="notification-form">
+
+                <input
+                    type="text"
+                    id="notificationTitle"
+                    placeholder="Notification Title">
+
+                <textarea
+                    id="notificationDescription"
+                    placeholder="Notification Description"></textarea>
+
+                <select id="notificationType">
+
+                    <option value="breaking">Breaking News</option>
+
+                    <option value="popup">Popup Notification</option>
+
+                    <option value="normal">Normal Notification</option>
+
+                </select>
+
+                <select id="notificationPriority">
+
+                    <option value="High">High</option>
+
+                    <option value="Medium">Medium</option>
+
+                    <option value="Low">Low</option>
+
+                </select>
+
+                <button id="saveNotification">
+                    Publish Notification
+                </
