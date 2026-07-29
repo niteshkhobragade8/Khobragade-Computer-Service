@@ -1,179 +1,110 @@
-import {
-    db,
-    auth
-} from "./firebase-config.js";
+import { auth } from "./firebase-config.js";
 
 import {
-    collection,
-    getDocs
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-
-import {
-    onAuthStateChanged,
-    signOut
+    signInWithEmailAndPassword,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
-const totalUpdatesElement =
-    document.getElementById("totalUpdates");
+const loginForm = document.getElementById("loginForm");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const loginMessage = document.getElementById("loginMessage");
+const togglePassword = document.getElementById("togglePassword");
 
-const totalServicesElement =
-    document.getElementById("totalServices");
-
-const totalVisitorsElement =
-    document.getElementById("totalVisitors");
-
-const logoutButton =
-    document.getElementById("logoutBtn");
-
-let dashboardStarted = false;
-
-function setText(element, value) {
-    if (element) {
-        element.innerText = value;
-    }
+function showMessage(message, color = "red") {
+    loginMessage.innerText = message;
+    loginMessage.style.color = color;
 }
 
-async function loadDashboard() {
-    try {
-        const [updatesSnapshot, servicesSnapshot] =
-            await Promise.all([
-                getDocs(collection(db, "updates")),
-                getDocs(collection(db, "services"))
-            ]);
+togglePassword.addEventListener("click", () => {
 
-        setText(
-            totalUpdatesElement,
-            updatesSnapshot.size
-        );
-
-        setText(
-            totalServicesElement,
-            servicesSnapshot.size
-        );
-
-    } catch (error) {
-        console.error(
-            "Dashboard data loading error:",
-            error
-        );
-
-        setText(totalUpdatesElement, "Error");
-        setText(totalServicesElement, "Error");
-    }
-}
-
-function loadVisitors() {
-    const visitors =
-        Number(localStorage.getItem("visitors")) || 0;
-
-    setText(totalVisitorsElement, visitors);
-}
-
-function increaseVisitor() {
-    const visitorAlreadyCounted =
-        sessionStorage.getItem(
-            "dashboardVisitorCounted"
-        );
-
-    if (visitorAlreadyCounted === "true") {
-        return;
+    if (password.type === "password") {
+        password.type = "text";
+        togglePassword.innerText = "🙈";
+    } else {
+        password.type = "password";
+        togglePassword.innerText = "👁";
     }
 
-    let visitors =
-        Number(localStorage.getItem("visitors")) || 0;
-
-    visitors++;
-
-    localStorage.setItem(
-        "visitors",
-        visitors.toString()
-    );
-
-    sessionStorage.setItem(
-        "dashboardVisitorCounted",
-        "true"
-    );
-}
-
-async function startDashboard() {
-    if (dashboardStarted) {
-        return;
-    }
-
-    dashboardStarted = true;
-
-    increaseVisitor();
-
-    await loadDashboard();
-
-    loadVisitors();
-}
-
-async function logoutAdmin() {
-    try {
-        if (logoutButton) {
-            logoutButton.style.pointerEvents = "none";
-            logoutButton.style.opacity = "0.6";
-        }
-
-        await signOut(auth);
-
-        sessionStorage.removeItem(
-            "dashboardVisitorCounted"
-        );
-
-        window.location.replace("login.html");
-
-    } catch (error) {
-        console.error("Logout Error:", error);
-
-        alert(
-            "Logout failed. Please check your internet connection."
-        );
-
-        if (logoutButton) {
-            logoutButton.style.pointerEvents = "";
-            logoutButton.style.opacity = "";
-        }
-    }
-}
-
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        window.location.replace("login.html");
-        return;
-    }
-
-    await startDashboard();
 });
 
-if (logoutButton) {
-    logoutButton.addEventListener(
-        "click",
-        logoutAdmin
-    );
-}
+loginForm.addEventListener("submit", async (e) => {
 
-window.refreshDashboard = async function () {
-    await loadDashboard();
-    loadVisitors();
-};
+    e.preventDefault();
 
-window.reloadDashboard = async function () {
-    await loadDashboard();
-    loadVisitors();
-};
+    const userEmail = email.value.trim();
+    const userPassword = password.value;
 
-window.resetDashboard = function () {
-    setText(totalUpdatesElement, "0");
-    setText(totalServicesElement, "0");
-    setText(totalVisitorsElement, "0");
-};
+    if (!userEmail || !userPassword) {
+        showMessage("Please enter Email & Password.");
+        return;
+    }
 
-window.logout = logoutAdmin;
+    loginBtn.disabled = true;
+    loginBtn.innerText = "Logging in...";
 
-export {
-    loadDashboard,
-    loadVisitors,
-    logoutAdmin
-};
+    try {
+
+        await signInWithEmailAndPassword(
+            auth,
+            userEmail,
+            userPassword
+        );
+
+        showMessage(
+            "Login Successful...",
+            "green"
+        );
+
+        setTimeout(() => {
+
+            window.location.replace("dashboard.html");
+
+        }, 700);
+
+    } catch (error) {
+
+        let msg = "Login Failed";
+
+        switch (error.code) {
+
+            case "auth/invalid-email":
+                msg = "Invalid Email Address";
+                break;
+
+            case "auth/invalid-credential":
+                msg = "Wrong Email or Password";
+                break;
+
+            case "auth/network-request-failed":
+                msg = "Check Internet Connection";
+                break;
+
+            case "auth/too-many-requests":
+                msg = "Too many attempts. Try later.";
+                break;
+
+            default:
+                msg = error.message;
+
+        }
+
+        showMessage(msg);
+
+    }
+
+    loginBtn.disabled = false;
+    loginBtn.innerText = "Login";
+
+});
+
+onAuthStateChanged(auth, (user) => {
+
+    if (user) {
+
+        window.location.replace("dashboard.html");
+
+    }
+
+});
