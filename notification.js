@@ -12,186 +12,200 @@ doc
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const saveNotification =
-    document.getElementById("saveNotification");
+document.getElementById("saveNotification");
+
+const notificationList =
+document.getElementById("notificationList");
+
+const notificationPreview =
+document.getElementById("notificationPreview");
+
+const historyBox =
+document.getElementById("notificationHistory");
+
+const totalNotifications =
+document.getElementById("totalNotifications");
+
+const publishedNotifications =
+document.getElementById("publishedNotifications");
+
+const draftNotifications =
+document.getElementById("draftNotifications");
 
 let editNotificationId = null;
 
-async function loadNotifications() {
+async function loadNotifications(){
 
-    const notificationList =
-        document.getElementById("notificationList");
+if(!notificationList) return;
 
-    const latestNotifications =
-        document.getElementById("latestNotifications");
+notificationList.innerHTML="";
 
-    const notificationCount =
-        document.getElementById("notificationCount");
+let total=0;
+let published=0;
+let draft=0;
 
-    const totalNotifications =
-        document.getElementById("totalNotifications");
+const snapshot =
+await getDocs(collection(db,"notifications"));
 
-    if (!notificationList) {
-        return;
-    }
+snapshot.forEach((item)=>{
 
-    notificationList.innerHTML = "";
+const data=item.data();
 
-    if (latestNotifications) {
-        latestNotifications.innerHTML = "";
-    }
+total++;
 
-    const snapshot =
-        await getDocs(collection(db, "notifications"));
-
-    if (notificationCount) {
-        notificationCount.innerText = snapshot.size;
-    }
-
-    if (totalNotifications) {
-        totalNotifications.innerText = snapshot.size;
-    }
-
-    snapshot.forEach((item) => {
-
-        const data = item.data();
-
-        if (latestNotifications) {
-
-            latestNotifications.innerHTML += `
-                <div class="notification-item">
-                    <b>${data.title}</b><br>
-                    <small>${data.type}</small>
-                </div>
-            `;
-
-        }
-
-        notificationList.innerHTML += `
-
-            <div class="notification-card">
-
-                <h3>${data.title}</h3>
-
-                <p>${data.description}</p>
-
-                <small>
-                    ${data.type} |
-                    ${data.priority}
-                </small>
-
-                <div class="actions">
-
-                    <button onclick="editNotification('${item.id}')">
-                        ✏️ Edit
-                    </button>
-
-                    <button onclick="deleteNotification('${item.id}')">
-                        🗑 Delete
-                    </button>
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
-
-    if (snapshot.size === 0) {
-
-        notificationList.innerHTML = `
-            <div class="notification-card">
-                <h3>No Notifications Found</h3>
-            </div>
-        `;
-
-        if (latestNotifications) {
-
-            latestNotifications.innerHTML = `
-                <div class="notification-item">
-                    No Notifications
-                </div>
-            `;
-
-        }
-
-    }
-
+if(data.status==="Published"){
+published++;
+}else{
+draft++;
 }
-saveNotification.addEventListener("click", async () => {
 
-    const title =
-        document.getElementById("notificationTitle").value.trim();
+notificationList.innerHTML+=`
 
-    const description =
-        document.getElementById("notificationDescription").value.trim();
+<div class="notification-card">
 
-    const type =
-        document.getElementById("notificationType").value;
+<h3>${data.title}</h3>
 
-    const priority =
-        document.getElementById("notificationPriority").value;
+<p>${data.description}</p>
 
-    if (title === "" || description === "") {
+<small>
 
-        alert("Fill all fields");
+${data.type} |
+${data.priority}
 
-        return;
+</small>
 
-    }
+<div class="actions">
 
-    if (editNotificationId) {
+<button onclick="editNotification('${item.id}')">
 
-        await updateDoc(
-            doc(db, "notifications", editNotificationId),
-            {
-                title,
-                description,
-                type,
-                priority
-            }
-        );
+✏️ Edit
 
-        alert("Notification Updated");
+</button>
 
-        editNotificationId = null;
+<button onclick="deleteNotification('${item.id}')">
 
-        saveNotification.innerText = "Save Notification";
+🗑 Delete
 
-    } else {
+</button>
 
-        await addDoc(
-            collection(db, "notifications"),
-            {
-                title,
-                description,
-                type,
-                priority,
-                status: "Published",
-                createdAt: new Date()
-            }
-        );
+</div>
 
-        alert("Notification Saved");
+</div>
 
-    }
-
-    document.getElementById("notificationTitle").value = "";
-    document.getElementById("notificationDescription").value = "";
-    document.getElementById("notificationType").selectedIndex = 0;
-    document.getElementById("notificationPriority").selectedIndex = 0;
-
-    loadNotifications();
+`;
 
 });
+if(totalNotifications){
+totalNotifications.innerText=total;
+}
 
-window.deleteNotification = async function (id) {
+if(publishedNotifications){
+publishedNotifications.innerText=published;
+}
 
-    if (!confirm("Delete this notification?")) {
+if(draftNotifications){
+draftNotifications.innerText=draft;
+}
+
+if(total===0){
+
+notificationList.innerHTML=`
+
+<div class="notification-card">
+
+<h3>No Notifications Available</h3>
+
+<p>Create your first notification.</p>
+
+</div>
+
+`;
+
+}
+
+}
+
+saveNotification.addEventListener("click",async()=>{
+
+const title=
+document.getElementById("notificationTitle").value.trim();
+
+const description=
+document.getElementById("notificationDescription").value.trim();
+
+const type=
+document.getElementById("notificationType").value;
+
+const priority=
+document.getElementById("notificationPriority").value;
+
+if(title===""||description===""){
+
+alert("Fill all fields");
+
+return;
+
+}
+
+if(editNotificationId){
+
+await updateDoc(
+
+doc(db,"notifications",editNotificationId),
+
+{
+title,
+description,
+type,
+priority
+}
+
+);
+
+alert("Notification Updated");
+
+editNotificationId=null;
+
+saveNotification.innerText="Save Notification";
+
+}else{
+
+await addDoc(
+
+collection(db,"notifications"),
+
+{
+
+title,
+description,
+type,
+priority,
+status:"Published",
+createdAt:new Date()
+
+}
+
+);
+
+alert("Notification Saved");
+
+}
+
+document.getElementById("notificationTitle").value="";
+document.getElementById("notificationDescription").value="";
+document.getElementById("notificationType").selectedIndex=0;
+document.getElementById("notificationPriority").selectedIndex=0;
+
+loadNotifications();
+
+});
+window.deleteNotification = async function(id){
+
+    if(!confirm("Delete this notification?")){
         return;
     }
 
-    await deleteDoc(doc(db, "notifications", id));
+    await deleteDoc(doc(db,"notifications",id));
 
     alert("Notification Deleted");
 
@@ -199,76 +213,67 @@ window.deleteNotification = async function (id) {
 
 };
 
-window.editNotification = async function (id) {
+window.editNotification = async function(id){
 
     const snapshot =
-        await getDocs(collection(db, "notifications"));
+    await getDocs(collection(db,"notifications"));
 
-    snapshot.forEach((item) => {
+    snapshot.forEach((item)=>{
 
-        if (item.id === id) {
+        if(item.id===id){
 
-            const data = item.data();
+            const data=item.data();
 
-            editNotificationId = id;
+            editNotificationId=id;
 
-            document.getElementById("notificationTitle").value =
-                data.title;
+            document.getElementById("notificationTitle").value=data.title;
 
-            document.getElementById("notificationDescription").value =
-                data.description;
+            document.getElementById("notificationDescription").value=data.description;
 
-            document.getElementById("notificationType").value =
-                data.type;
+            document.getElementById("notificationType").value=data.type;
 
-            document.getElementById("notificationPriority").value =
-                data.priority;
+            document.getElementById("notificationPriority").value=data.priority;
 
-            saveNotification.innerText =
-                "Update Notification";
+            saveNotification.innerText="Update Notification";
+
+            if(notificationPreview){
+
+                notificationPreview.innerHTML=`
+
+                <h2>👁 Live Preview</h2>
+
+                <h3>${data.title}</h3>
+
+                <p>${data.description}</p>
+
+                <small>${data.type} | ${data.priority}</small>
+
+                `;
+
+            }
 
         }
 
     });
 
 };
-window.addEventListener("DOMContentLoaded", () => {
 
-    loadNotifications();
+const refreshBtn =
+document.getElementById("refreshNotifications");
 
-    window.refreshNotificationPanel = function () {
+if(refreshBtn){
 
-        loadNotifications();
-
-    };
-
-});
-
-const bell =
-    document.getElementById("notificationBell");
-
-const dropdown =
-    document.getElementById("notificationDropdown");
-
-if (bell && dropdown) {
-
-    bell.addEventListener("click", () => {
-
-        if (dropdown.style.display === "block") {
-
-            dropdown.style.display = "none";
-
-        } else {
-
-            dropdown.style.display = "block";
-
-        }
-
-    });
+    refreshBtn.addEventListener("click",loadNotifications);
 
 }
 
-export {
+window.addEventListener("DOMContentLoaded",()=>{
+
+    loadNotifications();
+
+});
+
+export{
 
     loadNotifications
 
