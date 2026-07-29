@@ -3,6 +3,11 @@ let allImages = [];
 async function loadImages() {
     const imagesList = document.getElementById("imagesList");
 
+    if (!imagesList) {
+        console.error("imagesList element not found");
+        return;
+    }
+
     try {
         const response = await fetch("./images/images.json");
 
@@ -22,6 +27,10 @@ async function loadImages() {
 function displayImages(images) {
     const imagesList = document.getElementById("imagesList");
 
+    if (!imagesList) {
+        return;
+    }
+
     if (images.length === 0) {
         imagesList.innerHTML = "<p>No Images Available</p>";
         return;
@@ -29,39 +38,112 @@ function displayImages(images) {
 
     imagesList.innerHTML = "";
 
-    images.forEach(function(img) {
-        imagesList.innerHTML += `
-            <div class="image-card">
-                <img src="${img.url}" alt="${img.name}">
-                <p>${img.name}</p>
+    images.forEach(function (img) {
+        const imageCard = document.createElement("div");
+        imageCard.className = "image-card";
 
-                <div class="image-actions">
-                    <button onclick="previewImage('${img.url}')">👁 Preview</button>
-                    <button onclick="copyImageLink('${img.url}')">📋 Copy Link</button>
-                </div>
-            </div>
-        `;
+        const image = document.createElement("img");
+        image.src = img.url;
+        image.alt = img.name;
+
+        const imageName = document.createElement("p");
+        imageName.textContent = img.name;
+
+        const actions = document.createElement("div");
+        actions.className = "image-actions";
+
+        const previewButton = document.createElement("button");
+        previewButton.type = "button";
+        previewButton.textContent = "👁 Preview";
+
+        previewButton.addEventListener("click", function () {
+            previewImage(img.url);
+        });
+
+        const copyButton = document.createElement("button");
+        copyButton.type = "button";
+        copyButton.textContent = "📋 Copy Link";
+
+        copyButton.addEventListener("click", function () {
+            copyImageLink(img.url);
+        });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.textContent = "🗑 Delete";
+
+        deleteButton.addEventListener("click", function () {
+            deleteImage(img.name);
+        });
+
+        actions.appendChild(previewButton);
+        actions.appendChild(copyButton);
+        actions.appendChild(deleteButton);
+
+        imageCard.appendChild(image);
+        imageCard.appendChild(imageName);
+        imageCard.appendChild(actions);
+
+        imagesList.appendChild(imageCard);
     });
 }
 
 function previewImage(url) {
-    window.open(url, "_blank");
+    const fullUrl = new URL(url, window.location.href).href;
+    window.open(fullUrl, "_blank");
 }
 
-function copyImageLink(url) {
+async function copyImageLink(url) {
     const fullUrl = new URL(url, window.location.href).href;
 
-    navigator.clipboard.writeText(fullUrl)
-        .then(function() {
-            alert("Image Link Copied");
-        })
-        .catch(function() {
-            alert("Link Copy Failed");
-        });
+    try {
+        await navigator.clipboard.writeText(fullUrl);
+        alert("Image Link Copied");
+    } catch (error) {
+        const textArea = document.createElement("textarea");
+
+        textArea.value = fullUrl;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+
+        document.body.appendChild(textArea);
+
+        textArea.select();
+        document.execCommand("copy");
+
+        document.body.removeChild(textArea);
+
+        alert("Image Link Copied");
+    }
+}
+
+function deleteImage(name) {
+    const permission = confirm(
+        "Kya aap is image ko gallery se hatana chahte hain?"
+    );
+
+    if (!permission) {
+        return;
+    }
+
+    allImages = allImages.filter(function (img) {
+        return img.name !== name;
+    });
+
+    displayImages(allImages);
+
+    alert(
+        "Image gallery se hat gayi. Refresh karne par image wapas aa jayegi."
+    );
 }
 
 function searchImages() {
     const searchBox = document.getElementById("searchImage");
+
+    if (!searchBox) {
+        return;
+    }
+
     const text = searchBox.value.trim().toLowerCase();
 
     if (text === "") {
@@ -69,14 +151,14 @@ function searchImages() {
         return;
     }
 
-    const filteredImages = allImages.filter(function(img) {
+    const filteredImages = allImages.filter(function (img) {
         return img.name.toLowerCase().includes(text);
     });
 
     displayImages(filteredImages);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     loadImages();
 
     const searchButton = document.getElementById("searchImageBtn");
@@ -87,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (searchBox) {
-        searchBox.addEventListener("keydown", function(event) {
+        searchBox.addEventListener("keydown", function (event) {
             if (event.key === "Enter") {
                 searchImages();
             }
