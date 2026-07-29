@@ -5,7 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Admin Login</title>
 
@@ -26,12 +26,14 @@
 <input
 type="text"
 id="username"
-placeholder="Username">
+placeholder="Username"
+autocomplete="username">
 
 <input
 type="password"
 id="password"
-placeholder="Password">
+placeholder="Password"
+autocomplete="current-password">
 
 <button id="loginBtn">
 
@@ -44,13 +46,6 @@ Login
 </div>
 
 </div>
-
-<script type="module" src="login.js"></script>
-
-</body>
-
-</html>
-<hr>
 
 <div class="login-info">
 
@@ -76,11 +71,8 @@ Login
 
 </div>
 
-<div class="footer">
+<hr>
 
-<p>© 2026 Khobragade Computer Service Centre</p>
-
-</div>
 <div class="security-box">
 
 <h2>Security</h2>
@@ -107,36 +99,15 @@ Only authorized administrators can access the Dashboard.
 
 <hr>
 
-<div class="version-info">
-
-<p>
-
-Version 6.0 Professional Admin Panel
-
-</p>
-
-</div>
 <div class="support-box">
 
 <h2>Support</h2>
 
-<p>
+<p>Need help? Contact Administrator.</p>
 
-Need help? Contact Administrator.
+<p>📞 Mobile: 9637832490</p>
 
-</p>
-
-<p>
-
-📞 Mobile: 9637832490
-
-</p>
-
-<p>
-
-📧 Email: admin@khobragade.online
-
-</p>
+<p>📧 Email: admin@khobragade.online</p>
 
 </div>
 
@@ -153,6 +124,13 @@ Need help? Contact Administrator.
 <p>🟢 Firebase Ready</p>
 
 </div>
+
+<div class="version-info">
+
+<p>Version 6.0 Professional Admin Panel</p>
+
+</div>
+
 <div class="copyright">
 
 <p>
@@ -170,6 +148,8 @@ Khobragade Computer Service Centre
 </p>
 
 </div>
+
+<script type="module" src="login.js"></script>
 
 </body>
 
