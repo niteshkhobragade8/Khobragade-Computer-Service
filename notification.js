@@ -6,79 +6,42 @@ import {
     getDocs,
     deleteDoc,
     updateDoc,
-    doc
+    doc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
-const saveNotification =
-    document.getElementById("saveNotification");
+const saveButton =
+    document.getElementById("saveNotificationFinal");
 
 const notificationList =
-    document.getElementById("notificationList");
+    document.getElementById("notificationListFinal");
 
-const totalNotifications =
-    document.getElementById("totalNotifications");
+const titleInput =
+    document.getElementById("notificationTitle");
 
-const publishedNotifications =
-    document.getElementById("publishedNotifications");
+const descriptionInput =
+    document.getElementById("notificationDescription");
 
-const draftNotifications =
-    document.getElementById("draftNotifications");
+const typeInput =
+    document.getElementById("notificationType");
 
-const notificationPreview =
-    document.getElementById("notificationPreview");
-
-const notificationHistory =
-    document.getElementById("notificationHistory");
-
-const publishAllButton =
-    document.getElementById("publishAll");
-
-const deleteAllButton =
-    document.getElementById("deleteAll");
-
-const refreshButton =
-    document.getElementById("refreshNotifications");
+const priorityInput =
+    document.getElementById("notificationPriority");
 
 
-let editNotificationId = null;
+let editId = null;
+let notifications = [];
 
-let allNotifications = [];
 
+function safeText(value) {
 
-function escapeHTML(value) {
-
-    return String(value ?? "")
+    return String(value || "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
-
-}
-
-
-function formatNotificationDate(createdAt) {
-
-    if (!createdAt) {
-        return "Date not available";
-    }
-
-    try {
-
-        if (typeof createdAt.toDate === "function") {
-
-            return createdAt.toDate().toLocaleString();
-
-        }
-
-        return new Date(createdAt).toLocaleString();
-
-    } catch (error) {
-
-        return "Date not available";
-
-    }
 
 }
 
@@ -89,66 +52,82 @@ async function loadNotifications() {
         return;
     }
 
-    notificationList.innerHTML = `
-        <div class="notification-card">
-            <h3>Loading Notifications...</h3>
-        </div>
-    `;
+    notificationList.innerHTML =
+        "<p>Loading Notifications...</p>";
 
     try {
 
         const snapshot =
-            await getDocs(collection(db, "notifications"));
+            await getDocs(
+                collection(db, "notifications")
+            );
 
-        allNotifications = [];
+        notifications = [];
 
-        snapshot.forEach((item) => {
+        snapshot.forEach(function (documentItem) {
 
-            allNotifications.push({
-
-                id: item.id,
-
-                ...item.data()
-
+            notifications.push({
+                id: documentItem.id,
+                ...documentItem.data()
             });
 
         });
 
-        allNotifications.sort((first, second) => {
+        displayNotifications();
 
-            const firstTime =
-                first.createdAt?.seconds || 0;
+        const total =
+            document.getElementById(
+                "totalNotifications"
+            );
 
-            const secondTime =
-                second.createdAt?.seconds || 0;
+        const published =
+            document.getElementById(
+                "publishedNotifications"
+            );
 
-            return secondTime - firstTime;
+        const draft =
+            document.getElementById(
+                "draftNotifications"
+            );
 
-        });
+        if (total) {
+            total.textContent =
+                notifications.length;
+        }
 
-        displayNotifications(allNotifications);
+        if (published) {
 
-        updateNotificationCounters();
+            published.textContent =
+                notifications.filter(function (item) {
 
-        displayNotificationHistory();
+                    return item.status === "Published";
+
+                }).length;
+
+        }
+
+        if (draft) {
+
+            draft.textContent =
+                notifications.filter(function (item) {
+
+                    return item.status === "Draft";
+
+                }).length;
+
+        }
 
     } catch (error) {
 
         console.error(
-            "Notification loading error:",
+            "Notification Load Error:",
             error
         );
 
         notificationList.innerHTML = `
             <div class="notification-card">
-
-                <h3>Failed to Load Notifications</h3>
-
-                <p>
-                    Firebase connection or Firestore permission
-                    problem.
-                </p>
-
+                <h3>Notifications Load Failed</h3>
+                <p>${safeText(error.message)}</p>
             </div>
         `;
 
@@ -157,11 +136,7 @@ async function loadNotifications() {
 }
 
 
-function displayNotifications(notifications) {
-
-    if (!notificationList) {
-        return;
-    }
+function displayNotifications() {
 
     notificationList.innerHTML = "";
 
@@ -169,13 +144,8 @@ function displayNotifications(notifications) {
 
         notificationList.innerHTML = `
             <div class="notification-card">
-
                 <h3>No Notifications Available</h3>
-
-                <p>
-                    Create and publish your first notification.
-                </p>
-
+                <p>Create your first notification.</p>
             </div>
         `;
 
@@ -183,55 +153,35 @@ function displayNotifications(notifications) {
 
     }
 
-    notifications.forEach((notification) => {
+    notifications.forEach(function (item) {
 
         const card =
             document.createElement("div");
 
-        card.className =
-            "notification-card";
-
-        const title =
-            escapeHTML(notification.title);
-
-        const description =
-            escapeHTML(notification.description);
-
-        const type =
-            escapeHTML(notification.type || "popup");
-
-        const priority =
-            escapeHTML(notification.priority || "normal");
-
-        const status =
-            escapeHTML(notification.status || "Published");
-
-        const date =
-            escapeHTML(
-                formatNotificationDate(
-                    notification.createdAt
-                )
-            );
+        card.className = "notification-card";
 
         card.innerHTML = `
 
-            <h3>${title}</h3>
-
-            <p>${description}</p>
-
-            <small>
-                ${type} | ${priority} | ${status}
-            </small>
+            <h3>${safeText(item.title)}</h3>
 
             <p>
-                <small>${date}</small>
+                ${safeText(item.description)}
             </p>
+
+            <small>
+                ${safeText(item.type)}
+                |
+                ${safeText(item.priority)}
+                |
+                ${safeText(item.status)}
+            </small>
 
             <div class="actions">
 
                 <button
                     type="button"
-                    onclick="editNotification('${notification.id}')">
+                    data-action="edit"
+                    data-id="${item.id}">
 
                     ✏️ Edit
 
@@ -239,7 +189,8 @@ function displayNotifications(notifications) {
 
                 <button
                     type="button"
-                    onclick="deleteNotification('${notification.id}')">
+                    data-action="delete"
+                    data-id="${item.id}">
 
                     🗑 Delete
 
@@ -254,128 +205,9 @@ function displayNotifications(notifications) {
     });
 
 }
-function resetNotificationForm() {
-
-    const titleInput =
-        document.getElementById("notificationTitle");
-
-    const descriptionInput =
-        document.getElementById("notificationDescription");
-
-    const typeInput =
-        document.getElementById("notificationType");
-
-    const priorityInput =
-        document.getElementById("notificationPriority");
-
-    if (titleInput) {
-        titleInput.value = "";
-    }
-
-    if (descriptionInput) {
-        descriptionInput.value = "";
-    }
-
-    if (typeInput) {
-        typeInput.selectedIndex = 0;
-    }
-
-    if (priorityInput) {
-        priorityInput.selectedIndex = 0;
-    }
-
-    editNotificationId = null;
-
-    if (saveNotification) {
-        saveNotification.innerText =
-            "Save Notification";
-    }
-
-}
 
 
-function updateLivePreview() {
-
-    if (!notificationPreview) {
-        return;
-    }
-
-    const title =
-        document
-            .getElementById("notificationTitle")
-            ?.value
-            .trim();
-
-    const description =
-        document
-            .getElementById("notificationDescription")
-            ?.value
-            .trim();
-
-    const type =
-        document
-            .getElementById("notificationType")
-            ?.value;
-
-    const priority =
-        document
-            .getElementById("notificationPriority")
-            ?.value;
-
-    notificationPreview.innerHTML = `
-
-        <h2>👁 Live Preview</h2>
-
-        <h3>
-            ${escapeHTML(title || "Notification Title")}
-        </h3>
-
-        <p>
-            ${
-                escapeHTML(
-                    description ||
-                    "Notification Preview will appear here..."
-                )
-            }
-        </p>
-
-        <small>
-            ${escapeHTML(type || "popup")}
-            |
-            ${escapeHTML(priority || "normal")}
-        </small>
-
-    `;
-
-}
-
-
-async function saveOrUpdateNotification() {
-
-    const titleInput =
-        document.getElementById("notificationTitle");
-
-    const descriptionInput =
-        document.getElementById("notificationDescription");
-
-    const typeInput =
-        document.getElementById("notificationType");
-
-    const priorityInput =
-        document.getElementById("notificationPriority");
-
-    if (
-        !titleInput ||
-        !descriptionInput ||
-        !typeInput ||
-        !priorityInput
-    ) {
-
-        alert("Notification form not found.");
-
-        return;
-
-    }
+async function saveNotification() {
 
     const title =
         titleInput.value.trim();
@@ -394,44 +226,32 @@ async function saveOrUpdateNotification() {
         description === ""
     ) {
 
-        alert("Fill all fields");
+        alert("Title and Description भरें");
 
         return;
 
     }
 
-    if (saveNotification) {
-
-        saveNotification.disabled = true;
-
-        saveNotification.innerText =
-            editNotificationId
-                ? "Updating..."
-                : "Saving...";
-
-    }
+    saveButton.disabled = true;
 
     try {
 
-        if (editNotificationId) {
+        if (editId) {
 
             await updateDoc(
-
                 doc(
                     db,
                     "notifications",
-                    editNotificationId
+                    editId
                 ),
-
                 {
                     title,
                     description,
                     type,
                     priority,
                     status: "Published",
-                    updatedAt: new Date()
+                    updatedAt: serverTimestamp()
                 }
-
             );
 
             alert("Notification Updated");
@@ -439,184 +259,57 @@ async function saveOrUpdateNotification() {
         } else {
 
             await addDoc(
-
                 collection(
                     db,
                     "notifications"
                 ),
-
                 {
                     title,
                     description,
                     type,
                     priority,
                     status: "Published",
-                    createdAt: new Date()
+                    createdAt: serverTimestamp()
                 }
-
             );
 
             alert("Notification Saved");
 
         }
 
-        resetNotificationForm();
+        editId = null;
 
-        updateLivePreview();
+        titleInput.value = "";
+        descriptionInput.value = "";
+        typeInput.selectedIndex = 0;
+        priorityInput.selectedIndex = 0;
+
+        saveButton.textContent =
+            "Save Notification";
 
         await loadNotifications();
 
     } catch (error) {
 
         console.error(
-            "Notification save error:",
+            "Notification Save Error:",
             error
         );
 
         alert(
-            "Notification save failed. Check Firebase permission."
+            "Save Failed: " + error.message
         );
 
     } finally {
 
-        if (saveNotification) {
-
-            saveNotification.disabled = false;
-
-            saveNotification.innerText =
-                editNotificationId
-                    ? "Update Notification"
-                    : "Save Notification";
-
-        }
+        saveButton.disabled = false;
 
     }
 
 }
 
 
-if (saveNotification) {
-
-    saveNotification.addEventListener(
-        "click",
-        saveOrUpdateNotification
-    );
-
-}
-function updateNotificationCounters() {
-
-    if (totalNotifications) {
-        totalNotifications.innerText =
-            allNotifications.length;
-    }
-
-    if (publishedNotifications) {
-
-        publishedNotifications.innerText =
-            allNotifications.filter(function (item) {
-
-                return item.status === "Published";
-
-            }).length;
-
-    }
-
-    if (draftNotifications) {
-
-        draftNotifications.innerText =
-            allNotifications.filter(function (item) {
-
-                return item.status === "Draft";
-
-            }).length;
-
-    }
-
-}
-
-
-function displayNotificationHistory() {
-
-    if (!notificationHistory) {
-        return;
-    }
-
-    if (allNotifications.length === 0) {
-
-        notificationHistory.innerHTML = `
-            <p>No History Available</p>
-        `;
-
-        return;
-
-    }
-
-    notificationHistory.innerHTML = "";
-
-    allNotifications.forEach(function (item) {
-
-        notificationHistory.innerHTML += `
-
-            <div class="notification-card">
-
-                <h3>${escapeHTML(item.title)}</h3>
-
-                <p>
-                    Status :
-                    ${escapeHTML(item.status || "Published")}
-                </p>
-
-                <small>
-                    ${formatNotificationDate(item.createdAt)}
-                </small>
-
-            </div>
-
-        `;
-
-    });
-
-}
-
-
-window.editNotification = async function (id) {
-
-    const selected =
-        allNotifications.find(function (item) {
-
-            return item.id === id;
-
-        });
-
-    if (!selected) {
-        return;
-    }
-
-    editNotificationId = id;
-
-    document.getElementById("notificationTitle").value =
-        selected.title;
-
-    document.getElementById("notificationDescription").value =
-        selected.description;
-
-    document.getElementById("notificationType").value =
-        selected.type;
-
-    document.getElementById("notificationPriority").value =
-        selected.priority;
-
-    if (saveNotification) {
-        saveNotification.innerText =
-            "Update Notification";
-    }
-
-    updateLivePreview();
-
-};
-
-
-window.deleteNotification = async function (id) {
+async function deleteNotification(id) {
 
     if (!confirm("Delete this notification?")) {
         return;
@@ -634,92 +327,94 @@ window.deleteNotification = async function (id) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Delete Error:",
+            error
+        );
 
-        alert("Delete failed.");
+        alert(
+            "Delete Failed: " + error.message
+        );
 
     }
 
-};
-if (publishAllButton) {
+}
 
-    publishAllButton.addEventListener(
+
+function editNotification(id) {
+
+    const selected =
+        notifications.find(function (item) {
+
+            return item.id === id;
+
+        });
+
+    if (!selected) {
+        return;
+    }
+
+    editId = id;
+
+    titleInput.value =
+        selected.title || "";
+
+    descriptionInput.value =
+        selected.description || "";
+
+    typeInput.value =
+        selected.type || "popup";
+
+    priorityInput.value =
+        selected.priority || "normal";
+
+    saveButton.textContent =
+        "Update Notification";
+
+    titleInput.scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+if (saveButton) {
+
+    saveButton.addEventListener(
         "click",
-        async function () {
-
-            try {
-
-                for (const item of allNotifications) {
-
-                    await updateDoc(
-                        doc(
-                            db,
-                            "notifications",
-                            item.id
-                        ),
-                        {
-                            status: "Published"
-                        }
-                    );
-
-                }
-
-                alert("All Notifications Published");
-
-                await loadNotifications();
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert("Publish All Failed");
-
-            }
-
-        }
+        saveNotification
     );
 
 }
 
 
-if (deleteAllButton) {
+if (notificationList) {
 
-    deleteAllButton.addEventListener(
+    notificationList.addEventListener(
         "click",
-        async function () {
+        function (event) {
 
-            if (
-                !confirm(
-                    "Delete all notifications?"
-                )
-            ) {
+            const button =
+                event.target.closest(
+                    "button[data-action]"
+                );
+
+            if (!button) {
                 return;
             }
 
-            try {
+            const id =
+                button.dataset.id;
 
-                for (const item of allNotifications) {
+            const action =
+                button.dataset.action;
 
-                    await deleteDoc(
-                        doc(
-                            db,
-                            "notifications",
-                            item.id
-                        )
-                    );
+            if (action === "edit") {
+                editNotification(id);
+            }
 
-                }
-
-                alert("All Notifications Deleted");
-
-                await loadNotifications();
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert("Delete All Failed");
-
+            if (action === "delete") {
+                deleteNotification(id);
             }
 
         }
@@ -727,6 +422,11 @@ if (deleteAllButton) {
 
 }
 
+
+const refreshButton =
+    document.getElementById(
+        "refreshNotifications"
+    );
 
 if (refreshButton) {
 
@@ -738,47 +438,4 @@ if (refreshButton) {
 }
 
 
-[
-    "notificationTitle",
-    "notificationDescription",
-    "notificationType",
-    "notificationPriority"
-].forEach(function (id) {
-
-    const element =
-        document.getElementById(id);
-
-    if (element) {
-
-        element.addEventListener(
-            "input",
-            updateLivePreview
-        );
-
-        element.addEventListener(
-            "change",
-            updateLivePreview
-        );
-
-    }
-
-});
-
-
-window.addEventListener(
-    "DOMContentLoaded",
-    async function () {
-
-        updateLivePreview();
-
-        await loadNotifications();
-
-    }
-);
-
-
-export {
-
-    loadNotifications
-
-};
+loadNotifications();
