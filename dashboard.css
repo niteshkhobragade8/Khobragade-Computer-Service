@@ -878,3 +878,23 @@ text-align:center;
 #searchImageBtn:hover{
     background:#0d47a1;
 }
+
+.image-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    margin-top:10px;
+}
+
+.image-actions button{
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    background:#1565c0;
+    color:#fff;
+}
+
+.image-actions button:hover{
+    background:#0d47a1;
+}
