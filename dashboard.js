@@ -1,7 +1,4 @@
-import {
-    db,
-    auth
-} from "./firebase-config.js";
+import { db, auth } from "./firebase-config.js";
 
 import {
     collection,
@@ -13,167 +10,94 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
-const totalUpdatesElement =
-    document.getElementById("totalUpdates");
-
-const totalServicesElement =
-    document.getElementById("totalServices");
-
-const totalVisitorsElement =
-    document.getElementById("totalVisitors");
-
-const logoutButton =
-    document.getElementById("logoutBtn");
-
-let dashboardStarted = false;
-
-function setText(element, value) {
-    if (element) {
-        element.innerText = value;
-    }
-}
+const totalUpdates = document.getElementById("totalUpdates");
+const totalServices = document.getElementById("totalServices");
+const totalVisitors = document.getElementById("totalVisitors");
+const logoutBtn = document.getElementById("logoutBtn");
 
 async function loadDashboard() {
+
     try {
-        const [updatesSnapshot, servicesSnapshot] =
-            await Promise.all([
-                getDocs(collection(db, "updates")),
-                getDocs(collection(db, "services"))
-            ]);
 
-        setText(
-            totalUpdatesElement,
-            updatesSnapshot.size
-        );
+        const updates = await getDocs(collection(db, "updates"));
+        const services = await getDocs(collection(db, "services"));
 
-        setText(
-            totalServicesElement,
-            servicesSnapshot.size
-        );
+        if (totalUpdates)
+            totalUpdates.innerText = updates.size;
+
+        if (totalServices)
+            totalServices.innerText = services.size;
 
     } catch (error) {
-        console.error(
-            "Dashboard data loading error:",
-            error
-        );
 
-        setText(totalUpdatesElement, "Error");
-        setText(totalServicesElement, "Error");
+        console.error(error);
+
     }
+
 }
 
 function loadVisitors() {
-    const visitors =
-        Number(localStorage.getItem("visitors")) || 0;
-
-    setText(totalVisitorsElement, visitors);
-}
-
-function increaseVisitor() {
-    const visitorAlreadyCounted =
-        sessionStorage.getItem(
-            "dashboardVisitorCounted"
-        );
-
-    if (visitorAlreadyCounted === "true") {
-        return;
-    }
 
     let visitors =
-        Number(localStorage.getItem("visitors")) || 0;
+        Number(localStorage.getItem("visitors") || 0);
 
     visitors++;
 
-    localStorage.setItem(
-        "visitors",
-        visitors.toString()
-    );
+    localStorage.setItem("visitors", visitors);
 
-    sessionStorage.setItem(
-        "dashboardVisitorCounted",
-        "true"
-    );
+    if (totalVisitors)
+        totalVisitors.innerText = visitors;
+
 }
 
 async function startDashboard() {
-    if (dashboardStarted) {
-        return;
-    }
-
-    dashboardStarted = true;
-
-    increaseVisitor();
 
     await loadDashboard();
 
     loadVisitors();
-}
 
-async function logoutAdmin() {
-    try {
-        if (logoutButton) {
-            logoutButton.style.pointerEvents = "none";
-            logoutButton.style.opacity = "0.6";
-        }
-
-        await signOut(auth);
-
-        sessionStorage.removeItem(
-            "dashboardVisitorCounted"
-        );
-
-        window.location.replace("login.html");
-
-    } catch (error) {
-        console.error("Logout Error:", error);
-
-        alert(
-            "Logout failed. Please check your internet connection."
-        );
-
-        if (logoutButton) {
-            logoutButton.style.pointerEvents = "";
-            logoutButton.style.opacity = "";
-        }
-    }
 }
 
 onAuthStateChanged(auth, async (user) => {
+
     if (!user) {
+
         window.location.replace("login.html");
+
         return;
+
     }
 
     await startDashboard();
+
 });
 
-if (logoutButton) {
-    logoutButton.addEventListener(
-        "click",
-        logoutAdmin
-    );
-}
+logoutBtn?.addEventListener("click", async () => {
 
-window.refreshDashboard = async function () {
-    await loadDashboard();
-    loadVisitors();
-};
+    const ok =
+        confirm("Logout karna chahte ho?");
 
-window.reloadDashboard = async function () {
-    await loadDashboard();
-    loadVisitors();
-};
+    if (!ok) return;
 
-window.resetDashboard = function () {
-    setText(totalUpdatesElement, "0");
-    setText(totalServicesElement, "0");
-    setText(totalVisitorsElement, "0");
-};
+    try {
 
-window.logout = logoutAdmin;
+        await signOut(auth);
+
+        window.location.replace("login.html");
+
+    } catch (e) {
+
+        alert("Logout Failed");
+
+        console.error(e);
+
+    }
+
+});
+
+window.refreshDashboard = startDashboard;
+window.reloadDashboard = startDashboard;
 
 export {
-    loadDashboard,
-    loadVisitors,
-    logoutAdmin
+    loadDashboard
 };
