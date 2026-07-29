@@ -1,123 +1,179 @@
-const loginBtn = document.getElementById("loginBtn");
-const username = document.getElementById("username");
-const password = document.getElementById("password");
-const loginMessage = document.getElementById("loginMessage");
+import {
+    db,
+    auth
+} from "./firebase-config.js";
 
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "123456";
+import {
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-// अगर पहले से Login है तो सीधे Dashboard
-window.addEventListener("DOMContentLoaded", () => {
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
-    const isLoggedIn =
-        sessionStorage.getItem("adminLoggedIn");
+const totalUpdatesElement =
+    document.getElementById("totalUpdates");
 
-    if (isLoggedIn === "true") {
+const totalServicesElement =
+    document.getElementById("totalServices");
 
-        window.location.href = "dashboard.html";
+const totalVisitorsElement =
+    document.getElementById("totalVisitors");
 
+const logoutButton =
+    document.getElementById("logoutBtn");
+
+let dashboardStarted = false;
+
+function setText(element, value) {
+    if (element) {
+        element.innerText = value;
     }
+}
 
-});
+async function loadDashboard() {
+    try {
+        const [updatesSnapshot, servicesSnapshot] =
+            await Promise.all([
+                getDocs(collection(db, "updates")),
+                getDocs(collection(db, "services"))
+            ]);
 
-// Login Button
-loginBtn.addEventListener("click", () => {
-
-    const user = username.value.trim();
-    const pass = password.value.trim();
-
-    if (user === "" || pass === "") {
-
-        loginMessage.style.color = "red";
-        loginMessage.innerText =
-            "Please enter Username and Password.";
-
-        return;
-
-    }
-
-    if (
-        user === ADMIN_USERNAME &&
-        pass === ADMIN_PASSWORD
-    ) {
-
-        sessionStorage.setItem(
-            "adminLoggedIn",
-            "true"
+        setText(
+            totalUpdatesElement,
+            updatesSnapshot.size
         );
 
-        loginMessage.style.color = "green";
-        loginMessage.innerText =
-            "Login Successful...";
+        setText(
+            totalServicesElement,
+            servicesSnapshot.size
+        );
 
-        setTimeout(() => {
+    } catch (error) {
+        console.error(
+            "Dashboard data loading error:",
+            error
+        );
 
-            window.location.href =
-                "dashboard.html";
+        setText(totalUpdatesElement, "Error");
+        setText(totalServicesElement, "Error");
+    }
+}
 
-        }, 1000);
+function loadVisitors() {
+    const visitors =
+        Number(localStorage.getItem("visitors")) || 0;
 
-    } else {
+    setText(totalVisitorsElement, visitors);
+}
 
-        loginMessage.style.color = "red";
-        loginMessage.innerText =
-            "Invalid Username or Password.";
+function increaseVisitor() {
+    const visitorAlreadyCounted =
+        sessionStorage.getItem(
+            "dashboardVisitorCounted"
+        );
 
+    if (visitorAlreadyCounted === "true") {
+        return;
     }
 
+    let visitors =
+        Number(localStorage.getItem("visitors")) || 0;
+
+    visitors++;
+
+    localStorage.setItem(
+        "visitors",
+        visitors.toString()
+    );
+
+    sessionStorage.setItem(
+        "dashboardVisitorCounted",
+        "true"
+    );
+}
+
+async function startDashboard() {
+    if (dashboardStarted) {
+        return;
+    }
+
+    dashboardStarted = true;
+
+    increaseVisitor();
+
+    await loadDashboard();
+
+    loadVisitors();
+}
+
+async function logoutAdmin() {
+    try {
+        if (logoutButton) {
+            logoutButton.style.pointerEvents = "none";
+            logoutButton.style.opacity = "0.6";
+        }
+
+        await signOut(auth);
+
+        sessionStorage.removeItem(
+            "dashboardVisitorCounted"
+        );
+
+        window.location.replace("login.html");
+
+    } catch (error) {
+        console.error("Logout Error:", error);
+
+        alert(
+            "Logout failed. Please check your internet connection."
+        );
+
+        if (logoutButton) {
+            logoutButton.style.pointerEvents = "";
+            logoutButton.style.opacity = "";
+        }
+    }
+}
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.replace("login.html");
+        return;
+    }
+
+    await startDashboard();
 });
 
-// Enter Key Login
-document.addEventListener("keydown", (e) => {
-
-    if (e.key === "Enter") {
-
-        loginBtn.click();
-
-    }
-
-});
-
-// Dashboard Protection
-function checkLogin() {
-
-    const isLoggedIn =
-        sessionStorage.getItem("adminLoggedIn");
-
-    if (
-        !window.location.pathname.includes("login.html") &&
-        isLoggedIn !== "true"
-    ) {
-
-        window.location.href = "login.html";
-
-    }
-
+if (logoutButton) {
+    logoutButton.addEventListener(
+        "click",
+        logoutAdmin
+    );
 }
 
-// Logout
-function logout() {
+window.refreshDashboard = async function () {
+    await loadDashboard();
+    loadVisitors();
+};
 
-    sessionStorage.removeItem("adminLoggedIn");
+window.reloadDashboard = async function () {
+    await loadDashboard();
+    loadVisitors();
+};
 
-    window.location.href = "login.html";
+window.resetDashboard = function () {
+    setText(totalUpdatesElement, "0");
+    setText(totalServicesElement, "0");
+    setText(totalVisitorsElement, "0");
+};
 
-}
-
-// Clear Form
-function clearLoginForm() {
-
-    username.value = "";
-    password.value = "";
-    loginMessage.innerText = "";
-
-}
-
-window.checkLogin = checkLogin;
-window.logout = logout;
-window.clearLoginForm = clearLoginForm;
+window.logout = logoutAdmin;
 
 export {
-    checkLogin,
-    logout
+    loadDashboard,
+    loadVisitors,
+    logoutAdmin
 };
