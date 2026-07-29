@@ -408,34 +408,41 @@ function startRealtimeNotifications() {
     }
 
     unsubscribeNotifications =
-        onSnapshot(
+    onSnapshot(
 
-            notificationsCollection,
+        notificationsCollection,
 
-            function (snapshot) {
+        function (snapshot) {
 
-                allNotifications = [];
+            console.log("Documents:", snapshot.size);
 
-                snapshot.forEach(function (item) {
+            allNotifications = [];
 
-                    allNotifications.push({
+            snapshot.forEach(function (item) {
 
-                        id: item.id,
-
-                        ...item.data()
-
-                    });
-
+                allNotifications.push({
+                    id: item.id,
+                    ...item.data()
                 });
 
-                allNotifications =
-                    sortNotifications(allNotifications);
+            });
 
-                renderNotifications();
+            console.log(allNotifications);
 
-            }
+            allNotifications =
+                sortNotifications(allNotifications);
 
-        );
+            renderNotifications();
+
+        },
+
+        function (error) {
+
+            console.error("Notification Error:", error);
+
+        }
+
+    );
 
 }
 function updateLivePreview() {
