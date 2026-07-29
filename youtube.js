@@ -174,6 +174,8 @@ function deleteVideo(id) {
 
 }
 
+window.deleteVideo = deleteVideo;
+
 function searchVideos(text) {
 
     if (text.trim() === "") {
