@@ -1,86 +1,179 @@
-import { db } from "./firebase-config.js";
+import {
+    db,
+    auth
+} from "./firebase-config.js";
 
 import {
-
-collection,
-getDocs
-
+    collection,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-async function loadDashboard(){
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
-const updates=await getDocs(collection(db,"updates"));
+const totalUpdatesElement =
+    document.getElementById("totalUpdates");
 
-const services=await getDocs(collection(db,"services"));
+const totalServicesElement =
+    document.getElementById("totalServices");
 
-document.getElementById("totalUpdates").innerText=updates.size;
+const totalVisitorsElement =
+    document.getElementById("totalVisitors");
 
-document.getElementById("totalServices").innerText=services.size;
+const logoutButton =
+    document.getElementById("logoutBtn");
 
-}
-async function loadVisitors(){
+let dashboardStarted = false;
 
-const visitors=localStorage.getItem("visitors") || 0;
-
-document.getElementById("totalVisitors").innerText=visitors;
-
-}
-
-function increaseVisitor(){
-
-let visitors=Number(localStorage.getItem("visitors") || 0);
-
-visitors++;
-
-localStorage.setItem("visitors",visitors);
-
+function setText(element, value) {
+    if (element) {
+        element.innerText = value;
+    }
 }
 
-increaseVisitor();
-window.refreshDashboard = async function(){
+async function loadDashboard() {
+    try {
+        const [updatesSnapshot, servicesSnapshot] =
+            await Promise.all([
+                getDocs(collection(db, "updates")),
+                getDocs(collection(db, "services"))
+            ]);
 
-await loadDashboard();
+        setText(
+            totalUpdatesElement,
+            updatesSnapshot.size
+        );
 
-await loadVisitors();
+        setText(
+            totalServicesElement,
+            servicesSnapshot.size
+        );
 
-};
+    } catch (error) {
+        console.error(
+            "Dashboard data loading error:",
+            error
+        );
 
-window.addEventListener("DOMContentLoaded", async () => {
+        setText(totalUpdatesElement, "Error");
+        setText(totalServicesElement, "Error");
+    }
+}
 
-await loadDashboard();
+function loadVisitors() {
+    const visitors =
+        Number(localStorage.getItem("visitors")) || 0;
 
-await loadVisitors();
+    setText(totalVisitorsElement, visitors);
+}
 
+function increaseVisitor() {
+    const visitorAlreadyCounted =
+        sessionStorage.getItem(
+            "dashboardVisitorCounted"
+        );
+
+    if (visitorAlreadyCounted === "true") {
+        return;
+    }
+
+    let visitors =
+        Number(localStorage.getItem("visitors")) || 0;
+
+    visitors++;
+
+    localStorage.setItem(
+        "visitors",
+        visitors.toString()
+    );
+
+    sessionStorage.setItem(
+        "dashboardVisitorCounted",
+        "true"
+    );
+}
+
+async function startDashboard() {
+    if (dashboardStarted) {
+        return;
+    }
+
+    dashboardStarted = true;
+
+    increaseVisitor();
+
+    await loadDashboard();
+
+    loadVisitors();
+}
+
+async function logoutAdmin() {
+    try {
+        if (logoutButton) {
+            logoutButton.style.pointerEvents = "none";
+            logoutButton.style.opacity = "0.6";
+        }
+
+        await signOut(auth);
+
+        sessionStorage.removeItem(
+            "dashboardVisitorCounted"
+        );
+
+        window.location.replace("login.html");
+
+    } catch (error) {
+        console.error("Logout Error:", error);
+
+        alert(
+            "Logout failed. Please check your internet connection."
+        );
+
+        if (logoutButton) {
+            logoutButton.style.pointerEvents = "";
+            logoutButton.style.opacity = "";
+        }
+    }
+}
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.replace("login.html");
+        return;
+    }
+
+    await startDashboard();
 });
-window.resetDashboard = function(){
 
-document.getElementById("totalUpdates").innerText="0";
+if (logoutButton) {
+    logoutButton.addEventListener(
+        "click",
+        logoutAdmin
+    );
+}
 
-document.getElementById("totalServices").innerText="0";
-
-document.getElementById("totalVisitors").innerText="0";
-
+window.refreshDashboard = async function () {
+    await loadDashboard();
+    loadVisitors();
 };
 
-window.reloadDashboard = async function(){
-
-await loadDashboard();
-
-await loadVisitors();
-
+window.reloadDashboard = async function () {
+    await loadDashboard();
+    loadVisitors();
 };
-window.addEventListener("load", async () => {
 
-await loadDashboard();
+window.resetDashboard = function () {
+    setText(totalUpdatesElement, "0");
+    setText(totalServicesElement, "0");
+    setText(totalVisitorsElement, "0");
+};
 
-await loadVisitors();
-
-});
+window.logout = logoutAdmin;
 
 export {
-
-loadDashboard,
-
-loadVisitors
-
+    loadDashboard,
+    loadVisitors,
+    logoutAdmin
 };
