@@ -400,6 +400,11 @@ box-shadow:0 10px 25px rgba(0,0,0,.10);
 
 transition:.35s;
 
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+min-height:180px;
+
 }
 
 .card:nth-child(1){
