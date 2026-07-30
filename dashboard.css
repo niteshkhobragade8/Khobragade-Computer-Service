@@ -911,3 +911,37 @@ text-align:center;
 .image-actions button:hover{
     background:#0d47a1;
 }
+
+/* ===== FINAL DASHBOARD 4 CARDS FIX ===== */
+
+#dashboardPage > .cards{
+display:grid !important;
+grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+gap:15px !important;
+width:100% !important;
+}
+
+#dashboardPage > .cards > .card{
+min-width:0 !important;
+min-height:130px !important;
+padding:16px !important;
+justify-content:center !important;
+}
+
+#dashboardPage > .cards > .card h3{
+font-size:16px !important;
+margin:0 0 10px !important;
+}
+
+#dashboardPage > .cards > .card h2{
+font-size:30px !important;
+margin:0 !important;
+}
+
+@media(max-width:768px){
+
+#dashboardPage > .cards{
+grid-template-columns:1fr !important;
+}
+
+}
