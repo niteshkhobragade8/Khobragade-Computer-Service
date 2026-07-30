@@ -912,7 +912,7 @@ text-align:center;
     background:#0d47a1;
 }
 
-/* ===== FINAL DASHBOARD 4 CARDS FIX ===== */
+/* ===== FINAL DASHBOARD LAYOUT FIX ===== */
 
 #dashboardPage{
 width:100% !important;
@@ -921,36 +921,58 @@ width:100% !important;
 #dashboardPage > .cards{
 display:grid !important;
 grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-gap:18px !important;
+gap:14px !important;
 width:100% !important;
-margin:10px 0 25px !important;
+margin:10px 0 22px !important;
 }
 
 #dashboardPage > .cards > .card{
 min-width:0 !important;
-min-height:155px !important;
-padding:20px !important;
+min-height:105px !important;
+padding:16px 18px !important;
 justify-content:center !important;
+border-radius:14px !important;
 }
 
 #dashboardPage > .cards > .card h3{
-font-size:18px !important;
-margin:0 0 12px !important;
+font-size:15px !important;
+margin:0 0 8px !important;
+line-height:1.25 !important;
 }
 
 #dashboardPage > .cards > .card h2{
-font-size:34px !important;
+font-size:28px !important;
 margin:0 !important;
+line-height:1 !important;
+}
+
+.dashboard-grid{
+grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+gap:14px !important;
+margin-top:0 !important;
+}
+
+.dashboard-box{
+min-height:140px !important;
+padding:18px !important;
+border-radius:14px !important;
 }
 
 .main-content{
-padding-left:15px !important;
-padding-right:20px !important;
+padding:20px 22px !important;
+}
+
+.topbar{
+margin-bottom:10px !important;
 }
 
 @media(max-width:768px){
 
 #dashboardPage > .cards{
+grid-template-columns:1fr !important;
+}
+
+.dashboard-grid{
 grid-template-columns:1fr !important;
 }
 
