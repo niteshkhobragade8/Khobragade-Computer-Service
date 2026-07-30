@@ -52,6 +52,8 @@ loginForm.addEventListener("submit", async (e) => {
             userPassword
         );
 
+        localStorage.setItem("activePage", "dashboard");
+
         showMessage(
             "Login Successful...",
             "green"
