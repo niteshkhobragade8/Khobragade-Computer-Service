@@ -914,34 +914,48 @@ text-align:center;
 
 /* ===== FINAL DASHBOARD 4 CARDS FIX ===== */
 
+#dashboardPage{
+width:100% !important;
+}
+
 #dashboardPage > .cards{
 display:grid !important;
 grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-gap:15px !important;
+gap:18px !important;
 width:100% !important;
+margin:10px 0 25px !important;
 }
 
 #dashboardPage > .cards > .card{
 min-width:0 !important;
-min-height:130px !important;
-padding:16px !important;
+min-height:155px !important;
+padding:20px !important;
 justify-content:center !important;
 }
 
 #dashboardPage > .cards > .card h3{
-font-size:16px !important;
-margin:0 0 10px !important;
+font-size:18px !important;
+margin:0 0 12px !important;
 }
 
 #dashboardPage > .cards > .card h2{
-font-size:30px !important;
+font-size:34px !important;
 margin:0 !important;
+}
+
+.main-content{
+padding-left:15px !important;
+padding-right:20px !important;
 }
 
 @media(max-width:768px){
 
 #dashboardPage > .cards{
 grid-template-columns:1fr !important;
+}
+
+.main-content{
+padding:15px !important;
 }
 
 }
