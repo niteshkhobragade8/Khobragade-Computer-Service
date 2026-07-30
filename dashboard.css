@@ -21,6 +21,9 @@ top:0;
 left:0;
 height:100vh;
 overflow:auto;
+
+display:flex;
+flex-direction:column;
 }
 
 .sidebar h2{
@@ -1074,4 +1077,24 @@ grid-template-columns:1fr;
 grid-template-columns:1fr;
 }
 
+}
+
+.logo{
+text-align:center;
+padding:20px 10px 25px;
+}
+
+.logo h2{
+margin:0;
+font-size:28px;
+font-weight:700;
+color:#FFD600;
+line-height:1.2;
+}
+
+.logo p{
+margin-top:8px;
+font-size:15px;
+font-weight:600;
+color:#fff;
 }
