@@ -1,4 +1,5 @@
 import { db } from "./firebase-config.js";
+import { DEFAULT_SERVICES, DEFAULT_SCHEMES, DEFAULT_DIVYANG } from "./catalog-data.js";
 import {
   collection,
   addDoc,
@@ -125,6 +126,26 @@ async function saveService() {
   }
 }
 
+
+async function loadDefaultCatalog() {
+  const button = $("loadDefaultCatalog");
+  if (!confirm("Complete CSC + Yojana + Divyang catalog Firebase me add karna hai? Existing duplicate names skip honge.")) return;
+  const catalog = [...DEFAULT_SERVICES, ...DEFAULT_SCHEMES, ...DEFAULT_DIVYANG];
+  const existing = new Set(allServices.map((x) => String(x.name || "").replace(/\s+/g," ").trim().toLocaleLowerCase()));
+  let added = 0, skipped = 0;
+  if (button) { button.disabled = true; button.textContent = "Loading Catalog..."; }
+  try {
+    for (const item of catalog) {
+      const key = String(item.name || "").replace(/\s+/g," ").trim().toLocaleLowerCase();
+      if (!key || existing.has(key)) { skipped++; continue; }
+      await addDoc(collection(db,"services"), {...item,status:"Published",featured:false,createdAt:serverTimestamp()});
+      existing.add(key); added++;
+    }
+    alert(`Catalog Ready: ${added} added, ${skipped} duplicates skipped.`);
+  } catch(error) { console.error(error); alert(`Catalog Error: ${error.message}`); }
+  finally { if (button) { button.disabled=false; button.textContent="⚡ Load Complete CSC + Yojana + Divyang Catalog"; } }
+}
+
 function editService(id) {
   const item = allServices.find((service) => service.id === id);
   if (!item) return;
@@ -150,6 +171,7 @@ async function deleteService(id) {
 }
 
 saveButton?.addEventListener("click", saveService);
+$("loadDefaultCatalog")?.addEventListener("click", loadDefaultCatalog);
 list?.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
