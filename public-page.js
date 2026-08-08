@@ -36,7 +36,53 @@ function relevant(kind){if(kind==='yojana')return services.filter(x=>/yojana|sch
 function base(kind){if(settings.catalogMode==='firebase')return[];return kind==='yojana'?DEFAULT_SCHEMES:kind==='divyang'?DEFAULT_DIVYANG:DEFAULT_SERVICES}
 function applyFullCms(){const g=cmsGlobal||{},h=cmsHome||{},t=(id,v)=>{const e=$(id);if(e&&v!==undefined&&v!==null&&v!=='')e.textContent=v};t('cmsTopLeftPublic',g.topLeft);t('navHome',g.navHome);t('navServices',g.navServices);t('navYojana',g.navYojana);t('navDivyang',g.navDivyang);t('navDocuments',g.navDocuments);t('navContact',g.navContact);t('navYoutube',g.navYoutube);t('navWhatsapp',g.navWhatsapp);if($('globalSearch')&&g.searchPlaceholder)$('globalSearch').placeholder=g.searchPlaceholder;t('globalSearchButton',g.searchButton);if($('globalSearchSection'))$('globalSearchSection').style.display=g.searchVisible===false?'none':'';t('footerQuickTitle',g.footerQuickTitle);t('footerSupportTitle',g.footerSupportTitle);if($('footerText')&&g.copyright)$('footerText').textContent=g.copyright;if(g.menuBg)document.documentElement.style.setProperty('--menu-bg',g.menuBg);if(g.menuText)document.documentElement.style.setProperty('--menu-text',g.menuText);if(g.menuActive)document.documentElement.style.setProperty('--menu-active',g.menuActive);if($('siteFooter')&&g.footerBg)$('siteFooter').style.background=g.footerBg;if(document.body.dataset.page==='home'){t('homeHeroEyebrow',h.heroEyebrow);if($('heroTitle')&&h.heroTitle)$('heroTitle').textContent=h.heroTitle;if($('heroSubtitle')&&h.heroText)$('heroSubtitle').textContent=h.heroText;t('homeHeroBtn1',h.heroBtn1);t('homeHeroBtn2',h.heroBtn2);if($('homeHeroSection')){$('homeHeroSection').style.display=h.heroVisible===false?'none':'';if(h.heroColor1&&h.heroColor2)$('homeHeroSection').style.background=`linear-gradient(135deg,${h.heroColor1},${h.heroColor2})`}t('homeYoutubeTitle',h.youtubeTitle);t('homeYoutubeText',h.youtubeText);if($('youtubeHomeSection'))$('youtubeHomeSection').style.display=h.youtubeVisible===false?'none':'';t('homeQuickTitle',h.quickTitle);t('homeQuickText',h.quickText);t('homeQuickButton',h.quickButton);if($('homeQuickSection'))$('homeQuickSection').style.display=h.quickVisible===false?'none':'';t('homeAboutKicker',h.aboutKicker);if($('homeAboutTitle')&&h.aboutTitle)$('homeAboutTitle').textContent=h.aboutTitle;if($('homeAboutText')&&h.aboutText)$('homeAboutText').textContent=h.aboutText;if($('homeAboutSection'))$('homeAboutSection').style.display=h.aboutVisible===false?'none':''}renderCustomSections()}
 function safeLink(v){const s=String(v||'').trim();return(/^https?:\/\//i.test(s)||/^[a-z0-9_-]+\.html/i.test(s)||s.startsWith('#'))?s:'#'}
-function renderCustomSections(){const host=$('customSectionsHost');if(!host)return,page=document.body.dataset.page||'home',rows=siteSections.filter(x=>x.page===page&&x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0));host.innerHTML=rows.map(x=>`<section class="section cms-custom-section" style="background:${esc(x.bgColor||'#fff')};color:${esc(x.textColor||'#132238')}"><div class="section-inner"><div class="cms-custom-grid">${x.imageUrl?`<img src="${esc(x.imageUrl)}" alt="${esc(x.title||'Section image')}" loading="lazy">`:''}<div><span class="kicker" style="color:${esc(x.accentColor||'#ec4899')}">CUSTOM</span><h2>${esc(x.title||'')}</h2><p>${esc(x.description||'')}</p>${x.buttonText&&x.buttonLink?`<a class="btn btn-blue" href="${esc(safeLink(x.buttonLink))}" ${/^https?:/i.test(x.buttonLink)?'target="_blank" rel="noopener"':''}>${esc(x.buttonText)}</a>`:''}</div></div></div></section>`).join('')}
+function renderCustomSections(){
+  const host = $('customSectionsHost');
+  if (!host) return;
+
+  const page = document.body.dataset.page || 'home';
+
+  const rows = siteSections
+    .filter(x => x.page === page && x.visible !== false)
+    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
+  host.innerHTML = rows.map(x => `
+    <section class="section cms-custom-section"
+      style="background:${esc(x.bgColor || '#ffffff')};color:${esc(x.textColor || '#132238')}">
+
+      <div class="section-inner">
+        <div class="cms-custom-grid">
+
+          ${x.imageUrl
+            ? `<img src="${esc(x.imageUrl)}"
+                    alt="${esc(x.title || 'Section image')}"
+                    loading="lazy">`
+            : ''
+          }
+
+          <div>
+            <span class="kicker"
+              style="color:${esc(x.accentColor || '#ec4899')}">
+              CUSTOM
+            </span>
+
+            <h2>${esc(x.title || '')}</h2>
+            <p>${esc(x.description || '')}</p>
+
+            ${x.buttonText && x.buttonLink
+              ? `<a class="btn btn-blue"
+                    href="${esc(safeLink(x.buttonLink))}">
+                    ${esc(x.buttonText)}
+                 </a>`
+              : ''
+            }
+          </div>
+
+        </div>
+      </div>
+    </section>
+  `).join('');
+}
 function applySettings(){let name=settings.siteName||'Khobragade Computer Service Centre';document.querySelectorAll('[data-site-name]').forEach(e=>e.textContent=name);document.querySelectorAll('[data-tagline]').forEach(e=>e.textContent=settings.tagline||'Digital Seva & Government Service Assistance');document.querySelectorAll('[data-address]').forEach(e=>e.textContent=settings.address||'Nagpur, Maharashtra, India');document.querySelectorAll('[data-phone]').forEach(e=>e.textContent=settings.contactNumber||'9637832490');document.querySelectorAll('[data-wa]').forEach(e=>e.href=wa(e.dataset.message||'Digital service'));document.querySelectorAll('[data-call]').forEach(e=>{let n=digits(settings.contactNumber||'9637832490');e.href='tel:'+(n.length===10?'+91':'')+n});document.querySelectorAll('[data-youtube]').forEach(e=>e.href=settings.youtubeChannel||'https://youtube.com/@niteshkhobragade8');if($('heroTitle'))$('heroTitle').textContent=settings.heroTitle||name;if($('heroSubtitle'))$('heroSubtitle').textContent=settings.heroSubtitle||'Online citizen services, government schemes and document assistance at one place.';if($('homeAboutTitle'))$('homeAboutTitle').textContent=settings.homeAboutTitle||name;if($('homeAboutText'))$('homeAboutText').textContent=settings.homeAboutText||'Digital applications, government schemes, citizen services and document guidance ke liye professional assistance.';if($('footerText'))$('footerText').textContent=settings.footerText||'© 2026 All Rights Reserved'}
 function applyPage(){let key=document.body.dataset.page||document.body.dataset.catalog||'home',p=pages[key];if(!p||p.status==='Draft')return;if($('pageHeroTitle')&&p.title)$('pageHeroTitle').textContent=p.title;if($('pageHeroSubtitle')&&p.subtitle)$('pageHeroSubtitle').textContent=p.subtitle;if($('pageDescription')&&p.description)$('pageDescription').textContent=p.description}
 function card(x){let name=localized(x,'name')||x.name,desc=localized(x,'description')||x.description,id='item-'+norm(x.name).replace(/[^a-z0-9]+/g,'-'),t=UI[currentLang]||UI.en;return `<article class="pro-card" id="${id}"><div class="card-icon">${esc(x.icon||'📄')}</div><span class="tag">${esc(x.category||'Digital Service')}</span><h3>${esc(name)}</h3><p>${esc(desc||'Online application aur document guidance assistance available.')}</p><div class="card-actions"><a class="btn btn-wa" target="_blank" rel="noopener" href="${wa(name)}">${t.apply}</a></div></article>`}
