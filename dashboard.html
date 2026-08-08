@@ -32,6 +32,7 @@
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
       <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
       <li data-page="pages"><i class="fa-solid fa-pen-to-square"></i><span>Website Pages</span></li>
+      <li data-page="sitebuilder"><i class="fa-solid fa-layer-group"></i><span>Full Website CMS</span></li>
       <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
@@ -207,7 +208,7 @@
         <button id="uploadDocument" class="primary-btn" type="button">Upload / Add Document</button>
       </div>
       <div class="toolbar"><input type="search" id="documentSearch" placeholder="🔍 Search documents..."><select id="documentCategoryFilter"><option value="all">All Categories</option><option>Government</option><option>PAN Card</option><option>Aadhaar OTP Based</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select></div>
-      <div id="documentsList">No Documents Available</div>
+      <div id="documentsList">No Documents Available</div><div class="dashboard-info-box" style="margin-top:24px"><div class="box-heading"><div><span class="box-kicker">EDITABLE</span><h2>Document Checklists</h2></div></div><p>Public Documents page ki list Add / Edit / Update / Delete karein.</p><div class="manager-layout"><div class="manager-form checklist-form"><label>Checklist Title</label><input id="checklistTitle" type="text"><label>Category</label><input id="checklistCategory" type="text"><label>Documents (one per line)</label><textarea id="checklistItems"></textarea><label>Status</label><select id="checklistStatus"><option>Published</option><option>Draft</option></select><button id="saveChecklist" class="primary-btn" type="button">Save Checklist</button></div><div class="manager-content"><div id="checklistsList" class="content-grid"><div class="empty-state">No editable checklists.</div></div></div></div></div>
     </section>
 
     <section id="youtubePage" class="page">
@@ -263,6 +264,87 @@
       </div>
     </section>
 
+
+    <section id="sitebuilderPage" class="page">
+      <div class="page-intro"><div><h2>🧩 Full Website CMS</h2><p>Header, menu bar, Home sections, footer, colors, visibility aur custom sections manage karein.</p></div></div>
+      <div class="dashboard-information cms-summary">
+        <article class="dashboard-info-box"><h3>🌐 Global Website</h3><p>Menu labels, top bar, search, header/footer colors.</p></article>
+        <article class="dashboard-info-box"><h3>🏠 Home Page</h3><p>Hero, YouTube, Quick Services, About.</p></article>
+        <article class="dashboard-info-box"><h3>➕ Custom Sections</h3><p>Kisi bhi page par new image/text/button section add karein.</p></article>
+      </div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <div class="form-title"><span>🎛️</span><div><h3>Global Header / Menu / Footer</h3><p>Save karte hi poori website par apply hoga.</p></div></div>
+          <label>Top Bar Left Text</label><input id="cmsTopLeft" type="text">
+          <div class="form-grid two"><div><label>Menu Background</label><input id="cmsMenuBg" type="color" value="#172554"></div><div><label>Menu Text Color</label><input id="cmsMenuText" type="color" value="#ffffff"></div></div>
+          <div class="form-grid two"><div><label>Active Menu Color</label><input id="cmsMenuActive" type="color" value="#ec4899"></div><div><label>Footer Background</label><input id="cmsFooterBg" type="color" value="#07182d"></div></div>
+          <h4 class="cms-subtitle">Menu Names</h4>
+          <div class="form-grid two">
+            <div><label>Home</label><input id="cmsNavHome" type="text"></div><div><label>Services</label><input id="cmsNavServices" type="text"></div>
+            <div><label>Yojana</label><input id="cmsNavYojana" type="text"></div><div><label>Divyang</label><input id="cmsNavDivyang" type="text"></div>
+            <div><label>Documents</label><input id="cmsNavDocuments" type="text"></div><div><label>Contact</label><input id="cmsNavContact" type="text"></div>
+            <div><label>YouTube</label><input id="cmsNavYoutube" type="text"></div><div><label>WhatsApp</label><input id="cmsNavWhatsapp" type="text"></div>
+          </div>
+          <h4 class="cms-subtitle">Search Bar</h4>
+          <label>Search Placeholder</label><input id="cmsSearchPlaceholder" type="text">
+          <div class="form-grid two"><div><label>Button Text</label><input id="cmsSearchButton" type="text"></div><div><label>Search Bar</label><select id="cmsSearchVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+          <h4 class="cms-subtitle">Footer</h4>
+          <div class="form-grid two"><div><label>Quick Links Heading</label><input id="cmsFooterQuickTitle" type="text"></div><div><label>Support Heading</label><input id="cmsFooterSupportTitle" type="text"></div></div>
+          <label>Copyright</label><input id="cmsCopyright" type="text">
+          <button id="saveGlobalCms" class="primary-btn" type="button">Save Global Website</button>
+          <div id="globalCmsMessage" class="settings-message info">Global CMS ready.</div>
+        </div>
+        <div class="manager-form">
+          <div class="form-title"><span>🏠</span><div><h3>Home Page Sections</h3><p>Edit / Show-Hide / colors.</p></div></div>
+          <h4 class="cms-subtitle">Hero</h4>
+          <label>Eyebrow</label><input id="cmsHeroEyebrow" type="text">
+          <label>Hero Title</label><input id="cmsHeroTitle" type="text">
+          <label>Hero Description</label><textarea id="cmsHeroText"></textarea>
+          <div class="form-grid two"><div><label>Primary Button</label><input id="cmsHeroBtn1" type="text"></div><div><label>WhatsApp Button</label><input id="cmsHeroBtn2" type="text"></div></div>
+          <div class="form-grid two"><div><label>Hero Start Color</label><input id="cmsHeroColor1" type="color" value="#ec4899"></div><div><label>Hero End Color</label><input id="cmsHeroColor2" type="color" value="#2563eb"></div></div>
+          <label>Hero</label><select id="cmsHeroVisible"><option value="true">Show</option><option value="false">Hide</option></select>
+          <h4 class="cms-subtitle">YouTube</h4>
+          <label>Heading</label><input id="cmsYoutubeTitle" type="text">
+          <label>Description</label><textarea id="cmsYoutubeText"></textarea>
+          <label>Section</label><select id="cmsYoutubeVisible"><option value="true">Show</option><option value="false">Hide</option></select>
+          <h4 class="cms-subtitle">Quick Services</h4>
+          <label>Heading</label><input id="cmsQuickTitle" type="text">
+          <label>Description</label><textarea id="cmsQuickText"></textarea>
+          <div class="form-grid two"><div><label>Button</label><input id="cmsQuickButton" type="text"></div><div><label>Section</label><select id="cmsQuickVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+          <h4 class="cms-subtitle">About</h4>
+          <label>Small Heading</label><input id="cmsAboutKicker" type="text">
+          <label>Title</label><input id="cmsAboutTitle" type="text">
+          <label>Description</label><textarea id="cmsAboutText"></textarea>
+          <label>Section</label><select id="cmsAboutVisible"><option value="true">Show</option><option value="false">Hide</option></select>
+          <button id="saveHomeCms" class="primary-btn" type="button">Save Home Sections</button>
+          <div id="homeCmsMessage" class="settings-message info">Home CMS ready.</div>
+        </div>
+      </div>
+      <div class="manager-layout" style="margin-top:22px">
+        <div class="manager-form custom-section-form">
+          <div class="form-title"><span>➕</span><div><h3>Add / Edit Custom Section</h3><p>Kisi bhi page par new professional section.</p></div></div>
+          <div class="form-grid two"><div><label>Page</label><select id="sectionPage"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select></div><div><label>Order</label><input id="sectionOrder" type="number" min="0" value="50"></div></div>
+          <label>Title</label><input id="sectionTitle" type="text">
+          <label>Description</label><textarea id="sectionDescription"></textarea>
+          <div class="form-grid two"><div><label>Image URL</label><input id="sectionImage" type="url"></div><div><label>Button Text</label><input id="sectionButtonText" type="text"></div></div>
+          <label>Button Link</label><input id="sectionButtonLink" type="text">
+          <div class="form-grid three"><div><label>Background</label><input id="sectionBg" type="color" value="#ffffff"></div><div><label>Text</label><input id="sectionText" type="color" value="#132238"></div><div><label>Accent</label><input id="sectionAccent" type="color" value="#ec4899"></div></div>
+          <label>Visibility</label><select id="sectionVisible"><option value="true">Visible</option><option value="false">Hidden</option></select>
+          <div class="settings-actions"><button id="saveCustomSection" class="primary-btn" type="button">Save Section</button><button id="clearCustomSection" class="secondary-btn" type="button">Clear Form</button></div>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar"><input id="sectionSearch" type="search" placeholder="🔍 Search custom sections..."><select id="sectionPageFilter"><option value="all">All Pages</option><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select></div>
+          <div id="customSectionsList" class="content-grid"><div class="empty-state">No custom sections.</div></div>
+        </div>
+      </div>
+      <div class="dashboard-info-box" style="margin-top:22px">
+        <div class="box-heading"><div><span class="box-kicker">ONE-TIME</span><h2>Make Existing Content Fully Editable</h2></div></div>
+        <p>Existing default catalog ko Firebase/Admin me import karke code fallback band karein.</p>
+        <div class="settings-actions"><button id="importEditableCatalog" class="secondary-btn" type="button">⚡ Import Services + Yojana + Divyang</button><button id="importEditableChecklists" class="secondary-btn" type="button">📋 Import Document Checklists</button></div>
+        <div id="migrationMessage" class="settings-message info">Import ek baar karna hai.</div>
+      </div>
+    </section>
+
     <section id="settingsPage" class="page">
       <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
       <div class="settings-shell">
@@ -303,5 +385,7 @@
 <script type="module" src="youtube.js"></script>
 <script type="module" src="settings.js"></script>
 <script type="module" src="page-manager.js"></script>
+<script type="module" src="site-builder.js"></script>
+<script type="module" src="checklists.js"></script>
 </body>
 </html>

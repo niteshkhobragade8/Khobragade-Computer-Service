@@ -2,29 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-
-    match /services/{id}       { allow read: if true; allow write: if signedIn(); }
-    match /categories/{id}     { allow read: if true; allow write: if signedIn(); }
-    match /updates/{id}        { allow read: if true; allow write: if signedIn(); }
-    match /notifications/{id}  { allow read: if true; allow write: if signedIn(); }
-    match /images/{id}         { allow read: if true; allow write: if signedIn(); }
-    match /documents/{id}      { allow read: if true; allow write: if signedIn(); }
-    match /youtube/{id}        { allow read: if true; allow write: if signedIn(); }
-    match /settings/{id}       { allow read: if true; allow write: if signedIn(); }
-    match /pageContent/{id}    { allow read: if true; allow write: if signedIn(); }
-    match /siteSections/{id}   { allow read: if true; allow write: if signedIn(); }
-
-    match /analytics/{id} {
-      allow read: if signedIn();
-      allow create, update: if true;
-      allow delete: if signedIn();
-    }
-    match /visitorDaily/{id} {
-      allow read: if signedIn();
-      allow create, update: if true;
-      allow delete: if signedIn();
-    }
-
+    match /services/{id} { allow read: if true; allow write: if signedIn(); }
+    match /categories/{id} { allow read: if true; allow write: if signedIn(); }
+    match /updates/{id} { allow read: if true; allow write: if signedIn(); }
+    match /notifications/{id} { allow read: if true; allow write: if signedIn(); }
+    match /images/{id} { allow read: if true; allow write: if signedIn(); }
+    match /documents/{id} { allow read: if true; allow write: if signedIn(); }
+    match /documentChecklists/{id} { allow read: if true; allow write: if signedIn(); }
+    match /youtube/{id} { allow read: if true; allow write: if signedIn(); }
+    match /settings/{id} { allow read: if true; allow write: if signedIn(); }
+    match /pageContent/{id} { allow read: if true; allow write: if signedIn(); }
+    match /siteSections/{id} { allow read: if true; allow write: if signedIn(); }
+    match /analytics/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
+    match /visitorDaily/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
     match /{document=**} { allow read, write: if false; }
   }
 }

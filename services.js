@@ -5,6 +5,7 @@ import {
   addDoc,
   doc,
   updateDoc,
+  setDoc,
   deleteDoc,
   serverTimestamp,
   onSnapshot
@@ -144,7 +145,8 @@ async function loadDefaultCatalog() {
       await addDoc(collection(db,"services"), {...item,status:"Published",featured:false,createdAt:serverTimestamp()});
       existing.add(key); added++;
     }
-    alert(`Catalog Ready: ${added} added, ${skipped} duplicates skipped.`);
+    await setDoc(doc(db,"settings","website"),{catalogMode:"firebase",updatedAt:serverTimestamp()},{merge:true});
+    alert(`Catalog Ready: ${added} added, ${skipped} duplicates skipped. Editable mode ON.`);
   } catch(error) { console.error(error); alert(`Catalog Error: ${error.message}`); }
   finally { if (button) { button.disabled=false; button.textContent="⚡ Load Complete CSC + Yojana + Divyang Catalog"; } }
 }

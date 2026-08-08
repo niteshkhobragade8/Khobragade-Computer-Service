@@ -11,6 +11,7 @@ const titleMap = {
   notifications: "Notifications",
   analytics: "Analytics",
   pages: "Website Pages",
+  sitebuilder: "Full Website CMS",
   settings: "Website Settings"
 };
 

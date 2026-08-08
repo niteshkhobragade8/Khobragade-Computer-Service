@@ -421,3 +421,5 @@ textarea{min-height:105px;resize:vertical}
   .dashboard-cards,.secondary-stats,.analytics-cards,.images-grid{grid-template-columns:1fr}
   .dashboard-stat-card{min-height:96px}
 }
+
+.cms-summary{margin-bottom:20px}.cms-subtitle{margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid #e5e7eb;color:#334155}.custom-section-form input[type="color"],#sitebuilderPage input[type="color"]{min-height:44px;padding:5px}#sitebuilderPage .settings-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:800px){#sitebuilderPage .manager-layout{grid-template-columns:1fr}}
