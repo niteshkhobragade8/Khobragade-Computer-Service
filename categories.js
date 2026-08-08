@@ -52,6 +52,12 @@ async function saveCategory() {
     alert("Enter Category Name");
     return;
   }
+  const normalizedName = name.replace(/\s+/g, " ").trim().toLocaleLowerCase();
+  const duplicate = allCategories.find((item) => item.id !== editId && String(item.name || "").replace(/\s+/g, " ").trim().toLocaleLowerCase() === normalizedName);
+  if (duplicate) {
+    alert(`Duplicate Category Not Allowed: "${duplicate.name}" already exists.`);
+    return;
+  }
   saveButton.disabled = true;
   try {
     if (editId) {

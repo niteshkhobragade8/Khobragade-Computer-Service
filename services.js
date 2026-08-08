@@ -100,6 +100,12 @@ async function saveService() {
     alert("Enter Service Name");
     return;
   }
+  const normalizedName = name.replace(/\s+/g, " ").trim().toLocaleLowerCase();
+  const duplicate = allServices.find((item) => item.id !== editId && String(item.name || "").replace(/\s+/g, " ").trim().toLocaleLowerCase() === normalizedName);
+  if (duplicate) {
+    alert(`Duplicate Service Not Allowed: "${duplicate.name}" already exists.`);
+    return;
+  }
 
   saveButton.disabled = true;
   try {
