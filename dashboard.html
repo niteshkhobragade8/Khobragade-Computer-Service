@@ -223,21 +223,40 @@
     </section>
 
 
+    
     <section id="pagesPage" class="page">
-      <div class="page-intro"><div><h2>📝 Website Pages</h2><p>Edit, update or clear the public page headings and descriptions. Services/Yojana/Divyang items are managed from Services; document items from Documents; homepage notification from Notifications.</p></div></div>
-      <div class="manager-layout">
+      <div class="page-intro"><div><h2>📝 Website Pages</h2><p>Public website ke pages ko yahin se Edit / Update / Clear karein.</p></div></div>
+
+      <div id="publicPagesList" class="website-pages-grid">
+        <article class="website-page-card"><div><h3>🏠 Home</h3><p>Homepage title, subtitle aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="home">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="home">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>🛠️ Services</h3><p>Services page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="services">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="services">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>🏛️ Yojana</h3><p>Government Yojana page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="yojana">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="yojana">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>♿ Divyang</h3><p>Divyang page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="divyang">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="divyang">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>📄 Documents</h3><p>Documents page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="documents">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="documents">🗑 Clear</button></div></article>
+        <article class="website-page-card"><div><h3>☎️ Contact</h3><p>Contact page heading aur details.</p></div><div class="card-actions"><button class="action-btn edit edit-public-page" data-key="contact">✏️ Edit / Update</button><button class="action-btn delete clear-public-page" data-key="contact">🗑 Clear</button></div></article>
+      </div>
+
+      <div class="manager-layout" style="margin-top:22px">
         <div class="manager-form">
+          <h3 id="pageEditorHeading">Edit Home Page</h3>
           <label>Select Public Page</label>
           <select id="pageKey"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select>
           <label>Page Title</label><input id="pageTitle" type="text" placeholder="Page title">
           <label>Subtitle</label><textarea id="pageSubtitle" placeholder="Page subtitle"></textarea>
-          <label>Description / Details</label><textarea id="pageDescriptionAdmin" placeholder="Professional page details"></textarea>
+          <label>Description / Details</label><textarea id="pageDescriptionAdmin" placeholder="Page details"></textarea>
           <label>Status</label><select id="pageStatus"><option>Published</option><option>Draft</option></select>
-          <div class="settings-actions"><button id="savePageContent" class="primary-btn" type="button">Save / Update Page</button><button id="deletePageContent" class="danger-btn" type="button">Clear Custom Page Content</button></div>
-          <div id="pageManagerMessage" class="settings-message info">Select a page to edit.</div>
+          <div class="settings-actions"><button id="savePageContent" class="primary-btn" type="button">Update Page</button><button id="deletePageContent" class="danger-btn" type="button">Delete / Clear Custom Content</button></div>
+          <div id="pageManagerMessage" class="settings-message info">Page select karke edit karein.</div>
         </div>
         <div class="manager-content">
-          <div class="dashboard-info-box"><h3>What controls what?</h3><p><b>Home notification:</b> Notifications module</p><p><b>Home name/contact:</b> Settings module</p><p><b>Services + Yojana + Divyang:</b> Services module (category decides page)</p><p><b>Documents:</b> Documents module</p><p><b>Page headings/details:</b> Website Pages module</p></div>
+          <div class="dashboard-info-box">
+            <h3>Content Control</h3>
+            <p><b>Notification:</b> Notifications module</p>
+            <p><b>Services / Yojana / Divyang cards:</b> Services module</p>
+            <p><b>Documents:</b> Documents module</p>
+            <p><b>YouTube videos:</b> YouTube module</p>
+            <p><b>Phone / WhatsApp / address:</b> Settings module</p>
+          </div>
         </div>
       </div>
     </section>
