@@ -118,8 +118,10 @@
       <div class="manager-layout">
         <div class="manager-form service-form">
           <div class="form-title"><span>🛠️</span><div><h3>Service Details</h3><p>Add, edit, publish or feature a service.</p></div></div>
-          <label>Service Name</label><input type="text" id="serviceName" placeholder="Service Name">
-          <label>Description</label><textarea id="serviceDescription" placeholder="Service Description"></textarea>
+          <label>Service Name (English / Default)</label><input type="text" id="serviceName" placeholder="Service Name">
+<div class="form-grid two"><div><label>Service Name (Hindi)</label><input type="text" id="serviceNameHI" placeholder="हिंदी नाम"></div><div><label>Service Name (Marathi)</label><input type="text" id="serviceNameMR" placeholder="मराठी नाव"></div></div>
+          <label>Description (English / Default)</label><textarea id="serviceDescription" placeholder="Service Description"></textarea>
+<div class="form-grid two"><div><label>Description (Hindi)</label><textarea id="serviceDescriptionHI" placeholder="हिंदी विवरण"></textarea></div><div><label>Description (Marathi)</label><textarea id="serviceDescriptionMR" placeholder="मराठी माहिती"></textarea></div></div>
           <div class="form-grid two">
             <div><label>Category</label><select id="serviceCategory"><option>Government</option><option>Aadhaar OTP Based</option><option>PAN Card</option><option>Voter ID</option><option>Ayushman</option><option>ABHA</option><option>Labour</option><option>Maha ID</option><option>Certificates</option><option>RTO</option><option>Passport</option><option>Agriculture</option><option>Scholarship</option><option>Banking</option><option>Bill Payment</option><option>Online Service</option><option>Divyang</option><option>Yojana - Women</option><option>Yojana - Education</option><option>Yojana - Farmer</option><option>Yojana - Social Welfare</option><option>Yojana - Senior Citizen</option><option>Yojana - Divyang</option><option>Yojana - Health</option><option>Yojana - Housing</option><option>Yojana - Employment</option><option>Yojana - Labour</option><option>Yojana - Food</option><option>Yojana - Digital Maharashtra</option></select></div>
             <div><label>Icon</label><input type="text" id="serviceIcon" placeholder="📄"></div>
@@ -186,7 +188,7 @@
       <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Firebase Storage or add an external image URL.</p></div></div>
       <div class="manager-form image-form horizontal-form">
         <input type="text" id="imageTitle" placeholder="Image Title">
-        <select id="imageCategory"><option>Gallery</option><option>Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
+        <select id="imageCategory"><option>Gallery</option><option>Header Logo</option><option>Home Banner</option><option>Services Banner</option><option>Yojana Banner</option><option>Divyang Banner</option><option>Documents Banner</option><option>Contact Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
         <input type="file" id="imageUpload" accept="image/*">
         <input type="url" id="imageUrl" placeholder="Or paste Image URL">
         <button id="uploadImage" class="primary-btn" type="button">Upload / Add Image</button>
@@ -267,7 +269,21 @@
         <div class="settings-group"><h3>🏢 Business Identity</h3><div class="form-grid two"><div><label>Website Name</label><input type="text" id="siteName" placeholder="Khobragade Computer Service Centre"></div><div><label>Tagline</label><input type="text" id="tagline" placeholder="CSC Digital Seva & Government Services"></div></div><div class="form-grid two"><div><label>Admin Email</label><input type="email" id="adminEmail" placeholder="admin@example.com"></div><div><label>Address</label><input type="text" id="address" placeholder="Nagpur, Maharashtra, India"></div></div><label>Logo URL</label><input type="url" id="logoUrl" placeholder="https://..."></div>
         <div class="settings-group"><h3>📞 Contact & Social</h3><div class="form-grid two"><div><label>Contact Number</label><input type="text" id="contactNumber" placeholder="9637832490"></div><div><label>WhatsApp Number</label><input type="text" id="whatsappNumber" placeholder="9637832490"></div></div><label>YouTube Channel</label><input type="url" id="youtubeChannel" placeholder="https://youtube.com/@yourchannel"><div class="form-grid three"><div><label>Facebook</label><input type="url" id="facebook"></div><div><label>Instagram</label><input type="url" id="instagram"></div><div><label>Telegram</label><input type="url" id="telegram"></div></div></div>
         <div class="settings-group"><h3>🌐 Homepage Text</h3><label>Hero Title</label><input type="text" id="heroTitle" placeholder="Khobragade Computer Service Centre"><label>Hero Subtitle</label><textarea id="heroSubtitle" placeholder="Professional digital service assistance"></textarea><label>Home About Title</label><input type="text" id="homeAboutTitle" placeholder="Khobragade Computer Service Centre"><label>Home About Details</label><textarea id="homeAboutText" placeholder="Centre / website details"></textarea><label>Footer Text</label><input type="text" id="footerText" placeholder="© 2026 All Rights Reserved"></div>
-        <div id="settingsMessage" class="settings-message info">Settings ready.</div>
+        <div class="settings-group"><h3>🎨 Public Website Theme</h3>
+<div class="form-grid three">
+<div><label>Primary Pink</label><input type="color" id="themePrimary" value="#ec4899"></div>
+<div><label>Primary Blue</label><input type="color" id="themeSecondary" value="#2563eb"></div>
+<div><label>Default Mode</label><select id="defaultMode"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div>
+</div>
+<div class="form-grid two"><div><label>Menu Background</label><input type="color" id="menuColor" value="#172554"></div><div><label>Card Radius</label><select id="cardRadius"><option value="14">14px</option><option value="20">20px</option><option value="28">28px</option></select></div></div>
+<p class="field-help">Pink + Blue default professional theme hai. Save karte hi public website update hogi.</p>
+</div>
+<div class="settings-group"><h3>🌐 Language & Media</h3>
+<div class="form-grid two"><div><label>Default Language</label><select id="defaultLanguage"><option value="en">English</option><option value="hi">Hindi</option><option value="mr">Marathi</option></select></div><div><label>Hero / Banner Image URL</label><input type="url" id="heroImageUrl" placeholder="https://..."></div></div>
+<label>Header Logo URL</label><input type="url" id="logoUrlCms" placeholder="https://... (same as Logo URL)">
+<p class="field-help">Visitors header se English / हिंदी / मराठी aur Light / Dark change kar sakte hain.</p>
+</div>
+<div id="settingsMessage" class="settings-message info">Settings ready.</div>
         <div class="settings-actions"><button id="saveSettings" class="primary-btn" type="button">Save Website Settings</button><button id="resetSettings" class="secondary-btn" type="button">Reset Form</button></div>
       </div>
     </section>

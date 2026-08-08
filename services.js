@@ -82,6 +82,7 @@ function renderServices() {
 function resetForm() {
   $("serviceName").value = "";
   $("serviceDescription").value = "";
+  if ($("serviceNameHI")) $("serviceNameHI").value=""; if ($("serviceNameMR")) $("serviceNameMR").value=""; if ($("serviceDescriptionHI")) $("serviceDescriptionHI").value=""; if ($("serviceDescriptionMR")) $("serviceDescriptionMR").value="";
   $("serviceCategory").selectedIndex = 0;
   $("serviceIcon").value = "";
   if ($("serviceStatus")) $("serviceStatus").value = "Published";
@@ -93,6 +94,8 @@ function resetForm() {
 async function saveService() {
   const name = $("serviceName")?.value.trim() || "";
   const description = $("serviceDescription")?.value.trim() || "";
+  const nameHI=$("serviceNameHI")?.value.trim()||"", nameMR=$("serviceNameMR")?.value.trim()||"";
+  const descriptionHI=$("serviceDescriptionHI")?.value.trim()||"", descriptionMR=$("serviceDescriptionMR")?.value.trim()||"";
   const category = $("serviceCategory")?.value || "Government";
   const icon = $("serviceIcon")?.value.trim() || "📄";
   const status = $("serviceStatus")?.value || "Published";
@@ -111,10 +114,10 @@ async function saveService() {
   saveButton.disabled = true;
   try {
     if (editId) {
-      await updateDoc(doc(db, "services", editId), { name, description, category, icon, status, featured, updatedAt: serverTimestamp() });
+      await updateDoc(doc(db, "services", editId), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, featured, updatedAt: serverTimestamp() });
       alert("Service Updated Successfully");
     } else {
-      await addDoc(collection(db, "services"), { name, description, category, icon, status, featured, createdAt: serverTimestamp() });
+      await addDoc(collection(db, "services"), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, featured, createdAt: serverTimestamp() });
       alert("Service Saved Successfully");
     }
     resetForm();
@@ -152,6 +155,7 @@ function editService(id) {
   editId = id;
   $("serviceName").value = item.name || "";
   $("serviceDescription").value = item.description || "";
+  if ($("serviceNameHI")) $("serviceNameHI").value=item.nameHI||""; if ($("serviceNameMR")) $("serviceNameMR").value=item.nameMR||""; if ($("serviceDescriptionHI")) $("serviceDescriptionHI").value=item.descriptionHI||""; if ($("serviceDescriptionMR")) $("serviceDescriptionMR").value=item.descriptionMR||"";
   $("serviceCategory").value = item.category || "Government";
   $("serviceIcon").value = item.icon || "";
   if ($("serviceStatus")) $("serviceStatus").value = item.status || "Published";

@@ -25,7 +25,14 @@ const fieldIds = [
   "heroSubtitle",
   "homeAboutTitle",
   "homeAboutText",
-  "footerText"
+  "footerText",
+  "themePrimary",
+  "themeSecondary",
+  "menuColor",
+  "cardRadius",
+  "defaultMode",
+  "defaultLanguage",
+  "heroImageUrl"
 ];
 
 function getValue(id) {
@@ -51,11 +58,14 @@ async function loadSettings() {
       setValue("contactNumber", "9637832490");
       setValue("whatsappNumber", "9637832490");
       setValue("youtubeChannel", "https://youtube.com/@niteshkhobragade8");
+      setValue("themePrimary", "#ec4899"); setValue("themeSecondary", "#2563eb"); setValue("menuColor", "#172554");
+      setValue("cardRadius", "20"); setValue("defaultMode", "light"); setValue("defaultLanguage", "en");
       setStatus("Default settings loaded. Save once to publish them.", "info");
       return;
     }
     const data = snapshot.data();
     fieldIds.forEach((id) => setValue(id, data[id]));
+    setValue("logoUrlCms", data.logoUrl);
     setStatus("Settings loaded from Firebase.", "success");
   } catch (error) {
     console.error(error);
@@ -77,6 +87,7 @@ async function saveWebsiteSettings() {
   }
 
   const settingsData = {};
+  if ($("logoUrlCms")?.value.trim()) setValue("logoUrl", $("logoUrlCms").value.trim());
   fieldIds.forEach((id) => { settingsData[id] = getValue(id); });
   settingsData.updatedAt = serverTimestamp();
 
@@ -103,6 +114,8 @@ function resetSettingsForm() {
   setValue("contactNumber", "9637832490");
   setValue("whatsappNumber", "9637832490");
   setValue("youtubeChannel", "https://youtube.com/@niteshkhobragade8");
+  setValue("themePrimary", "#ec4899"); setValue("themeSecondary", "#2563eb"); setValue("menuColor", "#172554");
+  setValue("cardRadius", "20"); setValue("defaultMode", "light"); setValue("defaultLanguage", "en");
   setStatus("Default values loaded. Save to apply.", "info");
 }
 

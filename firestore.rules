@@ -1,11 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() {
-      return request.auth != null;
-    }
+    function signedIn() { return request.auth != null; }
 
-    // Public website content: readable by everyone, editable only after Firebase login.
     match /services/{id}       { allow read: if true; allow write: if signedIn(); }
     match /categories/{id}     { allow read: if true; allow write: if signedIn(); }
     match /updates/{id}        { allow read: if true; allow write: if signedIn(); }
@@ -14,8 +11,9 @@ service cloud.firestore {
     match /documents/{id}      { allow read: if true; allow write: if signedIn(); }
     match /youtube/{id}        { allow read: if true; allow write: if signedIn(); }
     match /settings/{id}       { allow read: if true; allow write: if signedIn(); }
+    match /pageContent/{id}    { allow read: if true; allow write: if signedIn(); }
+    match /siteSections/{id}   { allow read: if true; allow write: if signedIn(); }
 
-    // Basic anonymous visitor counters used by the public website.
     match /analytics/{id} {
       allow read: if signedIn();
       allow create, update: if true;
@@ -27,13 +25,6 @@ service cloud.firestore {
       allow delete: if signedIn();
     }
 
-    match /{document=**} {
-      allow read, write: if false;
-    }
+    match /{document=**} { allow read, write: if false; }
   }
-
-    match /pageContent/{document} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
 }

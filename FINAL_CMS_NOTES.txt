@@ -1,0 +1,14 @@
+Khobragade Computer Service Centre - CMS Final Build
+- Existing admin sidebar/design preserved.
+- Public default theme: professional Pink + Blue.
+- Public Light/Dark toggle.
+- Public EN / Hindi / Marathi language selector.
+- Admin theme colors, menu color, default mode/language, logo and hero banner settings.
+- Admin Website Pages manager preserved.
+- Existing default catalog can be imported into Firebase from Services, making those records editable/deleteable.
+- Services support Hindi and Marathi name/description fields.
+- YouTube manager feeds homepage.
+- Image manager includes logo/banner placement categories.
+- Firestore pageContent rules fixed inside database rules.
+- CNAME/domain preserved: 9637832490.online.
+Note: Deploy firestore.rules separately in Firebase Console/CLI if pageContent writes were previously denied.
