@@ -31,6 +31,7 @@
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
       <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
+      <li data-page="pages"><i class="fa-solid fa-pen-to-square"></i><span>Website Pages</span></li>
       <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
@@ -120,7 +121,7 @@
           <label>Service Name</label><input type="text" id="serviceName" placeholder="Service Name">
           <label>Description</label><textarea id="serviceDescription" placeholder="Service Description"></textarea>
           <div class="form-grid two">
-            <div><label>Category</label><select id="serviceCategory"><option>Government</option><option>Aadhaar</option><option>PAN Card</option><option>Voter ID</option><option>Ayushman</option><option>ABHA</option><option>Labour</option><option>Maha ID</option><option>Certificates</option><option>RTO</option><option>Passport</option><option>Agriculture</option><option>Scholarship</option><option>Banking</option><option>Bill Payment</option><option>Online Service</option><option>Divyang</option><option>Yojana - Women</option><option>Yojana - Education</option><option>Yojana - Farmer</option><option>Yojana - Social Welfare</option><option>Yojana - Senior Citizen</option><option>Yojana - Divyang</option><option>Yojana - Health</option><option>Yojana - Housing</option><option>Yojana - Employment</option><option>Yojana - Labour</option><option>Yojana - Food</option><option>Yojana - Digital Maharashtra</option></select></div>
+            <div><label>Category</label><select id="serviceCategory"><option>Government</option><option>Aadhaar OTP Based</option><option>PAN Card</option><option>Voter ID</option><option>Ayushman</option><option>ABHA</option><option>Labour</option><option>Maha ID</option><option>Certificates</option><option>RTO</option><option>Passport</option><option>Agriculture</option><option>Scholarship</option><option>Banking</option><option>Bill Payment</option><option>Online Service</option><option>Divyang</option><option>Yojana - Women</option><option>Yojana - Education</option><option>Yojana - Farmer</option><option>Yojana - Social Welfare</option><option>Yojana - Senior Citizen</option><option>Yojana - Divyang</option><option>Yojana - Health</option><option>Yojana - Housing</option><option>Yojana - Employment</option><option>Yojana - Labour</option><option>Yojana - Food</option><option>Yojana - Digital Maharashtra</option></select></div>
             <div><label>Icon</label><input type="text" id="serviceIcon" placeholder="📄"></div>
           </div>
           <div class="form-grid two">
@@ -198,12 +199,12 @@
       <div class="page-intro"><div><h2>📄 Documents Manager</h2><p>Central document library for forms and public downloads.</p></div></div>
       <div class="manager-form document-form horizontal-form">
         <input type="text" id="documentTitle" placeholder="Document Title">
-        <select id="documentCategory"><option>Government</option><option>PAN Card</option><option>Aadhaar</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select>
+        <select id="documentCategory"><option>Government</option><option>PAN Card</option><option>Aadhaar OTP Based</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select>
         <input type="file" id="documentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
         <input type="url" id="documentUrl" placeholder="Or paste Document URL">
         <button id="uploadDocument" class="primary-btn" type="button">Upload / Add Document</button>
       </div>
-      <div class="toolbar"><input type="search" id="documentSearch" placeholder="🔍 Search documents..."><select id="documentCategoryFilter"><option value="all">All Categories</option><option>Government</option><option>PAN Card</option><option>Aadhaar</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select></div>
+      <div class="toolbar"><input type="search" id="documentSearch" placeholder="🔍 Search documents..."><select id="documentCategoryFilter"><option value="all">All Categories</option><option>Government</option><option>PAN Card</option><option>Aadhaar OTP Based</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select></div>
       <div id="documentsList">No Documents Available</div>
     </section>
 
@@ -221,12 +222,32 @@
       </div>
     </section>
 
+
+    <section id="pagesPage" class="page">
+      <div class="page-intro"><div><h2>📝 Website Pages</h2><p>Edit, update or clear the public page headings and descriptions. Services/Yojana/Divyang items are managed from Services; document items from Documents; homepage notification from Notifications.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <label>Select Public Page</label>
+          <select id="pageKey"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select>
+          <label>Page Title</label><input id="pageTitle" type="text" placeholder="Page title">
+          <label>Subtitle</label><textarea id="pageSubtitle" placeholder="Page subtitle"></textarea>
+          <label>Description / Details</label><textarea id="pageDescriptionAdmin" placeholder="Professional page details"></textarea>
+          <label>Status</label><select id="pageStatus"><option>Published</option><option>Draft</option></select>
+          <div class="settings-actions"><button id="savePageContent" class="primary-btn" type="button">Save / Update Page</button><button id="deletePageContent" class="danger-btn" type="button">Clear Custom Page Content</button></div>
+          <div id="pageManagerMessage" class="settings-message info">Select a page to edit.</div>
+        </div>
+        <div class="manager-content">
+          <div class="dashboard-info-box"><h3>What controls what?</h3><p><b>Home notification:</b> Notifications module</p><p><b>Home name/contact:</b> Settings module</p><p><b>Services + Yojana + Divyang:</b> Services module (category decides page)</p><p><b>Documents:</b> Documents module</p><p><b>Page headings/details:</b> Website Pages module</p></div>
+        </div>
+      </div>
+    </section>
+
     <section id="settingsPage" class="page">
       <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
       <div class="settings-shell">
         <div class="settings-group"><h3>🏢 Business Identity</h3><div class="form-grid two"><div><label>Website Name</label><input type="text" id="siteName" placeholder="Khobragade Computer Service Centre"></div><div><label>Tagline</label><input type="text" id="tagline" placeholder="CSC Digital Seva & Government Services"></div></div><div class="form-grid two"><div><label>Admin Email</label><input type="email" id="adminEmail" placeholder="admin@example.com"></div><div><label>Address</label><input type="text" id="address" placeholder="Nagpur, Maharashtra, India"></div></div><label>Logo URL</label><input type="url" id="logoUrl" placeholder="https://..."></div>
         <div class="settings-group"><h3>📞 Contact & Social</h3><div class="form-grid two"><div><label>Contact Number</label><input type="text" id="contactNumber" placeholder="9637832490"></div><div><label>WhatsApp Number</label><input type="text" id="whatsappNumber" placeholder="9637832490"></div></div><label>YouTube Channel</label><input type="url" id="youtubeChannel" placeholder="https://youtube.com/@yourchannel"><div class="form-grid three"><div><label>Facebook</label><input type="url" id="facebook"></div><div><label>Instagram</label><input type="url" id="instagram"></div><div><label>Telegram</label><input type="url" id="telegram"></div></div></div>
-        <div class="settings-group"><h3>🌐 Homepage Text</h3><label>Hero Title</label><input type="text" id="heroTitle" placeholder="Khobragade Computer Service Centre"><label>Hero Subtitle</label><textarea id="heroSubtitle" placeholder="CSC Digital Seva | Maharashtra Government Schemes | Online Services"></textarea><label>Footer Text</label><input type="text" id="footerText" placeholder="© 2026 All Rights Reserved"></div>
+        <div class="settings-group"><h3>🌐 Homepage Text</h3><label>Hero Title</label><input type="text" id="heroTitle" placeholder="Khobragade Computer Service Centre"><label>Hero Subtitle</label><textarea id="heroSubtitle" placeholder="Professional digital service assistance"></textarea><label>Home About Title</label><input type="text" id="homeAboutTitle" placeholder="Khobragade Computer Service Centre"><label>Home About Details</label><textarea id="homeAboutText" placeholder="Centre / website details"></textarea><label>Footer Text</label><input type="text" id="footerText" placeholder="© 2026 All Rights Reserved"></div>
         <div id="settingsMessage" class="settings-message info">Settings ready.</div>
         <div class="settings-actions"><button id="saveSettings" class="primary-btn" type="button">Save Website Settings</button><button id="resetSettings" class="secondary-btn" type="button">Reset Form</button></div>
       </div>
@@ -246,5 +267,6 @@
 <script type="module" src="documents.js"></script>
 <script type="module" src="youtube.js"></script>
 <script type="module" src="settings.js"></script>
+<script type="module" src="page-manager.js"></script>
 </body>
 </html>

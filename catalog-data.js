@@ -1,5 +1,4 @@
 export const DEFAULT_SERVICES = [
-  ['Aadhaar New Enrolment Guidance','Aadhaar','🪪'],['Aadhaar Address Update','Aadhaar','🏠'],['Aadhaar Mobile Number Update Guidance','Aadhaar','📱'],['Aadhaar PVC Card Order','Aadhaar','💳'],['Aadhaar Download / Print','Aadhaar','🖨️'],['Aadhaar Status Check','Aadhaar','🔎'],
   ['PAN Card New Application','PAN Card','💳'],['PAN Card Correction','PAN Card','✏️'],['PAN Card Reprint','PAN Card','🖨️'],['PAN-Aadhaar Link Assistance','PAN Card','🔗'],
   ['Voter ID New Registration','Voter ID','🗳️'],['Voter ID Correction','Voter ID','✏️'],['Voter ID Address Change','Voter ID','🏠'],['Voter ID Download','Voter ID','⬇️'],['Voter ID Status Check','Voter ID','🔎'],
   ['Ayushman Bharat Card','Ayushman','❤️'],['Ayushman Card Download','Ayushman','⬇️'],['Ayushman Beneficiary Search','Ayushman','🔎'],['ABHA Health ID','ABHA','🏥'],['ABHA Card Download','ABHA','⬇️'],
@@ -24,7 +23,6 @@ export const DEFAULT_DIVYANG = [
 ].map(([name,category,icon])=>({name,category,icon,description:`${name} ke liye form, document list, online process aur WhatsApp assistance available.`}));
 
 export const DOCUMENT_CHECKLISTS = [
-  {title:'Aadhaar Services',category:'Aadhaar',items:['Aadhaar number / Aadhaar copy','Registered mobile number where required','Address proof for address update','Supporting identity/address document as applicable']},
   {title:'PAN Card',category:'PAN Card',items:['Aadhaar card','Passport size photo where required','Signature','Mobile number & email','Date of birth proof if required']},
   {title:'Voter ID',category:'Voter ID',items:['Aadhaar / identity proof','Age proof','Address proof','Passport size photo','Mobile number']},
   {title:'Ayushman Bharat Card',category:'Ayushman',items:['Aadhaar card','Eligible family/ration details','Mobile number','Beneficiary details']},

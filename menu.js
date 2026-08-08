@@ -10,6 +10,7 @@ const titleMap = {
   youtube: "YouTube Manager",
   notifications: "Notifications",
   analytics: "Analytics",
+  pages: "Website Pages",
   settings: "Website Settings"
 };
 

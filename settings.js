@@ -23,6 +23,8 @@ const fieldIds = [
   "logoUrl",
   "heroTitle",
   "heroSubtitle",
+  "homeAboutTitle",
+  "homeAboutText",
   "footerText"
 ];
 
