@@ -1,0 +1,138 @@
+import { db } from "./firebase-config.js";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  orderBy,
+  limit
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const $ = (id) => document.getElementById(id);
+
+function setText(id, value) {
+  const el = $(id);
+  if (el) el.textContent = value;
+}
+
+function drawVisitorChart(rows) {
+  const canvas = $("visitorChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const ratio = window.devicePixelRatio || 1;
+  const cssWidth = Math.max(canvas.clientWidth, 320);
+  const cssHeight = 260;
+  canvas.width = cssWidth * ratio;
+  canvas.height = cssHeight * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+  const padding = { left: 44, right: 18, top: 22, bottom: 46 };
+  const chartW = cssWidth - padding.left - padding.right;
+  const chartH = cssHeight - padding.top - padding.bottom;
+  const values = rows.map((row) => Number(row.count || 0));
+  const max = Math.max(...values, 1);
+
+  ctx.strokeStyle = "rgba(17,24,39,.15)";
+  ctx.fillStyle = "#6b7280";
+  ctx.font = "12px Segoe UI, Arial";
+  ctx.lineWidth = 1;
+
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(cssWidth - padding.right, y);
+    ctx.stroke();
+    const label = Math.round(max - (max / 4) * i);
+    ctx.fillText(String(label), 8, y + 4);
+  }
+
+  if (!rows.length) {
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "15px Segoe UI, Arial";
+    ctx.fillText("Visitor data will appear after public website visits.", padding.left, padding.top + 60);
+    return;
+  }
+
+  const pointGap = rows.length > 1 ? chartW / (rows.length - 1) : chartW;
+  ctx.strokeStyle = "#2979FF";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  rows.forEach((row, index) => {
+    const x = padding.left + (rows.length > 1 ? pointGap * index : chartW / 2);
+    const y = padding.top + chartH - (Number(row.count || 0) / max) * chartH;
+    if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  rows.forEach((row, index) => {
+    const x = padding.left + (rows.length > 1 ? pointGap * index : chartW / 2);
+    const y = padding.top + chartH - (Number(row.count || 0) / max) * chartH;
+    ctx.beginPath();
+    ctx.fillStyle = "#00C853";
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#374151";
+    const label = String(row.date || "").slice(5);
+    ctx.save();
+    ctx.translate(x - 3, cssHeight - 17);
+    ctx.rotate(-0.45);
+    ctx.fillText(label, 0, 0);
+    ctx.restore();
+  });
+}
+
+async function loadAnalytics() {
+  try {
+    const [updates, services, categories, notifications, siteSnap, dailySnap] = await Promise.all([
+      getDocs(collection(db, "updates")),
+      getDocs(collection(db, "services")),
+      getDocs(collection(db, "categories")),
+      getDocs(collection(db, "notifications")),
+      getDoc(doc(db, "analytics", "site")),
+      getDocs(query(collection(db, "visitorDaily"), orderBy("date", "desc"), limit(14)))
+    ]);
+
+    const site = siteSnap.exists() ? siteSnap.data() : {};
+    setText("analyticsVisitors", Number(site.totalVisitors || 0));
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const todayRow = dailySnap.docs.map((item) => item.data()).find((row) => row.date === todayKey);
+    setText("todayVisitors", Number(todayRow?.count || 0));
+    setText("analyticsUpdates", updates.size);
+    setText("analyticsServices", services.size);
+    setText("analyticsCategories", categories.size);
+    setText("analyticsNotifications", notifications.size);
+
+    const rows = dailySnap.docs.map((item) => item.data()).reverse();
+    drawVisitorChart(rows);
+
+    const analyticsData = $("analyticsData");
+    if (analyticsData) {
+      const lastUpdated = site.updatedAt?.toDate?.().toLocaleString() || "Waiting for visitor data";
+      analyticsData.innerHTML = `
+        <div class="analytics-summary-grid">
+          <div><span>Tracked Days</span><strong>${rows.length}</strong></div>
+          <div><span>Total Collections</span><strong>7+</strong></div>
+          <div><span>Last Visitor Update</span><strong>${lastUpdated}</strong></div>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error("Analytics load error:", error);
+    const analyticsData = $("analyticsData");
+    if (analyticsData) analyticsData.textContent = `Analytics Error: ${error.message}`;
+  }
+}
+
+window.refreshAnalytics = loadAnalytics;
+window.showAnalytics = loadAnalytics;
+window.reloadAnalytics = loadAnalytics;
+window.getAnalytics = loadAnalytics;
+window.resetAnalytics = () => loadAnalytics();
+
+window.addEventListener("DOMContentLoaded", loadAnalytics);
+window.addEventListener("resize", () => loadAnalytics());
+
+export { loadAnalytics };

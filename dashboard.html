@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khobragade CSC Admin Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+<div class="breaking-news">
+  <div class="breaking-label">🔴 BREAKING NEWS</div>
+  <div class="breaking-text"><span id="breakingNews">Welcome to Khobragade Computer Service Centre Admin Dashboard</span></div>
+</div>
+
+<div class="dashboard">
+  <aside class="sidebar">
+    <div class="logo">
+      <h2>Khobragade CSC</h2>
+      <p>Admin Panel</p>
+    </div>
+
+    <ul id="sidebarMenu">
+      <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
+      <li data-page="updates"><i class="fa-solid fa-bullhorn"></i><span>Government Updates</span></li>
+      <li data-page="services"><i class="fa-solid fa-toolbox"></i><span>Services</span></li>
+      <li data-page="categories"><i class="fa-solid fa-folder"></i><span>Categories</span></li>
+      <li data-page="images"><i class="fa-solid fa-image"></i><span>Images</span></li>
+      <li data-page="documents"><i class="fa-solid fa-file-lines"></i><span>Documents</span></li>
+      <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
+      <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
+      <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
+      <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
+      <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
+    </ul>
+
+    <div class="sidebar-foot">
+      <span>Firebase CMS</span>
+      <small id="adminIdentity">Administrator</small>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Khobragade Computer Service Centre</p>
+        <h1 id="topbarTitle">Dashboard</h1>
+      </div>
+      <div class="top-right">
+        <button id="notificationBell" class="icon-button" type="button" aria-label="Notifications">
+          <i class="fa-solid fa-bell"></i><span id="notificationCount">0</span>
+        </button>
+        <div id="notificationDropdown" class="notification-dropdown" style="display:none;">
+          <h3>Latest Notifications</h3>
+          <div id="notificationDropdownList">No Notifications</div>
+        </div>
+      </div>
+    </header>
+
+    <section id="dashboardPage" class="page active">
+      <div class="page-intro">
+        <div><h2>Overview</h2><p>Live website content, visitors and publishing activity.</p></div>
+        <button class="secondary-btn" type="button" onclick="refreshDashboard()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+      </div>
+
+      <div class="dashboard-cards">
+        <article class="dashboard-stat-card green"><span class="stat-icon">📢</span><div><p>Total Updates</p><h2 id="totalUpdates">0</h2></div></article>
+        <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
+        <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
+        <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div></article>
+      </div>
+
+      <div class="secondary-stats">
+        <div><span>🔔 Notifications</span><strong id="totalNotifications">0</strong></div>
+        <div><span>🖼️ Images</span><strong id="totalImages">0</strong></div>
+        <div><span>📄 Documents</span><strong id="totalDocuments">0</strong></div>
+        <div><span>▶️ Videos</span><strong id="totalVideos">0</strong></div>
+        <div><span>📅 Today Visitors</span><strong id="dashboardTodayVisitors">0</strong></div>
+      </div>
+
+      <div class="dashboard-information">
+        <article class="dashboard-info-box">
+          <div class="box-heading"><div><span class="box-kicker">LIVE</span><h2>Latest Notifications</h2></div><button class="text-button" type="button" onclick="openDashboardPage('notifications')">Manage</button></div>
+          <div id="latestNotifications" class="mini-feed"><div class="empty-state">No Notifications</div></div>
+        </article>
+        <article class="dashboard-info-box">
+          <div class="box-heading"><div><span class="box-kicker">RECENT</span><h2>Government Updates</h2></div><button class="text-button" type="button" onclick="openDashboardPage('updates')">Manage</button></div>
+          <div id="latestUpdates" class="mini-feed"><div class="empty-state">No Updates Available</div></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="updatesPage" class="page">
+      <div class="page-intro"><div><h2>📢 Government Updates</h2><p>Publish new CSC and government updates directly to the website.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form update-form">
+          <div class="form-title"><span>📝</span><div><h3>Create / Edit Update</h3><p>Published updates can appear on the public homepage.</p></div></div>
+          <label>Update Title</label><input type="text" id="updateTitle" placeholder="Update Title">
+          <label>Description</label><textarea id="updateDescription" placeholder="Update Description"></textarea>
+          <div class="form-grid two">
+            <div><label>Category</label><select id="updateCategory"><option>Government Update</option><option>Maha ID</option><option>Ayushman Card</option><option>PAN Card</option><option>Divyang</option><option>Scholarship</option><option>Agriculture</option></select></div>
+            <div><label>Status</label><select id="updateStatus"><option>Published</option><option>Draft</option></select></div>
+          </div>
+          <label class="check-row"><input type="checkbox" id="updateFeatured"> <span>Show as Featured Update on homepage</span></label>
+          <button id="saveUpdate" class="primary-btn" type="button">Save Update</button>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar"><input type="search" id="updateSearch" placeholder="🔍 Search updates..."><select id="updateStatusFilter"><option value="all">All Status</option><option>Published</option><option>Draft</option></select></div>
+          <div id="updatesList" class="content-grid">No Updates Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicesPage" class="page">
+      <div class="page-intro"><div><h2>🛠 Services Management</h2><p>Add complete CSC services and control what appears on your website.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form service-form">
+          <div class="form-title"><span>🛠️</span><div><h3>Service Details</h3><p>Add, edit, publish or feature a service.</p></div></div>
+          <label>Service Name</label><input type="text" id="serviceName" placeholder="Service Name">
+          <label>Description</label><textarea id="serviceDescription" placeholder="Service Description"></textarea>
+          <div class="form-grid two">
+            <div><label>Category</label><select id="serviceCategory"><option>Government</option><option>PAN Card</option><option>Aadhaar</option><option>Ayushman</option><option>Divyang</option><option>Maha ID</option><option>Certificates</option><option>RTO</option><option>Scholarship</option><option>Agriculture</option><option>Banking</option></select></div>
+            <div><label>Icon</label><input type="text" id="serviceIcon" placeholder="📄"></div>
+          </div>
+          <div class="form-grid two">
+            <div><label>Status</label><select id="serviceStatus"><option>Published</option><option>Draft</option></select></div>
+            <label class="check-row standalone"><input type="checkbox" id="serviceFeatured"><span>Featured Service</span></label>
+          </div>
+          <button id="saveService" class="primary-btn" type="button">Save Service</button>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar triple"><input type="search" id="serviceSearch" placeholder="🔍 Search services..."><select id="serviceCategoryFilter"><option value="all">All Categories</option></select><select id="serviceStatusFilter"><option value="all">All Status</option><option>Published</option><option>Draft</option></select></div>
+          <div id="servicesList" class="content-grid">No Services Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="categoriesPage" class="page">
+      <div class="page-intro"><div><h2>📂 Categories</h2><p>Organize services into clean website sections.</p></div></div>
+      <div class="compact-manager">
+        <div class="manager-form category-form"><label>Category Name</label><div class="inline-form"><input type="text" id="categoryName" placeholder="Category Name"><button id="saveCategory" class="primary-btn" type="button">Save Category</button></div></div>
+        <div class="toolbar"><input type="search" id="categorySearch" placeholder="🔍 Search categories..."></div>
+        <div id="categoriesList" class="category-list">No Categories Available</div>
+      </div>
+    </section>
+
+    <section id="notificationsPage" class="page">
+      <div class="page-intro"><div><h2>🔔 Notifications</h2><p>Create breaking news, popup and normal notices for the public website.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form notification-form">
+          <label>Notification Title</label><input type="text" id="notificationTitle" placeholder="Notification Title">
+          <label>Description</label><textarea id="notificationDescription" placeholder="Notification Description"></textarea>
+          <div class="form-grid two">
+            <div><label>Type</label><select id="notificationType"><option value="breaking">Breaking News</option><option value="popup">Popup Notification</option><option value="normal">Normal Notification</option></select></div>
+            <div><label>Priority</label><select id="notificationPriority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
+          </div>
+          <label>Status</label><select id="notificationStatus"><option>Published</option><option>Draft</option></select>
+          <button id="saveNotification" class="primary-btn" type="button">Publish Notification</button>
+          <div id="notificationPreview" class="preview-box"><h2>👁 Live Preview</h2><p>Notification Preview will appear here...</p></div>
+        </div>
+        <div class="manager-content">
+          <div class="toolbar"><input type="search" id="notificationSearch" placeholder="🔍 Search notifications..."><select id="notificationTypeFilter"><option value="all">All Types</option><option value="breaking">Breaking</option><option value="popup">Popup</option><option value="normal">Normal</option></select></div>
+          <div class="quick-actions"><button id="publishAll" type="button">🚀 Publish All</button><button id="deleteAll" class="danger-btn" type="button">🗑 Delete All</button><button id="refreshNotifications" class="secondary-btn" type="button">🔄 Refresh</button></div><div class="notification-summary"><div><span>Total</span><strong id="notificationModuleTotal">0</strong></div><div><span>Published</span><strong id="publishedNotifications">0</strong></div><div><span>Draft</span><strong id="draftNotifications">0</strong></div></div>
+          <div id="notificationList" class="content-grid">No Notifications Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analyticsPage" class="page">
+      <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Firebase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
+      <div class="analytics-cards">
+        <div class="analytics-card"><span>👥</span><p>Total Visitors</p><h2 id="analyticsVisitors">0</h2></div>
+        <div class="analytics-card"><span>📅</span><p>Today Visitors</p><h2 id="todayVisitors">0</h2></div>
+        <div class="analytics-card"><span>📢</span><p>Total Updates</p><h2 id="analyticsUpdates">0</h2></div>
+        <div class="analytics-card"><span>🛠️</span><p>Total Services</p><h2 id="analyticsServices">0</h2></div>
+        <div class="analytics-card"><span>📂</span><p>Categories</p><h2 id="analyticsCategories">0</h2></div>
+        <div class="analytics-card"><span>🔔</span><p>Notifications</p><h2 id="analyticsNotifications">0</h2></div>
+      </div>
+      <div class="analytics-panel"><div class="box-heading"><div><span class="box-kicker">LAST 14 DAYS</span><h2>Visitor Trend</h2></div></div><canvas id="visitorChart"></canvas></div>
+      <div class="analytics-panel"><h2>Website Statistics</h2><div id="analyticsData">Analytics Loading...</div></div>
+    </section>
+
+    <section id="imagesPage" class="page">
+      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Firebase Storage or add an external image URL.</p></div></div>
+      <div class="manager-form image-form horizontal-form">
+        <input type="text" id="imageTitle" placeholder="Image Title">
+        <select id="imageCategory"><option>Gallery</option><option>Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
+        <input type="file" id="imageUpload" accept="image/*">
+        <input type="url" id="imageUrl" placeholder="Or paste Image URL">
+        <button id="uploadImage" class="primary-btn" type="button">Upload / Add Image</button>
+      </div>
+      <div class="toolbar"><input type="search" id="searchImage" placeholder="🔍 Search images..."><button id="searchImageBtn" class="secondary-btn" type="button">Search</button></div>
+      <div id="imagesList" class="images-grid"></div>
+    </section>
+
+    <section id="documentsPage" class="page">
+      <div class="page-intro"><div><h2>📄 Documents Manager</h2><p>Central document library for forms and public downloads.</p></div></div>
+      <div class="manager-form document-form horizontal-form">
+        <input type="text" id="documentTitle" placeholder="Document Title">
+        <select id="documentCategory"><option>Government</option><option>PAN Card</option><option>Aadhaar</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select>
+        <input type="file" id="documentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+        <input type="url" id="documentUrl" placeholder="Or paste Document URL">
+        <button id="uploadDocument" class="primary-btn" type="button">Upload / Add Document</button>
+      </div>
+      <div class="toolbar"><input type="search" id="documentSearch" placeholder="🔍 Search documents..."><select id="documentCategoryFilter"><option value="all">All Categories</option><option>Government</option><option>PAN Card</option><option>Aadhaar</option><option>Ayushman</option><option>Maha ID</option><option>Divyang</option><option>Other</option></select></div>
+      <div id="documentsList">No Documents Available</div>
+    </section>
+
+    <section id="youtubePage" class="page">
+      <div class="page-intro"><div><h2>▶️ YouTube Manager</h2><p>Publish YouTube videos to the public website from one place.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form youtube-form">
+          <label>Video Title</label><input type="text" id="youtubeTitle" placeholder="Video Title">
+          <label>YouTube Link</label><input type="url" id="youtubeLink" placeholder="https://youtube.com/....">
+          <label>Description</label><textarea id="youtubeDescription" placeholder="Video Description"></textarea>
+          <label>Status</label><select id="youtubeStatus"><option>Published</option><option>Draft</option></select>
+          <button id="saveYoutube" class="primary-btn" type="button">Save Video</button>
+        </div>
+        <div class="manager-content"><div class="toolbar"><input type="search" id="youtubeSearch" placeholder="🔍 Search videos..."></div><div id="youtubeList" class="youtube-grid">No Videos Available</div></div>
+      </div>
+    </section>
+
+    <section id="settingsPage" class="page">
+      <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
+      <div class="settings-shell">
+        <div class="settings-group"><h3>🏢 Business Identity</h3><div class="form-grid two"><div><label>Website Name</label><input type="text" id="siteName" placeholder="Khobragade Computer Service Centre"></div><div><label>Tagline</label><input type="text" id="tagline" placeholder="CSC Digital Seva & Government Services"></div></div><div class="form-grid two"><div><label>Admin Email</label><input type="email" id="adminEmail" placeholder="admin@example.com"></div><div><label>Address</label><input type="text" id="address" placeholder="Nagpur, Maharashtra, India"></div></div><label>Logo URL</label><input type="url" id="logoUrl" placeholder="https://..."></div>
+        <div class="settings-group"><h3>📞 Contact & Social</h3><div class="form-grid two"><div><label>Contact Number</label><input type="text" id="contactNumber" placeholder="9637832490"></div><div><label>WhatsApp Number</label><input type="text" id="whatsappNumber" placeholder="9637832490"></div></div><label>YouTube Channel</label><input type="url" id="youtubeChannel" placeholder="https://youtube.com/@yourchannel"><div class="form-grid three"><div><label>Facebook</label><input type="url" id="facebook"></div><div><label>Instagram</label><input type="url" id="instagram"></div><div><label>Telegram</label><input type="url" id="telegram"></div></div></div>
+        <div class="settings-group"><h3>🌐 Homepage Text</h3><label>Hero Title</label><input type="text" id="heroTitle" placeholder="Khobragade Computer Service Centre"><label>Hero Subtitle</label><textarea id="heroSubtitle" placeholder="CSC Digital Seva | Maharashtra Government Schemes | Online Services"></textarea><label>Footer Text</label><input type="text" id="footerText" placeholder="© 2026 All Rights Reserved"></div>
+        <div id="settingsMessage" class="settings-message info">Settings ready.</div>
+        <div class="settings-actions"><button id="saveSettings" class="primary-btn" type="button">Save Website Settings</button><button id="resetSettings" class="secondary-btn" type="button">Reset Form</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="updates.js"></script>
+<script type="module" src="services.js"></script>
+<script type="module" src="categories.js"></script>
+<script type="module" src="notification.js?v=5"></script>
+<script type="module" src="analytics.js"></script>
+<script type="module" src="menu.js"></script>
+<script type="module" src="images.js"></script>
+<script type="module" src="documents.js"></script>
+<script type="module" src="youtube.js"></script>
+<script type="module" src="settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login | Khobragade CSC</title>
+
+    <link rel="stylesheet"
+          href="login.css">
+
+</head>
+
+<body>
+
+    <main class="login-container">
+
+        <section class="login-box">
+
+            <h1>🔐 Admin Login</h1>
+
+            <p class="login-subtitle">
+                Khobragade Computer Service Centre
+            </p>
+
+            <form id="loginForm"
+                  novalidate>
+
+                <label for="email">
+                    Admin Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter Admin Email"
+                    autocomplete="email"
+                    required>
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter Password"
+                        autocomplete="current-password"
+                        required>
+
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="toggle-password"
+                        aria-label="Show Password">
+
+                        👁
+
+                    </button>
+
+                </div>
+
+                <button
+                    type="submit"
+                    id="loginBtn">
+
+                    Login
+
+                </button>
+
+                <p
+                    id="loginMessage"
+                    role="alert"
+                    aria-live="polite">
+                </p>
+
+            </form>
+
+        </section>
+
+        <section class="login-info">
+
+            <h2>Admin Panel Features</h2>
+
+            <ul>
+
+                <li>✅ Secure Firebase Login</li>
+
+                <li>✅ Protected Dashboard</li>
+
+                <li>✅ Government Updates Management</li>
+
+                <li>✅ Services Management</li>
+
+                <li>✅ Notification Management</li>
+
+                <li>✅ Documents and Images Management</li>
+
+                <li>✅ Analytics Dashboard</li>
+
+            </ul>
+
+        </section>
+
+        <section class="security-box">
+
+            <h2>Security</h2>
+
+            <p>
+                Only authorized administrators can access the dashboard.
+            </p>
+
+            <div class="security-points">
+
+                <p>🔒 Firebase Authentication</p>
+
+                <p>🛡 Protected Dashboard</p>
+
+                <p>⚡ Secure Login Session</p>
+
+                <p>☁ Cloud Database Integration</p>
+
+            </div>
+
+        </section>
+
+        <section class="support-box">
+
+            <h2>Support</h2>
+
+            <p>
+                Need help? Contact Administrator.
+            </p>
+
+            <p>
+                📞 Mobile: 9637832490
+            </p>
+
+            <p>
+                📧 Email: admin@khobragade.online
+            </p>
+
+        </section>
+
+        <section class="status-box">
+
+            <h3>System Status</h3>
+
+            <p>🟢 Admin Portal Online</p>
+
+            <p>🟢 Firebase Connected</p>
+
+            <p>🟢 Authentication Ready</p>
+
+        </section>
+
+        <footer class="login-footer">
+
+            <p>
+                Version 7.0 Firebase Admin Panel
+            </p>
+
+            <p>
+                Designed &amp; Developed by
+                <strong>Nitesh Khobragade</strong>
+            </p>
+
+            <p>
+                © 2026 Khobragade Computer Service Centre
+            </p>
+
+        </footer>
+
+    </main>
+
+    <script
+        type="module"
+        src="login.js">
+    </script>
+
+</body>
+
+</html>
