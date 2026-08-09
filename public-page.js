@@ -26,7 +26,48 @@ function applyTheme(){
  document.documentElement.style.setProperty('--primary',primary);document.documentElement.style.setProperty('--pink',primary);document.documentElement.style.setProperty('--secondary',secondary);document.documentElement.style.setProperty('--blue',secondary);document.documentElement.style.setProperty('--menu-bg',menu);document.documentElement.style.setProperty('--radius',radius+'px');
  let mode=localStorage.getItem('kcsMode')||settings.defaultMode||'light';if(mode==='system')mode=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.body.classList.toggle('dark',mode==='dark');if($('modeToggle'))$('modeToggle').textContent=mode==='dark'?'☀️':'🌙';
  const logo=settings.logoUrl||'';document.querySelectorAll('[data-logo]').forEach(img=>{if(logo){img.src=logo;img.hidden=false}else img.hidden=true});document.querySelectorAll('[data-logo-letter]').forEach(e=>e.hidden=!!logo);
- const hero=document.querySelector('.hero');if(hero&&settings.heroImageUrl){hero.classList.add('has-admin-image');const panel=hero.querySelector('.hero-panel');if(panel)panel.style.backgroundImage=`linear-gradient(rgba(23,37,84,.35),rgba(236,72,153,.25)),url("${settings.heroImageUrl.replaceAll('"','%22')}")`}
+ const hero = document.querySelector('.hero');
+
+if (hero) {
+
+  const imageBox =
+    hero.querySelector('.hero-panel') ||
+    hero.querySelector('.computer-visual');
+
+  if (imageBox && settings.heroImageUrl) {
+
+    hero.classList.add('has-admin-image');
+
+    imageBox.style.backgroundImage =
+      `linear-gradient(
+        rgba(23,37,84,.18),
+        rgba(236,72,153,.12)
+      ),
+      url("${settings.heroImageUrl.replaceAll('"', '%22')}")`;
+
+    imageBox.style.backgroundSize = 'cover';
+    imageBox.style.backgroundPosition = 'center';
+    imageBox.style.backgroundRepeat = 'no-repeat';
+    imageBox.style.minHeight = '300px';
+    imageBox.style.borderRadius = '24px';
+    imageBox.style.overflow = 'hidden';
+
+    /*
+      Purana computer graphic hide
+      taaki uploaded photo clearly dikhe.
+    */
+    [...imageBox.children].forEach(child => {
+      child.style.display = 'none';
+    });
+
+  } else if (imageBox) {
+
+    imageBox.style.backgroundImage = '';
+
+    [...imageBox.children].forEach(child => {
+      child.style.display = '';
+    });
+  }
 }
 
 const time=v=>v?.toDate?.().getTime?.()||v?.seconds*1000||new Date(v||0).getTime()||0;
