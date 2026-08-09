@@ -33,6 +33,7 @@
       <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
       <li data-page="pages"><i class="fa-solid fa-pen-to-square"></i><span>Website Pages</span></li>
       <li data-page="sitebuilder"><i class="fa-solid fa-layer-group"></i><span>Full Website CMS</span></li>
+<li data-page="dynamicpages"><i class="fa-solid fa-file-circle-plus"></i><span>Page & Menu Builder</span></li>
       <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
@@ -345,7 +346,8 @@
       </div>
     </section>
 
-    <section id="settingsPage" class="page">
+    <section id="dynamicpagesPage" class="page"><div class="page-intro"><div><h2>🧱 Page & Menu Builder</h2><p>New page + automatic menu + sections ka full control.</p></div></div><div class="manager-layout"><div class="manager-form"><h3>Create / Edit Page</h3><label>Page Name</label><input id="dpName"><label>URL Slug</label><input id="dpSlug" placeholder="latest-updates"><label>Page Title</label><input id="dpTitle"><label>Description</label><textarea id="dpText"></textarea><div class="form-grid two"><div><label>Start Color</label><input id="dpC1" type="color" value="#ec4899"></div><div><label>End Color</label><input id="dpC2" type="color" value="#2563eb"></div></div><div class="form-grid two"><div><label>Add to Menu</label><select id="dpMenu"><option value="true">Yes</option><option value="false">No</option></select></div><div><label>Menu Order</label><input id="dpOrder" type="number" value="50"></div></div><label>Status</label><select id="dpStatus"><option>Published</option><option>Draft</option></select><button id="dpSave" class="primary-btn">Save Page</button><button id="dpClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="dpList" class="content-grid"></div></div></div><div class="manager-layout" style="margin-top:22px"><div class="manager-form"><h3>Page Sections</h3><label>Page</label><select id="dsPage"></select><label>Section Title</label><input id="dsTitle"><label>Text</label><textarea id="dsText"></textarea><label>Image URL</label><input id="dsImage"><div class="form-grid two"><div><label>Button Text</label><input id="dsButton"></div><div><label>Button Link</label><input id="dsLink"></div></div><div class="form-grid three"><div><label>Background</label><input id="dsBg" type="color" value="#ffffff"></div><div><label>Text Color</label><input id="dsColor" type="color" value="#132238"></div><div><label>Accent</label><input id="dsAccent" type="color" value="#ec4899"></div></div><label>Order</label><input id="dsOrder" type="number" value="50"><button id="dsSave" class="primary-btn">Save Section</button><button id="dsClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="dsList" class="content-grid"></div></div></div></section>
+<section id="settingsPage" class="page">
       <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
       <div class="settings-shell">
         <div class="settings-group"><h3>🏢 Business Identity</h3><div class="form-grid two"><div><label>Website Name</label><input type="text" id="siteName" placeholder="Khobragade Computer Service Centre"></div><div><label>Tagline</label><input type="text" id="tagline" placeholder="CSC Digital Seva & Government Services"></div></div><div class="form-grid two"><div><label>Admin Email</label><input type="email" id="adminEmail" placeholder="admin@example.com"></div><div><label>Address</label><input type="text" id="address" placeholder="Nagpur, Maharashtra, India"></div></div><label>Logo URL</label><input type="url" id="logoUrl" placeholder="https://..."></div>
@@ -387,5 +389,6 @@
 <script type="module" src="page-manager.js"></script>
 <script type="module" src="site-builder.js"></script>
 <script type="module" src="checklists.js"></script>
+<script type="module" src="dynamic-pages.js"></script>
 </body>
 </html>

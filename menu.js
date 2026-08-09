@@ -12,6 +12,7 @@ const titleMap = {
   analytics: "Analytics",
   pages: "Website Pages",
   sitebuilder: "Full Website CMS",
+  dynamicpages: "Page & Menu Builder",
   settings: "Website Settings"
 };
 
