@@ -34,6 +34,7 @@
       <li data-page="pages"><i class="fa-solid fa-pen-to-square"></i><span>Website Pages</span></li>
       <li data-page="sitebuilder"><i class="fa-solid fa-layer-group"></i><span>Full Website CMS</span></li>
 <li data-page="dynamicpages"><i class="fa-solid fa-file-circle-plus"></i><span>Page & Menu Builder</span></li>
+      <li data-page="recyclebin"><i class="fa-solid fa-recycle"></i><span>Recycle Bin</span></li>
       <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
@@ -347,6 +348,16 @@
     </section>
 
     <section id="dynamicpagesPage" class="page"><div class="page-intro"><div><h2>🧱 Page & Menu Builder</h2><p>New page + automatic menu + sections ka full control.</p></div></div><div class="manager-layout"><div class="manager-form"><h3>Create / Edit Page</h3><label>Page Name</label><input id="dpName"><label>URL Slug</label><input id="dpSlug" placeholder="latest-updates"><label>Page Title</label><input id="dpTitle"><label>Description</label><textarea id="dpText"></textarea><div class="form-grid two"><div><label>Start Color</label><input id="dpC1" type="color" value="#ec4899"></div><div><label>End Color</label><input id="dpC2" type="color" value="#2563eb"></div></div><div class="form-grid two"><div><label>Add to Menu</label><select id="dpMenu"><option value="true">Yes</option><option value="false">No</option></select></div><div><label>Menu Order</label><input id="dpOrder" type="number" value="50"></div></div><label>Status</label><select id="dpStatus"><option>Published</option><option>Draft</option></select><button id="dpSave" class="primary-btn">Save Page</button><button id="dpClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="dpList" class="content-grid"></div></div></div><div class="manager-layout" style="margin-top:22px"><div class="manager-form"><h3>Page Sections</h3><label>Page</label><select id="dsPage"></select><label>Section Title</label><input id="dsTitle"><label>Text</label><textarea id="dsText"></textarea><label>Image URL</label><input id="dsImage"><div class="form-grid two"><div><label>Button Text</label><input id="dsButton"></div><div><label>Button Link</label><input id="dsLink"></div></div><div class="form-grid three"><div><label>Background</label><input id="dsBg" type="color" value="#ffffff"></div><div><label>Text Color</label><input id="dsColor" type="color" value="#132238"></div><div><label>Accent</label><input id="dsAccent" type="color" value="#ec4899"></div></div><label>Order</label><input id="dsOrder" type="number" value="50"><button id="dsSave" class="primary-btn">Save Section</button><button id="dsClear" class="secondary-btn">Clear</button></div><div class="manager-content"><div id="dsList" class="content-grid"></div></div></div></section>
+
+    <section id="recyclebinPage" class="page">
+      <div class="page-intro"><div><h2>♻ Recycle Bin</h2><p>Deleted CMS items ko Restore ya permanently delete karein.</p></div></div>
+      <div class="dashboard-information cms-summary">
+        <article class="dashboard-info-box"><h3>🛡️ Safe Delete</h3><p>Page aur Page Section delete hone par pehle yahan aayega.</p></article>
+        <article class="dashboard-info-box"><h3>↩ Restore</h3><p>Galti se delete hua item original collection me wapas bhejein.</p></article>
+      </div>
+      <div class="manager-content"><div class="toolbar"><input id="recycleSearch" type="search" placeholder="🔍 Search deleted items..."><select id="recycleFilter"><option value="all">All Types</option><option value="dynamicPages">Pages</option><option value="dynamicSections">Page Sections</option><option value="menuItems">Menu Items</option></select></div><div id="recycleList" class="content-grid"><div class="empty-state">Recycle Bin loading...</div></div></div>
+    </section>
+
 <section id="settingsPage" class="page">
       <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
       <div class="settings-shell">
@@ -390,5 +401,6 @@
 <script type="module" src="site-builder.js"></script>
 <script type="module" src="checklists.js"></script>
 <script type="module" src="dynamic-pages.js"></script>
+<script type="module" src="recycle-bin.js"></script>
 </body>
 </html>

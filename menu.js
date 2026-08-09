@@ -13,6 +13,7 @@ const titleMap = {
   pages: "Website Pages",
   sitebuilder: "Full Website CMS",
   dynamicpages: "Page & Menu Builder",
+  recyclebin: "Recycle Bin",
   settings: "Website Settings"
 };
 

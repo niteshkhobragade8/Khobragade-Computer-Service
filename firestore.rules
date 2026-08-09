@@ -15,6 +15,8 @@ service cloud.firestore {
     match /siteSections/{id} { allow read: if true; allow write: if signedIn(); }
     match /dynamicPages/{id} { allow read: if true; allow write: if signedIn(); }
     match /dynamicSections/{id} { allow read: if true; allow write: if signedIn(); }
+    match /menuItems/{id} { allow read: if true; allow write: if signedIn(); }
+    match /recycleBin/{id} { allow read, write: if signedIn(); }
     match /analytics/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
     match /visitorDaily/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
     match /{document=**} { allow read, write: if false; }
