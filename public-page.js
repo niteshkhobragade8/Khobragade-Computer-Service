@@ -4,7 +4,7 @@ import {collection,onSnapshot,doc,setDoc,increment,serverTimestamp} from 'https:
 import {DEFAULT_SERVICES,DEFAULT_SCHEMES,DEFAULT_DIVYANG,DOCUMENT_CHECKLISTS} from './catalog-data.js';
 const $=id=>document.getElementById(id), esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
 const norm=v=>String(v||'').replace(/\s+/g,' ').trim().toLowerCase(), digits=v=>String(v||'').replace(/\D/g,'');
-let settings={},services=[],updates=[],docs=[],notifications=[],pages={},youtubeVideos=[],cmsGlobal={},cmsHome={},siteSections=[],editableChecklists=[],dynamicPages=[],extraMenus=[];
+let settings={},services=[],updates=[],docs=[],notifications=[],pages={},youtubeVideos=[],cmsGlobal={},cmsHome={},siteSections=[],editableChecklists=[],dynamicPages=[],extraMenus=[],activeTheme={};
 
 let currentLang=localStorage.getItem('kcsLang')||'';
 const UI={
@@ -40,54 +40,21 @@ function relevant(kind){if(kind==='yojana')return services.filter(x=>/yojana|sch
 function base(kind){if(settings.catalogMode==='firebase')return[];return kind==='yojana'?DEFAULT_SCHEMES:kind==='divyang'?DEFAULT_DIVYANG:DEFAULT_SERVICES}
 
 function renderDynamicMenu(){const h=$('dynamicMenuItems');if(!h)return;const p=dynamicPages.filter(x=>(x.status||'Published')==='Published'&&x.inMenu!==false).map(x=>({name:x.name||'Page',link:'dynamic-page.html?page='+encodeURIComponent(x.slug||''),order:Number(x.order??x.menuOrder??50)}));const m=extraMenus.filter(x=>x.visible!==false).map(x=>({name:x.name||'Menu',link:x.link||'#',order:Number(x.order||80),target:x.target||'_self'}));h.innerHTML=[...p,...m].sort((a,b)=>a.order-b.order).map(x=>`<a class="dynamic-nav-link" href="${esc(x.link)}" target="${esc(x.target||'_self')}">${esc(x.name)}</a>`).join('')}
-function applyFullCms(){const g=cmsGlobal||{},h=cmsHome||{},t=(id,v)=>{const e=$(id);if(e&&v!==undefined&&v!==null&&v!=='')e.textContent=v};t('cmsTopLeftPublic',g.topLeft);t('navHome',g.navHome);t('navServices',g.navServices);t('navYojana',g.navYojana);t('navDivyang',g.navDivyang);t('navDocuments',g.navDocuments);t('navContact',g.navContact);t('navYoutube',g.navYoutube);t('navWhatsapp',g.navWhatsapp);if($('globalSearch')&&g.searchPlaceholder)$('globalSearch').placeholder=g.searchPlaceholder;t('globalSearchButton',g.searchButton);if($('globalSearchSection'))$('globalSearchSection').style.display=g.searchVisible===false?'none':'';t('footerQuickTitle',g.footerQuickTitle);t('footerSupportTitle',g.footerSupportTitle);if($('footerText')&&g.copyright)$('footerText').textContent=g.copyright;if(g.menuBg)document.documentElement.style.setProperty('--menu-bg',g.menuBg);if(g.menuText)document.documentElement.style.setProperty('--menu-text',g.menuText);if(g.menuActive)document.documentElement.style.setProperty('--menu-active',g.menuActive);if($('siteFooter')&&g.footerBg)$('siteFooter').style.background=g.footerBg;if(document.body.dataset.page==='home'){t('homeHeroEyebrow',h.heroEyebrow);if($('heroTitle')&&h.heroTitle)$('heroTitle').textContent=h.heroTitle;if($('heroSubtitle')&&h.heroText)$('heroSubtitle').textContent=h.heroText;t('homeHeroBtn1',h.heroBtn1);t('homeHeroBtn2',h.heroBtn2);if($('homeHeroSection')){$('homeHeroSection').style.display=h.heroVisible===false?'none':'';if(h.heroColor1&&h.heroColor2)$('homeHeroSection').style.background=`linear-gradient(135deg,${h.heroColor1},${h.heroColor2})`}t('homeYoutubeTitle',h.youtubeTitle);t('homeYoutubeText',h.youtubeText);if($('youtubeHomeSection'))$('youtubeHomeSection').style.display=h.youtubeVisible===false?'none':'';t('homeQuickTitle',h.quickTitle);t('homeQuickText',h.quickText);t('homeQuickButton',h.quickButton);if($('homeQuickSection'))$('homeQuickSection').style.display=h.quickVisible===false?'none':'';t('homeAboutKicker',h.aboutKicker);if($('homeAboutTitle')&&h.aboutTitle)$('homeAboutTitle').textContent=h.aboutTitle;if($('homeAboutText')&&h.aboutText)$('homeAboutText').textContent=h.aboutText;if($('homeAboutSection'))$('homeAboutSection').style.display=h.aboutVisible===false?'none':''}renderCustomSections()}
+function applyMainMenuControl(g={}){
+ const nav=document.querySelector('.nav-links');if(!nav)return;
+ const rows=[['navHome','navHomeVisible','navHomeOrder',10],['navServices','navServicesVisible','navServicesOrder',20],['navYojana','navYojanaVisible','navYojanaOrder',30],['navDivyang','navDivyangVisible','navDivyangOrder',40],['navDocuments','navDocumentsVisible','navDocumentsOrder',50],['navContact','navContactVisible','navContactOrder',60],['navYoutube','navYoutubeVisible','navYoutubeOrder',70],['navWhatsapp','navWhatsappVisible','navWhatsappOrder',80]];
+ rows.forEach(([id,vk,ok,d])=>{const e=nav.querySelector('#'+id);if(e){e.style.display=g[vk]===false?'none':'';e.dataset.cmsOrder=String(Number(g[ok]??d));}});
+ const anchor=nav.querySelector('#dynamicMenuItems')||nav.querySelector('#langSelect');rows.map(([id])=>nav.querySelector('#'+id)).filter(Boolean).sort((a,b)=>Number(a.dataset.cmsOrder||0)-Number(b.dataset.cmsOrder||0)).forEach(e=>nav.insertBefore(e,anchor));
+}
+function applyFullCms(){const g=cmsGlobal||{},h=cmsHome||{},t=(id,v)=>{const e=$(id);if(e&&v!==undefined&&v!==null&&v!=='')e.textContent=v};t('cmsTopLeftPublic',g.topLeft);t('navHome',g.navHome);t('navServices',g.navServices);t('navYojana',g.navYojana);t('navDivyang',g.navDivyang);t('navDocuments',g.navDocuments);t('navContact',g.navContact);t('navYoutube',g.navYoutube);t('navWhatsapp',g.navWhatsapp);if($('globalSearch')&&g.searchPlaceholder)$('globalSearch').placeholder=g.searchPlaceholder;t('globalSearchButton',g.searchButton);if($('globalSearchSection'))$('globalSearchSection').style.display=g.searchVisible===false?'none':'';t('footerQuickTitle',g.footerQuickTitle);t('footerSupportTitle',g.footerSupportTitle);if($('footerText')&&g.copyright)$('footerText').textContent=g.copyright;if(g.menuBg&&!activeTheme.menuBg)document.documentElement.style.setProperty('--menu-bg',g.menuBg);if(g.menuText&&!activeTheme.menuText)document.documentElement.style.setProperty('--menu-text',g.menuText);if(g.menuActive&&!activeTheme.menuActive)document.documentElement.style.setProperty('--menu-active',g.menuActive);if($('siteFooter')&&g.footerBg&&!activeTheme.footer)$('siteFooter').style.background=g.footerBg;applyMainMenuControl(g);if(document.body.dataset.page==='home'){t('homeHeroEyebrow',h.heroEyebrow);if($('heroTitle')&&h.heroTitle)$('heroTitle').textContent=h.heroTitle;if($('heroSubtitle')&&h.heroText)$('heroSubtitle').textContent=h.heroText;t('homeHeroBtn1',h.heroBtn1);t('homeHeroBtn2',h.heroBtn2);if($('homeHeroSection')){$('homeHeroSection').style.display=h.heroVisible===false?'none':'';if(h.heroColor1&&h.heroColor2)$('homeHeroSection').style.background=`linear-gradient(135deg,${h.heroColor1},${h.heroColor2})`}t('homeYoutubeTitle',h.youtubeTitle);t('homeYoutubeText',h.youtubeText);if($('youtubeHomeSection'))$('youtubeHomeSection').style.display=h.youtubeVisible===false?'none':'';t('homeQuickTitle',h.quickTitle);t('homeQuickText',h.quickText);t('homeQuickButton',h.quickButton);if($('homeQuickSection'))$('homeQuickSection').style.display=h.quickVisible===false?'none':'';t('homeAboutKicker',h.aboutKicker);if($('homeAboutTitle')&&h.aboutTitle)$('homeAboutTitle').textContent=h.aboutTitle;if($('homeAboutText')&&h.aboutText)$('homeAboutText').textContent=h.aboutText;if($('homeAboutSection'))$('homeAboutSection').style.display=h.aboutVisible===false?'none':''}renderCustomSections()}
 function safeLink(v){const s=String(v||'').trim();return(/^https?:\/\//i.test(s)||/^[a-z0-9_-]+\.html/i.test(s)||s.startsWith('#'))?s:'#'}
+function customSectionHtml(x){return `<section class="section cms-custom-section" data-cms-generated="1" style="background:${esc(x.bgColor||'#fff')};color:${esc(x.textColor||'#132238')}"><div class="section-inner"><div class="cms-custom-grid">${x.imageUrl?`<img src="${esc(x.imageUrl)}" alt="${esc(x.title||'Section image')}" loading="lazy">`:''}<div><span class="kicker" style="color:${esc(x.accentColor||'#ec4899')}">CUSTOM</span><h2>${esc(x.title||'')}</h2><p>${esc(x.description||'')}</p>${x.buttonText&&x.buttonLink?`<a class="btn btn-blue" href="${esc(safeLink(x.buttonLink))}" ${/^https?:/i.test(x.buttonLink)?'target="_blank" rel="noopener"':''}>${esc(x.buttonText)}</a>`:''}</div></div></div></section>`}
 function renderCustomSections(){
-  const host = $('customSectionsHost');
-  if (!host) return;
-
-  const page = document.body.dataset.page || 'home';
-
-  const rows = siteSections
-    .filter(x => x.page === page && x.visible !== false)
-    .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
-
-  host.innerHTML = rows.map(x => `
-    <section class="section cms-custom-section"
-      style="background:${esc(x.bgColor || '#ffffff')};color:${esc(x.textColor || '#132238')}">
-
-      <div class="section-inner">
-        <div class="cms-custom-grid">
-
-          ${x.imageUrl
-            ? `<img src="${esc(x.imageUrl)}"
-                    alt="${esc(x.title || 'Section image')}"
-                    loading="lazy">`
-            : ''
-          }
-
-          <div>
-            <span class="kicker"
-              style="color:${esc(x.accentColor || '#ec4899')}">
-              CUSTOM
-            </span>
-
-            <h2>${esc(x.title || '')}</h2>
-            <p>${esc(x.description || '')}</p>
-
-            ${x.buttonText && x.buttonLink
-              ? `<a class="btn btn-blue"
-                    href="${esc(safeLink(x.buttonLink))}">
-                    ${esc(x.buttonText)}
-                 </a>`
-              : ''
-            }
-          </div>
-
-        </div>
-      </div>
-    </section>
-  `).join('');
+ document.querySelectorAll('.cms-custom-section[data-cms-generated="1"]').forEach(e=>e.remove());
+ const page=document.body.dataset.page||'home',rows=siteSections.filter(x=>x.page===page&&x.visible!==false).sort((a,b)=>Number(a.order||50)-Number(b.order||50));
+ if(page!=='home'){const host=$('customSectionsHost');if(host)host.innerHTML=rows.map(customSectionHtml).join('');return}
+ const builtins=[[$('homeHeroSection'),10],[$('homeUpdatesSection'),20],[$('youtubeHomeSection'),30],[$('homeQuickSection'),40],[$('homeAboutSection'),50]].filter(x=>x[0]);
+ rows.forEach(x=>{const wrap=document.createElement('div');wrap.innerHTML=customSectionHtml(x);const node=wrap.firstElementChild,ord=Number(x.order||50);const target=builtins.find(([,o])=>o>ord)?.[0];if(target)target.parentNode.insertBefore(node,target);else{const footer=$('siteFooter');footer?.parentNode.insertBefore(node,footer);}});
 }
 function applySettings(){let name=settings.siteName||'Khobragade Computer Service Centre';document.querySelectorAll('[data-site-name]').forEach(e=>e.textContent=name);document.querySelectorAll('[data-tagline]').forEach(e=>e.textContent=settings.tagline||'Digital Seva & Government Service Assistance');document.querySelectorAll('[data-address]').forEach(e=>e.textContent=settings.address||'Nagpur, Maharashtra, India');document.querySelectorAll('[data-phone]').forEach(e=>e.textContent=settings.contactNumber||'9637832490');document.querySelectorAll('[data-wa]').forEach(e=>e.href=wa(e.dataset.message||'Digital service'));document.querySelectorAll('[data-call]').forEach(e=>{let n=digits(settings.contactNumber||'9637832490');e.href='tel:'+(n.length===10?'+91':'')+n});document.querySelectorAll('[data-youtube]').forEach(e=>e.href=settings.youtubeChannel||'https://youtube.com/@niteshkhobragade8');if($('heroTitle'))$('heroTitle').textContent=settings.heroTitle||name;if($('heroSubtitle'))$('heroSubtitle').textContent=settings.heroSubtitle||'Online citizen services, government schemes and document assistance at one place.';if($('homeAboutTitle'))$('homeAboutTitle').textContent=settings.homeAboutTitle||name;if($('homeAboutText'))$('homeAboutText').textContent=settings.homeAboutText||'Digital applications, government schemes, citizen services and document guidance ke liye professional assistance.';if($('footerText'))$('footerText').textContent=settings.footerText||'© 2026 All Rights Reserved'}
 function applyPage(){let key=document.body.dataset.page||document.body.dataset.catalog||'home',p=pages[key];if(!p||p.status==='Draft')return;if($('pageHeroTitle')&&p.title)$('pageHeroTitle').textContent=p.title;if($('pageHeroSubtitle')&&p.subtitle)$('pageHeroSubtitle').textContent=p.subtitle;if($('pageDescription')&&p.description)$('pageDescription').textContent=p.description}
@@ -130,3 +97,5 @@ onSnapshot(collection(db,'documentChecklists'),s=>{editableChecklists=s.docs.map
 
 onSnapshot(collection(db,'dynamicPages'),s=>{dynamicPages=s.docs.map(d=>({id:d.id,...d.data()}));renderDynamicMenu()});
 onSnapshot(collection(db,'menuItems'),s=>{extraMenus=s.docs.map(d=>({id:d.id,...d.data()}));renderDynamicMenu()});
+
+onSnapshot(doc(db,'settings','activeTheme'),s=>{activeTheme=s.exists()?s.data():{};applyTheme()});

@@ -423,3 +423,5 @@ textarea{min-height:105px;resize:vertical}
 }
 
 .cms-summary{margin-bottom:20px}.cms-subtitle{margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid #e5e7eb;color:#334155}.custom-section-form input[type="color"],#sitebuilderPage input[type="color"]{min-height:44px;padding:5px}#sitebuilderPage .settings-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:800px){#sitebuilderPage .manager-layout{grid-template-columns:1fr}}
+
+.menu-control-grid{display:grid;gap:10px;margin-bottom:18px}.menu-control-row{display:grid;grid-template-columns:minmax(110px,1fr) 120px 90px;gap:10px;align-items:center;padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}.menu-control-row input,.menu-control-row select{margin:0}#themesPage input[type="color"]{min-height:46px;padding:4px}@media(max-width:700px){.menu-control-row{grid-template-columns:1fr 1fr}.menu-control-row b{grid-column:1/-1}}

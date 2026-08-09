@@ -36,6 +36,7 @@
       <li data-page="sitebuilder"><i class="fa-solid fa-layer-group"></i><span>Full Website CMS</span></li>
 <li data-page="dynamicpages"><i class="fa-solid fa-file-circle-plus"></i><span>Page & Menu Builder</span></li>
       <li data-page="recyclebin"><i class="fa-solid fa-recycle"></i><span>Recycle Bin</span></li>
+      <li data-page="themes"><i class="fa-solid fa-palette"></i><span>Theme Manager</span></li>
       <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
@@ -288,6 +289,17 @@
             <div><label>Documents</label><input id="cmsNavDocuments" type="text"></div><div><label>Contact</label><input id="cmsNavContact" type="text"></div>
             <div><label>YouTube</label><input id="cmsNavYoutube" type="text"></div><div><label>WhatsApp</label><input id="cmsNavWhatsapp" type="text"></div>
           </div>
+          <h4 class="cms-subtitle">Main Menu Visibility & Order</h4>
+          <div class="menu-control-grid">
+            <div class="menu-control-row"><b>Home</b><select id="cmsNavHomeVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavHomeOrder" type="number" value="10" title="Order"></div>
+            <div class="menu-control-row"><b>Services</b><select id="cmsNavServicesVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavServicesOrder" type="number" value="20" title="Order"></div>
+            <div class="menu-control-row"><b>Yojana</b><select id="cmsNavYojanaVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavYojanaOrder" type="number" value="30" title="Order"></div>
+            <div class="menu-control-row"><b>Divyang</b><select id="cmsNavDivyangVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavDivyangOrder" type="number" value="40" title="Order"></div>
+            <div class="menu-control-row"><b>Documents</b><select id="cmsNavDocumentsVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavDocumentsOrder" type="number" value="50" title="Order"></div>
+            <div class="menu-control-row"><b>Contact</b><select id="cmsNavContactVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavContactOrder" type="number" value="60" title="Order"></div>
+            <div class="menu-control-row"><b>YouTube</b><select id="cmsNavYoutubeVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavYoutubeOrder" type="number" value="70" title="Order"></div>
+            <div class="menu-control-row"><b>WhatsApp</b><select id="cmsNavWhatsappVisible"><option value="true">Show</option><option value="false">Hide</option></select><input id="cmsNavWhatsappOrder" type="number" value="80" title="Order"></div>
+          </div>
           <h4 class="cms-subtitle">Search Bar</h4>
           <label>Search Placeholder</label><input id="cmsSearchPlaceholder" type="text">
           <div class="form-grid two"><div><label>Button Text</label><input id="cmsSearchButton" type="text"></div><div><label>Search Bar</label><select id="cmsSearchVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
@@ -358,7 +370,25 @@
         <article class="dashboard-info-box"><h3>🛡️ Safe Delete</h3><p>Page aur Page Section delete hone par pehle yahan aayega.</p></article>
         <article class="dashboard-info-box"><h3>↩ Restore</h3><p>Galti se delete hua item original collection me wapas bhejein.</p></article>
       </div>
-      <div class="manager-content"><div class="toolbar"><input id="recycleSearch" type="search" placeholder="🔍 Search deleted items..."><select id="recycleFilter"><option value="all">All Types</option><option value="dynamicPages">Pages</option><option value="dynamicSections">Page Sections</option><option value="menuItems">Menu Items</option></select></div><div id="recycleList" class="content-grid"><div class="empty-state">Recycle Bin loading...</div></div></div>
+      <div class="manager-content"><div class="toolbar"><input id="recycleSearch" type="search" placeholder="🔍 Search deleted items..."><select id="recycleFilter"><option value="all">All Types</option><option value="services">Services / Yojana / Divyang</option><option value="categories">Categories</option><option value="updates">Government Updates</option><option value="notifications">Notifications</option><option value="images">Images</option><option value="documents">Documents</option><option value="documentChecklists">Document Checklists</option><option value="youtube">YouTube</option><option value="siteSections">Custom Sections</option><option value="pageContent">Website Page Content</option><option value="themes">Themes</option><option value="dynamicPages">Pages</option><option value="dynamicSections">Page Sections</option><option value="menuItems">Menu Items</option></select></div><div id="recycleList" class="content-grid"><div class="empty-state">Recycle Bin loading...</div></div></div>
+    </section>
+
+    <section id="themesPage" class="page">
+      <div class="page-intro"><div><h2>🎨 Theme Manager</h2><p>Professional website themes create, edit, apply, delete aur restore karein.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <div class="form-title"><span>🎨</span><div><h3>Create / Edit Theme</h3><p>Pink + Blue default professional theme preserved.</p></div></div>
+          <label>Theme Name</label><input id="themeName" type="text" placeholder="Pink Blue Professional">
+          <div class="form-grid three"><div><label>Primary</label><input id="themePrimary2" type="color" value="#ec4899"></div><div><label>Secondary</label><input id="themeSecondary2" type="color" value="#2563eb"></div><div><label>Accent</label><input id="themeAccent2" type="color" value="#f59e0b"></div></div>
+          <div class="form-grid three"><div><label>Page Background</label><input id="themePageBg" type="color" value="#f8fafc"></div><div><label>Surface / Card</label><input id="themeSurface" type="color" value="#ffffff"></div><div><label>Text</label><input id="themeText" type="color" value="#132238"></div></div>
+          <div class="form-grid three"><div><label>Menu Background</label><input id="themeMenuBg" type="color" value="#172554"></div><div><label>Menu Text</label><input id="themeMenuText" type="color" value="#ffffff"></div><div><label>Menu Active</label><input id="themeMenuActive" type="color" value="#ec4899"></div></div>
+          <div class="form-grid three"><div><label>Footer</label><input id="themeFooter" type="color" value="#07182d"></div><div><label>Button Text</label><input id="themeButtonText" type="color" value="#ffffff"></div><div><label>Border</label><input id="themeBorder" type="color" value="#e2e8f0"></div></div>
+          <div class="form-grid two"><div><label>Card Radius</label><select id="themeRadius"><option value="14">14px</option><option value="20" selected>20px</option><option value="28">28px</option></select></div><div><label>Preferred Mode</label><select id="themeMode"><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></div></div>
+          <div class="settings-actions"><button id="saveThemePreset" class="primary-btn" type="button">Save New Theme</button><button id="updateThemePreset" class="secondary-btn" type="button">Update Theme</button><button id="applyThemePreview" class="secondary-btn" type="button">Apply Current Values</button><button id="resetDefaultTheme" class="secondary-btn" type="button">Restore Pink + Blue Default</button></div>
+          <div id="themeManagerMessage" class="settings-message info">Theme Manager ready.</div>
+        </div>
+        <div class="manager-content"><div class="toolbar"><input id="themeSearch" type="search" placeholder="🔍 Search themes..."></div><div id="themePresetList" class="content-grid"><div class="empty-state">No saved themes.</div></div></div>
+      </div>
     </section>
 
 <section id="settingsPage" class="page">
@@ -381,6 +411,10 @@
 <label>Header Logo URL</label><input type="url" id="logoUrlCms" placeholder="https://... (same as Logo URL)">
 <p class="field-help">Visitors header se English / हिंदी / मराठी aur Light / Dark change kar sakte hain.</p>
 </div>
+<div class="settings-group"><h3>🛠 Data Recovery & Sync</h3>
+<p class="field-help">Existing Services se Categories rebuild karein; Settings me saved logo/banner ko Images Manager me recover karein. Existing Firestore data duplicate nahi hoga.</p>
+<div class="settings-actions"><button id="recoverCategories" class="secondary-btn" type="button">Recover Categories from Services</button><button id="recoverImages" class="secondary-btn" type="button">Recover Logo / Banner Images</button><button id="syncDashboardCounts" class="secondary-btn" type="button">Refresh Dashboard Counts</button></div>
+<div id="recoveryMessage" class="settings-message info">Recovery ready.</div></div>
 <div id="settingsMessage" class="settings-message info">Settings ready.</div>
         <div class="settings-actions"><button id="saveSettings" class="primary-btn" type="button">Save Website Settings</button><button id="resetSettings" class="secondary-btn" type="button">Reset Form</button></div>
       </div>
@@ -405,5 +439,7 @@
 <script type="module" src="checklists.js"></script>
 <script type="module" src="dynamic-pages.js"></script>
 <script type="module" src="recycle-bin.js"></script>
+<script type="module" src="theme-manager.js"></script>
+<script type="module" src="data-recovery.js"></script>
 </body>
 </html>

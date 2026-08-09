@@ -154,11 +154,9 @@ async function publishAllNotifications() {
 }
 
 async function deleteAllNotifications() {
-  if (!allNotifications.length || !confirm("Delete All Notifications?")) return;
-  const batch = writeBatch(db);
-  allNotifications.forEach((item) => batch.delete(doc(db, "notifications", item.id)));
-  await batch.commit();
-  alert("All Notifications Deleted");
+  if (!allNotifications.length || !confirm("Move ALL Notifications to Recycle Bin?")) return;
+  for (const item of [...allNotifications]) await moveToTrash("notifications", item.id, item);
+  alert("All Notifications moved to Recycle Bin");
 }
 
 saveButton?.addEventListener("click", saveNotification);

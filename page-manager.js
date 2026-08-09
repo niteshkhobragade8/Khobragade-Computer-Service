@@ -1,6 +1,7 @@
+import {moveToTrash} from './trash.js';
 
 import {db} from './firebase-config.js';
-import {doc,getDoc,setDoc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {doc,getDoc,setDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id);
 const names={home:'Home',services:'Services',yojana:'Yojana',divyang:'Divyang',documents:'Documents',contact:'Contact'};
 const ref=k=>doc(db,'pageContent',k||$('pageKey').value);
@@ -26,9 +27,10 @@ async function clearPage(key){
   key=key||$('pageKey').value;
   if(!confirm(names[key]+' ka custom page content clear karna hai?'))return;
   try{
-    await deleteDoc(ref(key));
+    const s=await getDoc(ref(key));
+    if(s.exists()) await moveToTrash('pageContent',key,{id:key,...s.data()});
     if($('pageKey').value===key){$('pageTitle').value='';$('pageSubtitle').value='';$('pageDescriptionAdmin').value='';$('pageStatus').value='Published'}
-    msg(names[key]+' custom content cleared. Default content active.','success');
+    msg(names[key]+' custom content moved to Recycle Bin. Default content active.','success');
   }catch(e){msg(e.message,'error')}
 }
 $('pageKey')?.addEventListener('change',()=>load());

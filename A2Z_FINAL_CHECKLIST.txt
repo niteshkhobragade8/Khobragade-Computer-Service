@@ -1,0 +1,12 @@
+A-to-Z CMS FINAL CHECKLIST
+Separate Theme Manager sidebar: create/save/apply/edit/delete/default restore.
+Existing Main Menu: names + show/hide + numeric order.
+Extra Menu target and Dynamic Section visibility remain supported.
+Custom Sections: numeric placement relative to Home built-in sections; order 1 appears before Hero.
+Safe Delete/Recycling supported by module delete flows; Notification Delete All now recycles.
+Government Updates Home display and Popup Notifications remain enabled.
+Categories recovery from existing Services.
+Images recovery from Settings logo/banner URLs.
+Dashboard counters remain live Firestore listeners.
+CNAME/domain preserved.
+Historical data already permanently deleted from Firestore cannot be recreated unless another source still contains it.

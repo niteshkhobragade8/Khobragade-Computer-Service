@@ -10,6 +10,7 @@ service cloud.firestore {
     match /documents/{id} { allow read: if true; allow write: if signedIn(); }
     match /documentChecklists/{id} { allow read: if true; allow write: if signedIn(); }
     match /youtube/{id} { allow read: if true; allow write: if signedIn(); }
+    match /themes/{id} { allow read: if true; allow write: if signedIn(); }
     match /settings/{id} { allow read: if true; allow write: if signedIn(); }
     match /pageContent/{id} { allow read: if true; allow write: if signedIn(); }
     match /siteSections/{id} { allow read: if true; allow write: if signedIn(); }

@@ -14,6 +14,7 @@ const titleMap = {
   sitebuilder: "Full Website CMS",
   dynamicpages: "Page & Menu Builder",
   recyclebin: "Recycle Bin",
+  themes: "Theme Manager",
   settings: "Website Settings"
 };
 
