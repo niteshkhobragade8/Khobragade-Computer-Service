@@ -1,32 +1,38 @@
 import { moveToTrash } from './trash.js';
-import { db, storage } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
 
 import {
   collection,
   addDoc,
-  doc,
-  setDoc,
   serverTimestamp,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
+/* =========================================
+   CLOUDINARY SETTINGS
+========================================= */
 
-const $ = id => document.getElementById(id);
+const CLOUD_NAME = "jkia38fa";
+const UPLOAD_PRESET = "khobragade_csc";
+
+const CLOUDINARY_UPLOAD_URL =
+  `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+
+/* =========================================
+   BASIC VARIABLES
+========================================= */
+
+const $ = (id) => document.getElementById(id);
 
 const list = $("imagesList");
 
 let cloudImages = [];
-let staticImages = [];
 
 
-/* ==============================
+/* =========================================
    SAFE HTML
-============================== */
+========================================= */
 
 function escapeHTML(value) {
   return String(value ?? "")
@@ -38,19 +44,9 @@ function escapeHTML(value) {
 }
 
 
-/* ==============================
-   STATIC IMAGES
-============================== */
-
-async function loadStaticImages() {
-  staticImages = [];
-  renderImages();
-}
-
-
-/* ==============================
-   RENDER
-============================== */
+/* =========================================
+   SHOW IMAGES
+========================================= */
 
 function renderImages() {
 
@@ -61,29 +57,12 @@ function renderImages() {
       .trim()
       .toLowerCase();
 
-  const combined = [
-
-    ...cloudImages.map(item => ({
-      ...item,
-      source: "cloud"
-    })),
-
-    ...staticImages.map((item, index) => ({
-      id: `static-${index}`,
-      title: item.name,
-      name: item.name,
-      url: item.url,
-      source: "static"
-    }))
-
-  ];
-
-
-  const filtered = combined.filter(item => {
+  const filtered = cloudImages.filter((item) => {
 
     const text =
-      `${item.title || item.name || ""}
-       ${item.category || ""}`
+      `${item.title || ""}
+       ${item.category || ""}
+       ${item.publicId || ""}`
         .toLowerCase();
 
     return !search || text.includes(search);
@@ -103,29 +82,24 @@ function renderImages() {
   }
 
 
-  list.innerHTML = filtered.map(item => `
+  list.innerHTML = filtered.map((item) => `
 
     <article class="image-card">
 
       <img
         src="${escapeHTML(item.url)}"
-        alt="${escapeHTML(item.title || item.name || "Image")}"
+        alt="${escapeHTML(item.title || "Website Image")}"
         loading="lazy"
       >
 
       <div class="image-card-body">
 
         <h3>
-          ${escapeHTML(item.title || item.name || "Image")}
+          ${escapeHTML(item.title || "Website Image")}
         </h3>
 
         <small>
-          ${escapeHTML(
-            item.category ||
-            (item.source === "static"
-              ? "Website Asset"
-              : "Gallery")
-          )}
+          ${escapeHTML(item.category || "Gallery")}
         </small>
 
         <div class="card-actions compact">
@@ -134,36 +108,26 @@ function renderImages() {
             class="action-link"
             href="${escapeHTML(item.url)}"
             target="_blank"
-            rel="noopener">
+            rel="noopener"
+          >
             👁 Preview
           </a>
 
           <button
             class="action-btn copy"
             data-action="copy"
-            data-url="${escapeHTML(item.url)}">
-            📋 Copy
+            data-url="${escapeHTML(item.url)}"
+          >
+            📋 Copy URL
           </button>
 
           <button
-            class="action-btn edit"
-            data-action="use"
-            data-id="${item.id}">
-            🌐 Use on Website
+            class="action-btn delete"
+            data-action="delete"
+            data-id="${item.id}"
+          >
+            🗑 Delete
           </button>
-
-          ${
-            item.source === "cloud"
-              ? `
-                <button
-                  class="action-btn delete"
-                  data-action="delete"
-                  data-id="${item.id}">
-                  🗑 Delete
-                </button>
-              `
-              : ""
-          }
 
         </div>
 
@@ -172,12 +136,13 @@ function renderImages() {
     </article>
 
   `).join("");
+
 }
 
 
-/* ==============================
-   UPLOAD / ADD IMAGE
-============================== */
+/* =========================================
+   UPLOAD IMAGE TO CLOUDINARY
+========================================= */
 
 async function uploadImage() {
 
@@ -188,20 +153,18 @@ async function uploadImage() {
     $("imageUrl")?.value.trim() || "";
 
   const title =
-    $("imageTitle")?.value.trim() ||
-    file?.name ||
-    "Website Image";
+    $("imageTitle")?.value.trim()
+    || file?.name
+    || "Website Image";
 
   const category =
-    $("imageCategory")?.value ||
-    "Gallery";
+    $("imageCategory")?.value
+    || "Gallery";
 
 
   if (!file && !externalUrl) {
 
-    alert(
-      "Image file select karo ya Image URL dalo."
-    );
+    alert("Image select karo.");
 
     return;
   }
@@ -214,23 +177,25 @@ async function uploadImage() {
     button.disabled = true;
 
     button.textContent =
-      "Uploading...";
+      "Uploading... Please Wait";
 
   }
 
 
   try {
 
-    let url = externalUrl;
+    let imageUrl = externalUrl;
 
-    let storagePath = "";
+    let publicId = "";
 
+
+    /* -------------------------------------
+       LOCAL FILE SELECTED
+    ------------------------------------- */
 
     if (file) {
 
-      if (
-        !file.type.startsWith("image/")
-      ) {
+      if (!file.type.startsWith("image/")) {
 
         throw new Error(
           "Please select an image file."
@@ -239,68 +204,88 @@ async function uploadImage() {
       }
 
 
-      if (
-        file.size >
-        8 * 1024 * 1024
-      ) {
+      if (file.size > 10 * 1024 * 1024) {
 
         throw new Error(
-          "Image size 8 MB se kam rakho."
+          "Image size 10 MB se kam rakho."
         );
 
       }
 
 
-      const safeName =
-        file.name.replace(
-          /[^a-zA-Z0-9._-]/g,
-          "_"
-        );
+      const formData = new FormData();
 
+      formData.append(
+        "file",
+        file
+      );
 
-      storagePath =
-        `website-images/${Date.now()}-${safeName}`;
+      formData.append(
+        "upload_preset",
+        UPLOAD_PRESET
+      );
 
-
-      const storageRef =
-        ref(
-          storage,
-          storagePath
-        );
-
-
-      await uploadBytes(
-        storageRef,
-        file,
-        {
-          contentType:
-            file.type
-        }
+      formData.append(
+        "folder",
+        "khobragade-csc"
       );
 
 
-      url =
-        await getDownloadURL(
-          storageRef
+      const response =
+        await fetch(
+          CLOUDINARY_UPLOAD_URL,
+          {
+            method: "POST",
+            body: formData
+          }
         );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result?.error?.message
+          || "Cloudinary upload failed."
+        );
+
+      }
+
+
+      imageUrl =
+        result.secure_url;
+
+      publicId =
+        result.public_id;
 
     }
 
 
+    /* -------------------------------------
+       SAVE IMAGE INFORMATION IN FIRESTORE
+    ------------------------------------- */
+
     await addDoc(
-      collection(
-        db,
-        "images"
-      ),
+      collection(db, "images"),
       {
 
         title,
-        category,
-        url,
-        storagePath,
 
-        status:
-          "Published",
+        category,
+
+        url: imageUrl,
+
+        publicId,
+
+        provider:
+          file
+            ? "cloudinary"
+            : "external",
+
+        status: "Published",
 
         createdAt:
           serverTimestamp()
@@ -309,42 +294,38 @@ async function uploadImage() {
     );
 
 
-    if ($("imageUpload")) {
+    /* -------------------------------------
+       CLEAR FORM
+    ------------------------------------- */
+
+    if ($("imageUpload"))
       $("imageUpload").value = "";
-    }
 
-    if ($("imageUrl")) {
+    if ($("imageUrl"))
       $("imageUrl").value = "";
-    }
 
-    if ($("imageTitle")) {
+    if ($("imageTitle"))
       $("imageTitle").value = "";
-    }
 
 
     alert(
-      "Image Added Successfully"
+      "✅ Image Uploaded Successfully"
     );
 
-  }
 
-  catch (error) {
+  } catch (error) {
 
     console.error(
       "Image Upload Error:",
       error
     );
 
-
     alert(
-      `Image Upload Error: ${error.message}
-
-Agar Firebase Storage enabled nahi hai to Image URL field use karo.`
+      `❌ Image Upload Error:\n${error.message}`
     );
 
-  }
 
-  finally {
+  } finally {
 
     if (button) {
 
@@ -360,187 +341,16 @@ Agar Firebase Storage enabled nahi hai to Image URL field use karo.`
 }
 
 
-/* ==============================
-   USE IMAGE ON WEBSITE
-============================== */
-
-async function useOnWebsite(id) {
-
-  const item =
-    cloudImages.find(
-      image =>
-        image.id === id
-    ) ||
-    staticImages.find(
-      image =>
-        image.id === id
-    );
-
-
-  if (!item || !item.url) {
-
-    alert(
-      "Image URL nahi mila."
-    );
-
-    return;
-  }
-
-
-  const choice =
-    prompt(
-`Image kaha use karna hai?
-
-1 = Home Hero / Banner
-2 = Custom Section
-
-1 ya 2 likho:`
-    );
-
-
-  /* ------------------------------
-     HERO / BANNER
-  ------------------------------ */
-
-  if (choice === "1") {
-
-    const ok =
-      confirm(
-        "Is image ko Home Hero / Banner banana hai?"
-      );
-
-
-    if (!ok) return;
-
-
-    try {
-
-      /*
-        Existing website settings document
-        ko preserve karte hue banner update.
-      */
-
-      await setDoc(
-        doc(
-          db,
-          "settings",
-          "website"
-        ),
-        {
-
-          bannerUrl:
-            item.url,
-
-          heroImage:
-            item.url,
-
-          updatedAt:
-            serverTimestamp()
-
-        },
-        {
-          merge: true
-        }
-      );
-
-
-      alert(
-        "✅ Home Hero / Banner image updated."
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(
-        "Banner update error:",
-        error
-      );
-
-
-      alert(
-        "Banner update failed: " +
-        error.message
-      );
-
-    }
-
-
-    return;
-  }
-
-
-  /* ------------------------------
-     CUSTOM SECTION
-  ------------------------------ */
-
-  if (choice === "2") {
-
-    /*
-      Image URL temporary browser storage
-      me rakhenge.
-
-      CMS page open hone ke baad
-      custom-section code ise use kar
-      sakta hai.
-    */
-
-    localStorage.setItem(
-      "cmsSelectedImageUrl",
-      item.url
-    );
-
-
-    localStorage.setItem(
-      "cmsSelectedImageTitle",
-      item.title ||
-      item.name ||
-      ""
-    );
-
-
-    alert(
-      `✅ Image selected.
-
-Ab Full Website CMS → Custom Section kholo.
-
-Image URL ready hai.`
-    );
-
-
-    /*
-      Agar CMS isi admin SPA me hai to
-      automatically sidebar/menu click
-      karne ki koshish nahi karenge,
-      taaki existing navigation na toote.
-    */
-
-    return;
-  }
-
-
-  if (
-    choice !== null
-  ) {
-
-    alert(
-      "Please 1 ya 2 select karo."
-    );
-
-  }
-
-}
-
-
-/* ==============================
-   DELETE → RECYCLE BIN
-============================== */
+/* =========================================
+   MOVE IMAGE RECORD TO RECYCLE BIN
+========================================= */
 
 async function deleteImage(id) {
 
   const item =
     cloudImages.find(
-      x => x.id === id
+      (image) =>
+        image.id === id
     );
 
 
@@ -554,6 +364,7 @@ async function deleteImage(id) {
   ) {
 
     return;
+
   }
 
 
@@ -570,18 +381,13 @@ async function deleteImage(id) {
       "Image moved to Recycle Bin"
     );
 
-  }
 
-  catch (error) {
+  } catch (error) {
 
-    console.error(
-      "Image delete error:",
-      error
-    );
-
+    console.error(error);
 
     alert(
-      error.message
+      `Delete Error: ${error.message}`
     );
 
   }
@@ -589,29 +395,26 @@ async function deleteImage(id) {
 }
 
 
-/* ==============================
-   COPY URL
-============================== */
+/* =========================================
+   COPY IMAGE URL
+========================================= */
 
 async function copyUrl(url) {
 
   try {
 
-    await navigator
-      .clipboard
+    await navigator.clipboard
       .writeText(url);
 
-  }
 
-  catch (_) {
+  } catch (error) {
 
     const area =
       document.createElement(
         "textarea"
       );
 
-    area.value =
-      url;
+    area.value = url;
 
     document.body
       .appendChild(area);
@@ -628,15 +431,15 @@ async function copyUrl(url) {
 
 
   alert(
-    "Image Link Copied"
+    "✅ Image URL Copied"
   );
 
 }
 
 
-/* ==============================
-   EVENTS
-============================== */
+/* =========================================
+   BUTTON EVENTS
+========================================= */
 
 $("uploadImage")
   ?.addEventListener(
@@ -659,62 +462,49 @@ $("searchImageBtn")
   );
 
 
-list
-  ?.addEventListener(
-    "click",
-    event => {
+list?.addEventListener(
+  "click",
+  (event) => {
 
-      const button =
-        event.target.closest(
-          "button[data-action]"
-        );
-
-
-      if (!button) return;
+    const button =
+      event.target.closest(
+        "button[data-action]"
+      );
 
 
-      if (
-        button.dataset.action ===
-        "delete"
-      ) {
-
-        deleteImage(
-          button.dataset.id
-        );
-
-      }
+    if (!button) return;
 
 
-      if (
-        button.dataset.action ===
-        "copy"
-      ) {
+    if (
+      button.dataset.action ===
+      "delete"
+    ) {
 
-        copyUrl(
-          button.dataset.url
-        );
-
-      }
-
-
-      if (
-        button.dataset.action ===
-        "use"
-      ) {
-
-        useOnWebsite(
-          button.dataset.id
-        );
-
-      }
+      deleteImage(
+        button.dataset.id
+      );
 
     }
-  );
 
 
-/* ==============================
-   FIRESTORE LIVE IMAGES
-============================== */
+    if (
+      button.dataset.action ===
+      "copy"
+    ) {
+
+      copyUrl(
+        button.dataset.url
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================
+   FIRESTORE REAL-TIME IMAGE LIST
+========================================= */
 
 const unsubscribe =
   onSnapshot(
@@ -724,11 +514,11 @@ const unsubscribe =
       "images"
     ),
 
-    snapshot => {
+    (snapshot) => {
 
       cloudImages =
         snapshot.docs.map(
-          item => ({
+          (item) => ({
             id: item.id,
             ...item.data()
           })
@@ -739,33 +529,38 @@ const unsubscribe =
 
     },
 
-    error => {
+    (error) => {
 
       console.error(
-        "Images Firestore error:",
+        "Images Firestore Error:",
         error
       );
 
 
-      renderImages();
+      if (list) {
+
+        list.innerHTML = `
+          <div class="empty-state danger">
+            ${escapeHTML(error.message)}
+          </div>
+        `;
+
+      }
 
     }
 
   );
 
 
-loadStaticImages();
-
+/* =========================================
+   GLOBAL FUNCTIONS
+========================================= */
 
 window.refreshImages =
   renderImages;
 
 
-window.useImageOnWebsite =
-  useOnWebsite;
-
-
 window.addEventListener(
   "beforeunload",
-  unsubscribe
+  () => unsubscribe()
 );
