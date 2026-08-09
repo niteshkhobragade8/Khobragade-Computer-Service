@@ -1,7 +1,516 @@
-import {db} from './firebase-config.js';
-import {collection,doc,setDoc,deleteDoc,onSnapshot,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-const $=id=>document.getElementById(id),esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');let rows=[];
-function render(){const box=$('recycleList');if(!box)return;const q=String($('recycleSearch')?.value||'').toLowerCase(),f=$('recycleFilter')?.value||'all';const list=rows.filter(x=>(f==='all'||x.type===f)&&(!q||JSON.stringify(x.data||{}).toLowerCase().includes(q)));box.innerHTML=list.length?list.map(x=>`<article class="content-card"><span class="status-badge draft">Deleted</span><h3>${esc(x.data?.name||x.data?.title||x.type||'Item')}</h3><p>${esc(x.type||'')}</p><div class="card-actions"><button class="action-btn edit" data-r="${x.id}">↩ Restore</button><button class="action-btn delete" data-d="${x.id}">🗑 Permanent Delete</button></div></article>`).join(''):'<div class="empty-state">Recycle Bin empty.</div>'}
-async function restore(id){const x=rows.find(v=>v.id===id);if(!x)return;const data={...(x.data||{}),restoredAt:serverTimestamp()};delete data.id;await setDoc(doc(db,x.type,x.sourceId),data,{merge:true});await deleteDoc(doc(db,'recycleBin',id))}
-async function remove(id){if(confirm('Permanently delete? Isko restore nahi kar sakte.'))await deleteDoc(doc(db,'recycleBin',id))}
-$('recycleSearch')?.addEventListener('input',render);$('recycleFilter')?.addEventListener('change',render);$('recycleList')?.addEventListener('click',e=>{const b=e.target.closest('button');if(b?.dataset.r)restore(b.dataset.r).catch(e=>alert(e.message));if(b?.dataset.d)remove(b.dataset.d).catch(e=>alert(e.message))});onSnapshot(collection(db,'recycleBin'),s=>{rows=s.docs.map(d=>({id:d.id,...d.data()}));render()},e=>{if($('recycleList'))$('recycleList').innerHTML=`<div class="empty-state">${esc(e.message)}</div>`});
+import { db } from './firebase-config.js';
+
+import {
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  onSnapshot,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+
+
+const $ = id => document.getElementById(id);
+
+const esc = value =>
+  String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+
+let rows = [];
+
+
+/* =========================================
+   COLLECTION NAME FIX / MAPPING
+========================================= */
+
+function getRestoreCollection(type) {
+
+  const key = String(type || '')
+    .trim()
+    .toLowerCase();
+
+  const map = {
+
+    // Government Updates
+    'update': 'updates',
+    'updates': 'updates',
+    'governmentupdate': 'updates',
+    'governmentupdates': 'updates',
+    'government-update': 'updates',
+    'government-updates': 'updates',
+
+    // Services
+    'service': 'services',
+    'services': 'services',
+
+    // Categories
+    'category': 'categories',
+    'categories': 'categories',
+
+    // Documents
+    'document': 'documents',
+    'documents': 'documents',
+
+    // Document Checklists
+    'documentchecklist': 'documentChecklists',
+    'documentchecklists': 'documentChecklists',
+
+    // Images
+    'image': 'images',
+    'images': 'images',
+
+    // YouTube
+    'youtube': 'youtube',
+    'video': 'youtube',
+    'videos': 'youtube',
+
+    // Notifications
+    'notification': 'notifications',
+    'notifications': 'notifications',
+
+    // Themes
+    'theme': 'themes',
+    'themes': 'themes',
+
+    // Website CMS
+    'sitesection': 'siteSections',
+    'sitesections': 'siteSections',
+
+    'pagecontent': 'pageContent',
+
+    // Dynamic Pages
+    'dynamicpage': 'dynamicPages',
+    'dynamicpages': 'dynamicPages',
+
+    'dynamicsection': 'dynamicSections',
+    'dynamicsections': 'dynamicSections',
+
+    // Extra Menu
+    'menuitem': 'menuItems',
+    'menuitems': 'menuItems'
+  };
+
+  return map[key] || type;
+}
+
+
+/* =========================================
+   CLEAN FIRESTORE DATA
+========================================= */
+
+function clean(value) {
+
+  if (Array.isArray(value)) {
+    return value
+      .filter(item => item !== undefined)
+      .map(clean);
+  }
+
+  if (
+    value &&
+    typeof value === 'object'
+  ) {
+
+    // Firestore Timestamp ko as-is rakho
+    if (
+      typeof value.toDate === 'function'
+    ) {
+      return value;
+    }
+
+    const output = {};
+
+    for (
+      const [key, item]
+      of Object.entries(value)
+    ) {
+
+      if (
+        item !== undefined &&
+        key !== 'id'
+      ) {
+        output[key] = clean(item);
+      }
+
+    }
+
+    return output;
+  }
+
+  return value;
+}
+
+
+/* =========================================
+   RENDER RECYCLE BIN
+========================================= */
+
+function render() {
+
+  const box = $('recycleList');
+
+  if (!box) return;
+
+
+  const query =
+    String(
+      $('recycleSearch')?.value || ''
+    ).toLowerCase();
+
+
+  const filter =
+    $('recycleFilter')?.value ||
+    'all';
+
+
+  const list = rows.filter(item => {
+
+    const filterMatch =
+      filter === 'all' ||
+      item.type === filter;
+
+    const searchText =
+      JSON.stringify(
+        item.data || {}
+      ).toLowerCase();
+
+    const searchMatch =
+      !query ||
+      searchText.includes(query) ||
+      String(item.type || '')
+        .toLowerCase()
+        .includes(query);
+
+    return (
+      filterMatch &&
+      searchMatch
+    );
+  });
+
+
+  if (!list.length) {
+
+    box.innerHTML = `
+      <div class="empty-state">
+        Recycle Bin empty.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML = list
+    .map(item => {
+
+      const title =
+        item.data?.name ||
+        item.data?.title ||
+        item.data?.serviceName ||
+        item.data?.heading ||
+        item.type ||
+        'Item';
+
+      return `
+
+        <article class="content-card">
+
+          <span class="status-badge draft">
+            Deleted
+          </span>
+
+          <h3>
+            ${esc(title)}
+          </h3>
+
+          <p>
+            Type:
+            <strong>
+              ${esc(item.type || '')}
+            </strong>
+          </p>
+
+          <small>
+            Restore to:
+            ${esc(
+              getRestoreCollection(
+                item.type
+              )
+            )}
+          </small>
+
+          <div class="card-actions">
+
+            <button
+              class="action-btn edit"
+              data-r="${item.id}">
+              ↩ Restore
+            </button>
+
+            <button
+              class="action-btn delete"
+              data-d="${item.id}">
+              🗑 Permanent Delete
+            </button>
+
+          </div>
+
+        </article>
+
+      `;
+    })
+    .join('');
+}
+
+
+/* =========================================
+   RESTORE
+========================================= */
+
+async function restore(id) {
+
+  const item =
+    rows.find(
+      row => row.id === id
+    );
+
+  if (!item) {
+    throw new Error(
+      'Recycle Bin item not found.'
+    );
+  }
+
+
+  if (!item.sourceId) {
+    throw new Error(
+      'Original document ID missing.'
+    );
+  }
+
+
+  if (!item.type) {
+    throw new Error(
+      'Original collection type missing.'
+    );
+  }
+
+
+  const targetCollection =
+    getRestoreCollection(
+      item.type
+    );
+
+
+  const restoredData =
+    clean(
+      item.data || {}
+    );
+
+
+  restoredData.restoredAt =
+    serverTimestamp();
+
+
+  console.log(
+    'Restoring:',
+    {
+      recycleId: id,
+      originalType: item.type,
+      targetCollection,
+      sourceId: item.sourceId
+    }
+  );
+
+
+  /*
+    Original ID ke saath
+    original Firestore collection me
+    document restore hoga.
+  */
+
+  await setDoc(
+    doc(
+      db,
+      targetCollection,
+      item.sourceId
+    ),
+    restoredData,
+    {
+      merge: false
+    }
+  );
+
+
+  /*
+    Original successfully restore hone
+    ke BAAD hi Recycle Bin item delete.
+  */
+
+  await deleteDoc(
+    doc(
+      db,
+      'recycleBin',
+      id
+    )
+  );
+
+
+  alert(
+    '✅ Restored successfully'
+  );
+}
+
+
+/* =========================================
+   PERMANENT DELETE
+========================================= */
+
+async function remove(id) {
+
+  const ok = confirm(
+    'Permanently delete? Isko restore nahi kar sakte.'
+  );
+
+  if (!ok) return;
+
+
+  await deleteDoc(
+    doc(
+      db,
+      'recycleBin',
+      id
+    )
+  );
+}
+
+
+/* =========================================
+   EVENTS
+========================================= */
+
+$('recycleSearch')
+  ?.addEventListener(
+    'input',
+    render
+  );
+
+
+$('recycleFilter')
+  ?.addEventListener(
+    'change',
+    render
+  );
+
+
+$('recycleList')
+  ?.addEventListener(
+    'click',
+    event => {
+
+      const button =
+        event.target.closest(
+          'button'
+        );
+
+      if (!button) return;
+
+
+      if (
+        button.dataset.r
+      ) {
+
+        restore(
+          button.dataset.r
+        )
+          .catch(error => {
+
+            console.error(
+              'Restore failed:',
+              error
+            );
+
+            alert(
+              'Restore failed: ' +
+              error.message
+            );
+
+          });
+
+      }
+
+
+      if (
+        button.dataset.d
+      ) {
+
+        remove(
+          button.dataset.d
+        )
+          .catch(error => {
+
+            console.error(
+              'Permanent delete failed:',
+              error
+            );
+
+            alert(
+              error.message
+            );
+
+          });
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   FIREBASE LIVE RECYCLE BIN
+========================================= */
+
+onSnapshot(
+
+  collection(
+    db,
+    'recycleBin'
+  ),
+
+  snapshot => {
+
+    rows =
+      snapshot.docs.map(
+        item => ({
+          id: item.id,
+          ...item.data()
+        })
+      );
+
+    render();
+  },
+
+  error => {
+
+    console.error(
+      'Recycle Bin listener error:',
+      error
+    );
+
+    if (
+      $('recycleList')
+    ) {
+
+      $('recycleList').innerHTML = `
+        <div class="empty-state">
+          ${esc(error.message)}
+        </div>
+      `;
+
+    }
+
+  }
+
+);
