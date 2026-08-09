@@ -455,27 +455,21 @@ async function useOnWebsite(id) {
     try {
 
       await setDoc(
-        doc(
-          db,
-          "settings",
-          "website"
-        ),
-        {
-
-          bannerUrl:
-            item.url,
-
-          heroImage:
-            item.url,
-
-          updatedAt:
-            serverTimestamp()
-
-        },
-        {
-          merge: true
-        }
-      );
+  doc(
+    db,
+    "settings",
+    "website"
+  ),
+  {
+    heroImageUrl: item.url,
+    bannerUrl: item.url,
+    heroImage: item.url,
+    updatedAt: serverTimestamp()
+  },
+  {
+    merge: true
+  }
+);
 
 
       alert(
