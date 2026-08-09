@@ -1,3 +1,4 @@
+import { moveToTrash } from './trash.js';
 import { db } from "./firebase-config.js";
 import {
   collection,
@@ -113,9 +114,10 @@ function editVideo(id) {
 }
 
 async function deleteVideo(id) {
-  if (!confirm("Delete this video?")) return;
-  await deleteDoc(doc(db, "youtube", id));
-  alert("Video Deleted Successfully");
+  const item = allVideos.find((x) => x.id === id);
+  if (!item || !confirm("Move this video to Recycle Bin?")) return;
+  try { await moveToTrash("youtube", id, item); alert("Video moved to Recycle Bin"); }
+  catch (error) { console.error(error); alert(error.message); }
 }
 
 saveButton?.addEventListener("click", saveVideo);

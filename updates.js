@@ -1,3 +1,4 @@
+import { moveToTrash } from './trash.js';
 import { db } from "./firebase-config.js";
 import {
   collection,
@@ -127,13 +128,10 @@ function editUpdate(id) {
 }
 
 async function deleteUpdate(id) {
-  if (!confirm("Are you sure you want to delete this update?")) return;
-  try {
-    await deleteDoc(doc(db, "updates", id));
-    alert("Update Deleted Successfully");
-  } catch (error) {
-    alert(error.message);
-  }
+  const item = allUpdates.find((x) => x.id === id);
+  if (!item || !confirm("Move this update to Recycle Bin?")) return;
+  try { await moveToTrash("updates", id, item); alert("Update moved to Recycle Bin"); }
+  catch (error) { console.error(error); alert(error.message); }
 }
 
 saveBtn?.addEventListener("click", saveUpdate);

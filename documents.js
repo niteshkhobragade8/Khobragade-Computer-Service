@@ -1,3 +1,4 @@
+import { moveToTrash } from './trash.js';
 import { db, storage } from "./firebase-config.js";
 import {
   collection,
@@ -99,17 +100,11 @@ async function uploadDocument() {
   }
 }
 
-async function deleteDocument(id, storagePath) {
-  if (!confirm("Delete this document?")) return;
-  try {
-    if (storagePath) {
-      try { await deleteObject(ref(storage, storagePath)); } catch (storageError) { console.warn(storageError); }
-    }
-    await deleteDoc(doc(db, "documents", id));
-    alert("Document Deleted Successfully");
-  } catch (error) {
-    alert(error.message);
-  }
+async function deleteDocument(id) {
+  const item = allDocuments.find((x) => x.id === id);
+  if (!item || !confirm("Move this document to Recycle Bin?")) return;
+  try { await moveToTrash("documents", id, item); alert("Document moved to Recycle Bin"); }
+  catch (error) { console.error(error); alert(error.message); }
 }
 
 $("uploadDocument")?.addEventListener("click", uploadDocument);

@@ -1,3 +1,4 @@
+import { moveToTrash } from './trash.js';
 import { db } from "./firebase-config.js";
 import {
   collection,
@@ -138,13 +139,10 @@ function editNotification(id) {
 }
 
 async function deleteNotification(id) {
-  if (!confirm("Delete this notification?")) return;
-  try {
-    await deleteDoc(doc(db, "notifications", id));
-    alert("Notification Deleted Successfully");
-  } catch (error) {
-    alert(error.message);
-  }
+  const item = allNotifications.find((x) => x.id === id);
+  if (!item || !confirm("Move this notification to Recycle Bin?")) return;
+  try { await moveToTrash("notifications", id, item); alert("Notification moved to Recycle Bin"); }
+  catch (error) { console.error(error); alert(error.message); }
 }
 
 async function publishAllNotifications() {

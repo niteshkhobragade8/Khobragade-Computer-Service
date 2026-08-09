@@ -1,3 +1,4 @@
+import { moveToTrash } from './trash.js';
 import { db } from "./firebase-config.js";
 import { DEFAULT_SERVICES, DEFAULT_SCHEMES, DEFAULT_DIVYANG } from "./catalog-data.js";
 import {
@@ -167,13 +168,10 @@ function editService(id) {
 }
 
 async function deleteService(id) {
-  if (!confirm("Delete this service?")) return;
-  try {
-    await deleteDoc(doc(db, "services", id));
-    alert("Service Deleted Successfully");
-  } catch (error) {
-    alert(error.message);
-  }
+  const item = allServices.find((x) => x.id === id);
+  if (!item || !confirm("Move this service to Recycle Bin?")) return;
+  try { await moveToTrash("services", id, item); alert("Service moved to Recycle Bin"); }
+  catch (error) { console.error(error); alert(error.message); }
 }
 
 saveButton?.addEventListener("click", saveService);

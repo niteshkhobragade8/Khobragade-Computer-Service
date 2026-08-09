@@ -1,3 +1,4 @@
+import { moveToTrash } from './trash.js';
 import { db, storage } from "./firebase-config.js";
 import {
   collection,
@@ -23,15 +24,7 @@ function escapeHTML(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
-async function loadStaticImages() {
-  try {
-    const response = await fetch("./images/images.json", { cache: "no-store" });
-    staticImages = response.ok ? await response.json() : [];
-  } catch (_) {
-    staticImages = [];
-  }
-  renderImages();
-}
+async function loadStaticImages(){ staticImages=[]; renderImages(); }
 
 function renderImages() {
   if (!list) return;
@@ -106,17 +99,11 @@ async function uploadImage() {
   }
 }
 
-async function deleteImage(id, storagePath) {
-  if (!confirm("Delete this image?")) return;
-  try {
-    if (storagePath) {
-      try { await deleteObject(ref(storage, storagePath)); } catch (storageError) { console.warn("Storage delete skipped:", storageError); }
-    }
-    await deleteDoc(doc(db, "images", id));
-    alert("Image Deleted Successfully");
-  } catch (error) {
-    alert(error.message);
-  }
+async function deleteImage(id) {
+  const item = cloudImages.find((x) => x.id === id);
+  if (!item || !confirm("Move this image to Recycle Bin?")) return;
+  try { await moveToTrash("images", id, item); alert("Image moved to Recycle Bin"); }
+  catch (error) { console.error(error); alert(error.message); }
 }
 
 async function copyUrl(url) {
