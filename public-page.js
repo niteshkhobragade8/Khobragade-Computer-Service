@@ -917,37 +917,42 @@ function applyWebsiteImages() {
 
   /* PAGE BANNERS */
 
-  const page =
-    document.body.dataset.page ||
-    document.body.dataset.catalog ||
-    "";
+  let pageKey =
+  document.body.dataset.page ||
+  document.body.dataset.catalog ||
+  "";
 
+if (!pageKey) {
+  const file =
+    location.pathname
+      .split("/")
+      .pop()
+      .toLowerCase();
 
-  const categoryMap = {
-
-    services:
-      "Services Banner",
-
-    yojana:
-      "Yojana Banner",
-
-    maharashtra:
-      "Yojana Banner",
-
-    divyang:
-      "Divyang Banner",
-
-    documents:
-      "Documents Banner",
-
-    contact:
-      "Contact Banner"
-
+  const fileMap = {
+    "index.html": "home",
+    "services.html": "services",
+    "maharashtra.html": "yojana",
+    "divyang.html": "divyang",
+    "documents.html": "documents",
+    "contact.html": "contact"
   };
 
+  pageKey =
+    fileMap[file] || "home";
+}
 
-  const category =
-    categoryMap[page];
+const categoryMap = {
+  home: "Home Banner",
+  services: "Services Banner",
+  yojana: "Yojana Banner",
+  divyang: "Divyang Banner",
+  documents: "Documents Banner",
+  contact: "Contact Banner"
+};
+
+const category =
+  categoryMap[pageKey];
 
 
   if (category) {
