@@ -75,6 +75,64 @@ function renderPopup(){
  o.innerHTML=`<div style="position:relative;max-width:min(980px,96vw);max-height:94vh;overflow:auto;border-radius:20px;background:#fff;box-shadow:0 25px 70px rgba(0,0,0,.4)"><button data-close-popup type="button" aria-label="Close" style="position:absolute;right:10px;top:10px;z-index:2;border:0;background:rgba(0,0,0,.72);color:#fff;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer">✕</button>${image}${textBlock}</div>`;
  o.querySelector('[data-close-popup]').onclick=()=>o.remove();o.onclick=e=>{if(e.target===o)o.remove()};document.body.appendChild(o)
 }
+function applyMainMenuControl(g = {}) {
+
+  const nav = document.querySelector('.nav-links');
+
+  if (!nav) return;
+
+  const rows = [
+    ['navHome', 'navHomeVisible', 'navHomeOrder', 10],
+    ['navServices', 'navServicesVisible', 'navServicesOrder', 20],
+    ['navYojana', 'navYojanaVisible', 'navYojanaOrder', 30],
+    ['navDivyang', 'navDivyangVisible', 'navDivyangOrder', 40],
+    ['navDocuments', 'navDocumentsVisible', 'navDocumentsOrder', 50],
+    ['navContact', 'navContactVisible', 'navContactOrder', 60],
+    ['navYoutube', 'navYoutubeVisible', 'navYoutubeOrder', 70],
+    ['navWhatsapp', 'navWhatsappVisible', 'navWhatsappOrder', 80]
+  ];
+
+  rows.forEach(([id, visibleKey, orderKey, defaultOrder]) => {
+
+    const element = nav.querySelector('#' + id);
+
+    if (!element) return;
+
+    element.style.display =
+      g[visibleKey] === false
+        ? 'none'
+        : '';
+
+    element.dataset.cmsOrder =
+      String(
+        Number(
+          g[orderKey] ?? defaultOrder
+        )
+      );
+  });
+
+  const anchor =
+    nav.querySelector('#dynamicMenuItems') ||
+    nav.querySelector('#langSelect');
+
+  rows
+    .map(([id]) => nav.querySelector('#' + id))
+    .filter(Boolean)
+    .sort(
+      (a, b) =>
+        Number(a.dataset.cmsOrder || 0) -
+        Number(b.dataset.cmsOrder || 0)
+    )
+    .forEach((element) => {
+
+      if (anchor) {
+        nav.insertBefore(element, anchor);
+      } else {
+        nav.appendChild(element);
+      }
+
+    });
+}
 function applyFullCms(){const g=cmsGlobal||{},h=cmsHome||{},t=(id,v)=>{const e=$(id);if(e&&v!==undefined&&v!==null&&v!=='')e.textContent=v};t('cmsTopLeftPublic',g.topLeft);t('navHome',g.navHome);t('navServices',g.navServices);t('navYojana',g.navYojana);t('navDivyang',g.navDivyang);t('navDocuments',g.navDocuments);t('navContact',g.navContact);t('navYoutube',g.navYoutube);t('navWhatsapp',g.navWhatsapp);if($('globalSearch')&&g.searchPlaceholder)$('globalSearch').placeholder=g.searchPlaceholder;t('globalSearchButton',g.searchButton);if($('globalSearchSection'))$('globalSearchSection').style.display=g.searchVisible===false?'none':'';t('footerQuickTitle',g.footerQuickTitle);t('footerSupportTitle',g.footerSupportTitle);if($('footerText')&&g.copyright)$('footerText').textContent=g.copyright;if(g.menuBg&&!activeTheme.menuBg)document.documentElement.style.setProperty('--menu-bg',g.menuBg);if(g.menuText&&!activeTheme.menuText)document.documentElement.style.setProperty('--menu-text',g.menuText);if(g.menuActive&&!activeTheme.menuActive)document.documentElement.style.setProperty('--menu-active',g.menuActive);if($('siteFooter')&&g.footerBg&&!activeTheme.footer)$('siteFooter').style.background=g.footerBg;applyMainMenuControl(g);if(document.body.dataset.page==='home'){t('homeHeroEyebrow',h.heroEyebrow);if($('heroTitle')&&h.heroTitle)$('heroTitle').textContent=h.heroTitle;if($('heroSubtitle')&&h.heroText)$('heroSubtitle').textContent=h.heroText;t('homeHeroBtn1',h.heroBtn1);t('homeHeroBtn2',h.heroBtn2);if($('homeHeroSection')){$('homeHeroSection').style.display=h.heroVisible===false?'none':'';if(h.heroColor1&&h.heroColor2)$('homeHeroSection').style.background=`linear-gradient(135deg,${h.heroColor1},${h.heroColor2})`}t('homeYoutubeTitle',h.youtubeTitle);t('homeYoutubeText',h.youtubeText);if($('youtubeHomeSection'))$('youtubeHomeSection').style.display=h.youtubeVisible===false?'none':'';t('homeQuickTitle',h.quickTitle);t('homeQuickText',h.quickText);t('homeQuickButton',h.quickButton);if($('homeQuickSection'))$('homeQuickSection').style.display=h.quickVisible===false?'none':'';t('homeAboutKicker',h.aboutKicker);if($('homeAboutTitle')&&h.aboutTitle)$('homeAboutTitle').textContent=h.aboutTitle;if($('homeAboutText')&&h.aboutText)$('homeAboutText').textContent=h.aboutText;if($('homeAboutSection'))$('homeAboutSection').style.display=h.aboutVisible===false?'none':''}renderCustomSections()}
 function safeLink(v){const s=String(v||'').trim();return(/^https?:\/\//i.test(s)||/^[a-z0-9_-]+\.html/i.test(s)||s.startsWith('#'))?s:'#'}
 function customSectionHtml(x){return `<section class="section cms-custom-section" data-cms-generated="1" style="background:${esc(x.bgColor||'#fff')};color:${esc(x.textColor||'#132238')}"><div class="section-inner"><div class="cms-custom-grid">${x.imageUrl?`<img src="${esc(x.imageUrl)}" alt="${esc(x.title||'Section image')}" loading="lazy">`:''}<div><span class="kicker" style="color:${esc(x.accentColor||'#ec4899')}">CUSTOM</span><h2>${esc(x.title||'')}</h2><p>${esc(x.description||'')}</p>${x.buttonText&&x.buttonLink?`<a class="btn btn-blue" href="${esc(safeLink(x.buttonLink))}" ${/^https?:/i.test(x.buttonLink)?'target="_blank" rel="noopener"':''}>${esc(x.buttonText)}</a>`:''}</div></div></div></section>`}
