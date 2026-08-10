@@ -86,13 +86,14 @@ function drawVisitorChart(rows) {
 
 async function loadAnalytics() {
   try {
-    const [updates, services, categories, notifications, siteSnap, dailySnap] = await Promise.all([
+    const [updates, services, categories, notifications, siteSnap, dailySnap, serviceAnalyticsSnap] = await Promise.all([
       getDocs(collection(db, "updates")),
       getDocs(collection(db, "services")),
       getDocs(collection(db, "categories")),
       getDocs(collection(db, "notifications")),
       getDoc(doc(db, "analytics", "site")),
-      getDocs(query(collection(db, "visitorDaily"), orderBy("date", "desc"), limit(14)))
+      getDocs(query(collection(db, "visitorDaily"), orderBy("date", "desc"), limit(14))),
+      getDocs(collection(db, "serviceAnalytics"))
     ]);
 
     const site = siteSnap.exists() ? siteSnap.data() : {};
@@ -104,6 +105,16 @@ async function loadAnalytics() {
     setText("analyticsServices", services.size);
     setText("analyticsCategories", categories.size);
     setText("analyticsNotifications", notifications.size);
+
+    const serviceRows = serviceAnalyticsSnap.docs.map((item) => ({ id: item.id, ...item.data() }));
+    const totalWhatsapp = serviceRows.reduce((sum, item) => sum + Number(item.whatsappClicks || 0), 0);
+    setText("analyticsWhatsappClicks", totalWhatsapp);
+    setText("analyticsTrackedServices", serviceRows.length);
+    const serviceBox = $("serviceAnalyticsData");
+    if (serviceBox) {
+      const top = [...serviceRows].sort((a, b) => (Number(b.whatsappClicks || 0) + Number(b.views || 0)) - (Number(a.whatsappClicks || 0) + Number(a.views || 0))).slice(0, 10);
+      serviceBox.innerHTML = top.length ? `<div style="overflow:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:10px">Service</th><th style="padding:10px">Views</th><th style="padding:10px">WhatsApp</th></tr></thead><tbody>${top.map((item) => `<tr><td style="padding:10px;border-top:1px solid #e5e7eb"><b>${String(item.name || item.id).replaceAll('&','&amp;').replaceAll('<','&lt;')}</b></td><td style="text-align:center;padding:10px;border-top:1px solid #e5e7eb">${Number(item.views || 0)}</td><td style="text-align:center;padding:10px;border-top:1px solid #e5e7eb">${Number(item.whatsappClicks || 0)}</td></tr>`).join("")}</tbody></table></div>` : "No service / WhatsApp analytics yet.";
+    }
 
     const rows = dailySnap.docs.map((item) => item.data()).reverse();
     drawVisitorChart(rows);

@@ -32,6 +32,7 @@
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
       <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
+      <li data-page="seo"><i class="fa-solid fa-magnifying-glass"></i><span>SEO Manager</span></li>
       <li data-page="pages"><i class="fa-solid fa-pen-to-square"></i><span>Website Pages</span></li>
       <li data-page="sitebuilder"><i class="fa-solid fa-layer-group"></i><span>Full Website CMS</span></li>
 <li data-page="dynamicpages"><i class="fa-solid fa-file-circle-plus"></i><span>Page & Menu Builder</span></li>
@@ -164,6 +165,11 @@
             <div><label>Priority</label><select id="notificationPriority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
           </div>
           <label>Status</label><select id="notificationStatus"><option>Published</option><option>Draft</option></select>
+          <div class="form-grid two">
+            <div><label>Notification Image</label><input type="file" id="notificationImageFile" accept="image/*"></div>
+            <div><label>Or Image URL</label><input type="url" id="notificationImageUrl" placeholder="https://..."></div>
+          </div>
+          <p class="field-help">Breaking, Normal aur Popup tino me image optional hai. Popup image full-screen responsive dikhegi.</p>
           <button id="saveNotification" class="primary-btn" type="button">Publish Notification</button>
           <div id="notificationPreview" class="preview-box"><h2>👁 Live Preview</h2><p>Notification Preview will appear here...</p></div>
         </div>
@@ -184,9 +190,33 @@
         <div class="analytics-card"><span>🛠️</span><p>Total Services</p><h2 id="analyticsServices">0</h2></div>
         <div class="analytics-card"><span>📂</span><p>Categories</p><h2 id="analyticsCategories">0</h2></div>
         <div class="analytics-card"><span>🔔</span><p>Notifications</p><h2 id="analyticsNotifications">0</h2></div>
+        <div class="analytics-card"><span>💬</span><p>WhatsApp Clicks</p><h2 id="analyticsWhatsappClicks">0</h2></div>
+        <div class="analytics-card"><span>⭐</span><p>Tracked Services</p><h2 id="analyticsTrackedServices">0</h2></div>
       </div>
       <div class="analytics-panel"><div class="box-heading"><div><span class="box-kicker">LAST 14 DAYS</span><h2>Visitor Trend</h2></div></div><canvas id="visitorChart"></canvas></div>
+      <div class="analytics-panel"><h2>Top Services / WhatsApp Apply</h2><div id="serviceAnalyticsData">Service analytics loading...</div></div>
       <div class="analytics-panel"><h2>Website Statistics</h2><div id="analyticsData">Analytics Loading...</div></div>
+    </section>
+
+
+    <section id="seoPage" class="page">
+      <div class="page-intro"><div><h2>🔎 SEO Manager</h2><p>Google title, description, keywords aur social share image page-wise manage karein.</p></div></div>
+      <div class="manager-layout">
+        <div class="manager-form">
+          <label>Page</label>
+          <select id="seoPageSelect"><option value="home">Home</option><option value="services">Services</option><option value="yojana">Yojana</option><option value="divyang">Divyang</option><option value="documents">Documents</option><option value="contact">Contact</option></select>
+          <label>SEO Title</label><input id="seoTitle" type="text" maxlength="70" placeholder="Page title for Google">
+          <label>Meta Description</label><textarea id="seoDescription" maxlength="180" placeholder="Short description for Google"></textarea>
+          <label>Keywords</label><input id="seoKeywords" type="text" placeholder="PAN, Maha ID, Divyang, CSC...">
+          <label>Social Share Image URL</label><input id="seoImage" type="url" placeholder="Cloudinary image URL">
+          <label>Canonical URL (optional)</label><input id="seoCanonical" type="url" placeholder="https://9637832490.online/...">
+          <div class="settings-actions"><button id="saveSeo" class="primary-btn" type="button">Save SEO</button><button id="resetSeoForm" class="secondary-btn" type="button">Reset Form</button></div>
+          <div id="seoMessage" class="settings-message info">SEO Manager ready.</div>
+        </div>
+        <div class="manager-content">
+          <div id="seoList" class="content-grid"><div class="empty-state">SEO settings loading...</div></div>
+        </div>
+      </div>
     </section>
 
     <section id="imagesPage" class="page">
@@ -429,6 +459,7 @@
 <script type="module" src="categories.js"></script>
 <script type="module" src="notification.js?v=5"></script>
 <script type="module" src="analytics.js"></script>
+<script type="module" src="seo-manager.js"></script>
 <script type="module" src="menu.js"></script>
 <script type="module" src="images.js"></script>
 <script type="module" src="documents.js"></script>

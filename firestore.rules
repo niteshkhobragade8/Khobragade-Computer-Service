@@ -20,6 +20,8 @@ service cloud.firestore {
     match /recycleBin/{id} { allow read, write: if signedIn(); }
     match /analytics/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
     match /visitorDaily/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
+    match /serviceAnalytics/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
+    match /seoSettings/{id} { allow read: if true; allow write: if signedIn(); }
     match /{document=**} { allow read, write: if false; }
   }
 }

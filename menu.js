@@ -10,6 +10,7 @@ const titleMap = {
   youtube: "YouTube Manager",
   notifications: "Notifications",
   analytics: "Analytics",
+  seo: "SEO Manager",
   pages: "Website Pages",
   sitebuilder: "Full Website CMS",
   dynamicpages: "Page & Menu Builder",
