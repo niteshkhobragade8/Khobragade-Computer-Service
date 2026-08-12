@@ -425,3 +425,16 @@ textarea{min-height:105px;resize:vertical}
 .cms-summary{margin-bottom:20px}.cms-subtitle{margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid #e5e7eb;color:#334155}.custom-section-form input[type="color"],#sitebuilderPage input[type="color"]{min-height:44px;padding:5px}#sitebuilderPage .settings-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:800px){#sitebuilderPage .manager-layout{grid-template-columns:1fr}}
 
 .menu-control-grid{display:grid;gap:10px;margin-bottom:18px}.menu-control-row{display:grid;grid-template-columns:minmax(110px,1fr) 120px 90px;gap:10px;align-items:center;padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}.menu-control-row input,.menu-control-row select{margin:0}#themesPage input[type="color"]{min-height:46px;padding:4px}@media(max-width:700px){.menu-control-row{grid-template-columns:1fr 1fr}.menu-control-row b{grid-column:1/-1}}
+
+/* ===== ADMIN EDITOR ===== */
+.admin-editor-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.admin-editor-tabs .active{outline:3px solid rgba(41,121,255,.18)}
+.admin-editor-panel{display:none}.admin-editor-panel.active{display:block}.admin-editor-list{display:grid;gap:10px;margin-top:16px}
+.ae-menu-row{display:grid;grid-template-columns:44px minmax(150px,1fr) 110px 110px 100px;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.ae-menu-row input,.ae-menu-row select{width:100%}.ae-icon-preview{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#f3f6ff;color:var(--blue)}
+.ae-theme-swatch{height:12px;border-radius:999px;margin:8px 0;background:linear-gradient(90deg,var(--ae1,#00c853),var(--ae2,#2979ff),var(--ae3,#ff4081),var(--ae4,#ff1744))}
+.ae-custom-content{white-space:pre-wrap;color:var(--muted);margin-top:10px}.admin-custom-page .dashboard-info-box{min-height:auto}
+body.admin-editor-themed{background:var(--admin-page-bg,#f4f7fc);color:var(--black)}
+body.admin-editor-themed .sidebar{background:linear-gradient(180deg,var(--admin-side-1,#00c853),var(--blue) 42%,var(--pink) 70%,var(--admin-side-2,#ff1744));color:var(--admin-menu-text,#fff)}
+body.admin-editor-themed .dashboard-info-box,body.admin-editor-themed .analytics-panel,body.admin-editor-themed .settings-group,body.admin-editor-themed .manager-form,body.admin-editor-themed .manager-content,body.admin-editor-themed .compact-manager,body.admin-editor-themed .dashboard-stat-card{background:var(--panel);border-color:var(--line)}
+@media(max-width:900px){.ae-menu-row{grid-template-columns:42px 1fr 90px}.ae-menu-row .ae-order,.ae-menu-row .ae-visible{grid-column:auto}.ae-menu-row .ae-icon-input{grid-column:2/-1}}
+@media(max-width:600px){.ae-menu-row{grid-template-columns:42px 1fr}.ae-menu-row>*{min-width:0}.ae-menu-row .ae-order,.ae-menu-row .ae-visible,.ae-menu-row .ae-icon-input{grid-column:1/-1}}

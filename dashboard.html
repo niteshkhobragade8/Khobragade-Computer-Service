@@ -24,6 +24,7 @@
 
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
+      <li data-page="admineditor"><i class="fa-solid fa-sliders"></i><span>Admin Editor</span></li>
       <li data-page="updates"><i class="fa-solid fa-bullhorn"></i><span>Government Updates</span></li>
       <li data-page="services"><i class="fa-solid fa-toolbox"></i><span>Services</span></li>
       <li data-page="categories"><i class="fa-solid fa-folder"></i><span>Categories</span></li>
@@ -96,6 +97,60 @@
           <div id="latestUpdates" class="mini-feed"><div class="empty-state">No Updates Available</div></div>
         </article>
       </div>
+    </section>
+
+    <section id="admineditorPage" class="page">
+      <div class="page-intro"><div><h2>🎛️ Admin Editor</h2><p>Admin Dashboard ka menu, pages aur complete appearance yahin se control karein.</p></div></div>
+
+      <div class="admin-editor-tabs">
+        <button class="secondary-btn active" type="button" data-ae-tab="menu">☰ Menu & Pages</button>
+        <button class="secondary-btn" type="button" data-ae-tab="theme">🎨 Admin Theme</button>
+        <button class="secondary-btn" type="button" data-ae-tab="custom">➕ New Admin Page</button>
+      </div>
+
+      <div id="aeMenuPanel" class="admin-editor-panel active">
+        <div class="dashboard-info-box">
+          <div class="box-heading"><div><span class="box-kicker">FULL CONTROL</span><h2>Existing Admin Menu / Pages</h2></div><button id="aeResetMenu" class="secondary-btn" type="button">Reset Original</button></div>
+          <p class="field-help">Name, icon, order aur Hide/Show change karein. Core page/function delete nahi hota; Hide karna safe delete hai.</p>
+          <div id="aeMenuList" class="admin-editor-list"></div>
+          <div class="settings-actions"><button id="aeSaveMenu" class="primary-btn" type="button">Save Menu Changes</button></div>
+        </div>
+      </div>
+
+      <div id="aeThemePanel" class="admin-editor-panel">
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>🎨</span><div><h3>Admin Dashboard Theme</h3><p>Public website theme se bilkul alag.</p></div></div>
+            <label>Theme Name</label><input id="aeThemeName" value="Original Admin">
+            <div class="form-grid three"><div><label>Green</label><input id="aeGreen" type="color" value="#00c853"></div><div><label>Yellow</label><input id="aeYellow" type="color" value="#ffd600"></div><div><label>Pink</label><input id="aePink" type="color" value="#ff4081"></div></div>
+            <div class="form-grid three"><div><label>Red</label><input id="aeRed" type="color" value="#ff1744"></div><div><label>Blue</label><input id="aeBlue" type="color" value="#2979ff"></div><div><label>Text</label><input id="aeText" type="color" value="#111827"></div></div>
+            <div class="form-grid three"><div><label>Page Background</label><input id="aeBg" type="color" value="#f4f7fc"></div><div><label>Card / Surface</label><input id="aePanel" type="color" value="#ffffff"></div><div><label>Border</label><input id="aeLine" type="color" value="#e5e7eb"></div></div>
+            <div class="form-grid three"><div><label>Sidebar Start</label><input id="aeSide1" type="color" value="#00c853"></div><div><label>Sidebar End</label><input id="aeSide2" type="color" value="#ff1744"></div><div><label>Menu Text</label><input id="aeMenuText" type="color" value="#ffffff"></div></div>
+            <div class="form-grid two"><div><label>Card Radius</label><input id="aeRadius" type="number" min="0" max="40" value="18"></div><div><label>Sidebar Width</label><input id="aeSidebarWidth" type="number" min="210" max="360" value="260"></div></div>
+            <div class="settings-actions"><button id="aePreviewTheme" class="secondary-btn" type="button">Preview</button><button id="aeSaveTheme" class="primary-btn" type="button">Save & Apply</button><button id="aeResetTheme" class="secondary-btn" type="button">Original Theme</button></div>
+          </div>
+          <div class="manager-content">
+            <h3>Saved Admin Themes</h3><p class="field-help">Theme create, edit/apply aur delete kar sakte hain.</p>
+            <div id="aeThemeList" class="content-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="aeCustomPanel" class="admin-editor-panel">
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>➕</span><div><h3>Create / Edit Admin Page</h3><p>Simple custom information page Admin sidebar me add karein.</p></div></div>
+            <label>Page Name</label><input id="aePageName" placeholder="My Admin Page">
+            <label>Icon</label><input id="aePageIcon" placeholder="fa-solid fa-star" value="fa-solid fa-file">
+            <label>Heading</label><input id="aePageHeading" placeholder="Page Heading">
+            <label>Content</label><textarea id="aePageContent" placeholder="Admin page content..."></textarea>
+            <div class="form-grid two"><div><label>Order</label><input id="aePageOrder" type="number" value="90"></div><div><label>Visible</label><select id="aePageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="settings-actions"><button id="aeSavePage" class="primary-btn" type="button">Save Admin Page</button><button id="aeClearPage" class="secondary-btn" type="button">Clear</button></div>
+          </div>
+          <div class="manager-content"><div id="aeCustomList" class="content-grid"></div></div>
+        </div>
+      </div>
+      <div id="aeMessage" class="settings-message info">Admin Editor ready.</div>
     </section>
 
     <section id="updatesPage" class="page">
@@ -460,6 +515,7 @@
 <script type="module" src="notification.js?v=5"></script>
 <script type="module" src="analytics.js"></script>
 <script type="module" src="seo-manager.js"></script>
+<script type="module" src="admin-editor.js"></script>
 <script type="module" src="menu.js"></script>
 <script type="module" src="images.js"></script>
 <script type="module" src="documents.js"></script>
