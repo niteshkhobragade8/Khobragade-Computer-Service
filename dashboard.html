@@ -100,23 +100,47 @@
     </section>
 
     <section id="admineditorPage" class="page">
-      <div class="page-intro"><div><h2>🎛️ Admin Editor</h2><p>Admin Dashboard ka menu, pages aur complete appearance yahin se control karein.</p></div></div>
-
+      <div class="page-intro"><div><h2>🎛️ Admin Editor</h2><p>Admin Dashboard ke menu, purane pages, naye pages aur complete theme ko yahin se control karein.</p></div></div>
       <div class="admin-editor-tabs">
-        <button class="secondary-btn active" type="button" data-ae-tab="menu">☰ Menu & Pages</button>
+        <button class="secondary-btn active" type="button" data-ae-tab="menu">☰ Menu Manager</button>
+        <button class="secondary-btn" type="button" data-ae-tab="pages">📄 Admin Pages</button>
         <button class="secondary-btn" type="button" data-ae-tab="theme">🎨 Admin Theme</button>
-        <button class="secondary-btn" type="button" data-ae-tab="custom">➕ New Admin Page</button>
       </div>
-
       <div id="aeMenuPanel" class="admin-editor-panel active">
-        <div class="dashboard-info-box">
-          <div class="box-heading"><div><span class="box-kicker">FULL CONTROL</span><h2>Existing Admin Menu / Pages</h2></div><button id="aeResetMenu" class="secondary-btn" type="button">Reset Original</button></div>
-          <p class="field-help">Name, icon, order aur Hide/Show change karein. Core page/function delete nahi hota; Hide karna safe delete hai.</p>
-          <div id="aeMenuList" class="admin-editor-list"></div>
-          <div class="settings-actions"><button id="aeSaveMenu" class="primary-btn" type="button">Save Menu Changes</button></div>
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>➕</span><div><h3>New Admin Menu</h3><p>Naya menu kisi existing ya custom Admin page ko open karega.</p></div></div>
+            <label>Menu Name</label><input id="aeNewMenuName" placeholder="New Menu">
+            <label>Icon</label><input id="aeNewMenuIcon" value="fa-solid fa-link" placeholder="fa-solid fa-link">
+            <label>Open Page</label><select id="aeNewMenuTarget"></select>
+            <div class="form-grid two"><div><label>Order</label><input id="aeNewMenuOrder" type="number" value="180"></div><div><label>Visible</label><select id="aeNewMenuVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="settings-actions"><button id="aeAddMenu" class="primary-btn" type="button">Add New Menu</button><button id="aeClearMenu" class="secondary-btn" type="button">Clear</button></div>
+          </div>
+          <div class="manager-content">
+            <div class="box-heading"><div><span class="box-kicker">FULL CONTROL</span><h2>All Admin Menus</h2></div><button id="aeResetMenu" class="secondary-btn" type="button">Reset Original</button></div>
+            <p class="field-help">Name, icon, order, page target, Hide/Show, Edit/Update/Delete. Delete item Recycle Bin me jayega.</p>
+            <div id="aeMenuList" class="admin-editor-list"></div>
+            <div class="settings-actions"><button id="aeSaveMenu" class="primary-btn" type="button">Save / Update Menu</button></div>
+          </div>
         </div>
       </div>
-
+      <div id="aePagesPanel" class="admin-editor-panel">
+        <div class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>📄</span><div><h3>Create / Edit Admin Page</h3><p>Naya Admin page sidebar menu me bhi add ho sakta hai.</p></div></div>
+            <label>Page Name</label><input id="aePageName" placeholder="My Admin Page">
+            <label>Icon</label><input id="aePageIcon" placeholder="fa-solid fa-star" value="fa-solid fa-file">
+            <label>Heading</label><input id="aePageHeading" placeholder="Page Heading">
+            <label>Content</label><textarea id="aePageContent" placeholder="Admin page content..."></textarea>
+            <div class="form-grid two"><div><label>Order</label><input id="aePageOrder" type="number" value="180"></div><div><label>Visible</label><select id="aePageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="settings-actions"><button id="aeSavePage" class="primary-btn" type="button">Save Admin Page</button><button id="aeClearPage" class="secondary-btn" type="button">Clear</button></div>
+          </div>
+          <div class="manager-content">
+            <h3>Existing + New Admin Pages</h3><p class="field-help">Purane pages ka name/heading, Hide/Show, order edit karein. Delete Recycle Bin me safe rahega; core code remove nahi hoga.</p>
+            <div id="aePagesList" class="content-grid"></div>
+          </div>
+        </div>
+      </div>
       <div id="aeThemePanel" class="admin-editor-panel">
         <div class="manager-layout">
           <div class="manager-form">
@@ -129,25 +153,7 @@
             <div class="form-grid two"><div><label>Card Radius</label><input id="aeRadius" type="number" min="0" max="40" value="18"></div><div><label>Sidebar Width</label><input id="aeSidebarWidth" type="number" min="210" max="360" value="260"></div></div>
             <div class="settings-actions"><button id="aePreviewTheme" class="secondary-btn" type="button">Preview</button><button id="aeSaveTheme" class="primary-btn" type="button">Save & Apply</button><button id="aeResetTheme" class="secondary-btn" type="button">Original Theme</button></div>
           </div>
-          <div class="manager-content">
-            <h3>Saved Admin Themes</h3><p class="field-help">Theme create, edit/apply aur delete kar sakte hain.</p>
-            <div id="aeThemeList" class="content-grid"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="aeCustomPanel" class="admin-editor-panel">
-        <div class="manager-layout">
-          <div class="manager-form">
-            <div class="form-title"><span>➕</span><div><h3>Create / Edit Admin Page</h3><p>Simple custom information page Admin sidebar me add karein.</p></div></div>
-            <label>Page Name</label><input id="aePageName" placeholder="My Admin Page">
-            <label>Icon</label><input id="aePageIcon" placeholder="fa-solid fa-star" value="fa-solid fa-file">
-            <label>Heading</label><input id="aePageHeading" placeholder="Page Heading">
-            <label>Content</label><textarea id="aePageContent" placeholder="Admin page content..."></textarea>
-            <div class="form-grid two"><div><label>Order</label><input id="aePageOrder" type="number" value="90"></div><div><label>Visible</label><select id="aePageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
-            <div class="settings-actions"><button id="aeSavePage" class="primary-btn" type="button">Save Admin Page</button><button id="aeClearPage" class="secondary-btn" type="button">Clear</button></div>
-          </div>
-          <div class="manager-content"><div id="aeCustomList" class="content-grid"></div></div>
+          <div class="manager-content"><h3>Saved Admin Themes</h3><p class="field-help">Create, Edit, Update, Apply aur Delete. Delete theme Recycle Bin me jayegi.</p><div id="aeThemeList" class="content-grid"></div></div>
         </div>
       </div>
       <div id="aeMessage" class="settings-message info">Admin Editor ready.</div>
@@ -455,7 +461,7 @@
         <article class="dashboard-info-box"><h3>🛡️ Safe Delete</h3><p>Page aur Page Section delete hone par pehle yahan aayega.</p></article>
         <article class="dashboard-info-box"><h3>↩ Restore</h3><p>Galti se delete hua item original collection me wapas bhejein.</p></article>
       </div>
-      <div class="manager-content"><div class="toolbar"><input id="recycleSearch" type="search" placeholder="🔍 Search deleted items..."><select id="recycleFilter"><option value="all">All Types</option><option value="services">Services / Yojana / Divyang</option><option value="categories">Categories</option><option value="updates">Government Updates</option><option value="notifications">Notifications</option><option value="images">Images</option><option value="documents">Documents</option><option value="documentChecklists">Document Checklists</option><option value="youtube">YouTube</option><option value="siteSections">Custom Sections</option><option value="pageContent">Website Page Content</option><option value="themes">Themes</option><option value="dynamicPages">Pages</option><option value="dynamicSections">Page Sections</option><option value="menuItems">Menu Items</option></select></div><div id="recycleList" class="content-grid"><div class="empty-state">Recycle Bin loading...</div></div></div>
+      <div class="manager-content"><div class="toolbar"><input id="recycleSearch" type="search" placeholder="🔍 Search deleted items..."><select id="recycleFilter"><option value="all">All Types</option><option value="services">Services / Yojana / Divyang</option><option value="categories">Categories</option><option value="updates">Government Updates</option><option value="notifications">Notifications</option><option value="images">Images</option><option value="documents">Documents</option><option value="documentChecklists">Document Checklists</option><option value="youtube">YouTube</option><option value="siteSections">Custom Sections</option><option value="pageContent">Website Page Content</option><option value="themes">Themes</option><option value="dynamicPages">Pages</option><option value="dynamicSections">Page Sections</option><option value="menuItems">Menu Items</option><option value="adminMenu">Admin Menus</option><option value="adminPage">Admin Pages</option><option value="adminTheme">Admin Themes</option></select></div><div id="recycleList" class="content-grid"><div class="empty-state">Recycle Bin loading...</div></div></div>
     </section>
 
     <section id="themesPage" class="page">

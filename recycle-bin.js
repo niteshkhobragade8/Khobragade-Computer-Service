@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   setDoc,
+  getDoc,
   deleteDoc,
   onSnapshot,
   serverTimestamp
@@ -90,7 +91,12 @@ function getRestoreCollection(type) {
 
     // Extra Menu
     'menuitem': 'menuItems',
-    'menuitems': 'menuItems'
+    'menuitems': 'menuItems',
+
+    // Admin Editor logical items
+    'adminmenu': 'settings/adminEditor',
+    'adminpage': 'settings/adminEditor',
+    'admintheme': 'settings/adminEditor'
   };
 
   return map[key] || type;
@@ -297,6 +303,36 @@ async function restore(id) {
     );
   }
 
+
+  // Admin Editor items settings/adminEditor document ke andar stored hote hain.
+  if (['adminMenu', 'adminPage', 'adminTheme'].includes(item.type)) {
+    const ref = doc(db, 'settings', 'adminEditor');
+    const snap = await getDoc(ref);
+    const state = snap.exists() ? snap.data() : {};
+    state.menu = state.menu || {};
+    state.pageOverrides = state.pageOverrides || {};
+    state.customMenus = Array.isArray(state.customMenus) ? state.customMenus : [];
+    state.customPages = Array.isArray(state.customPages) ? state.customPages : [];
+    state.themes = Array.isArray(state.themes) ? state.themes : [];
+    const d = item.data || {};
+    if (item.type === 'adminMenu') {
+      if (d.kind === 'fixed') state.menu[d.key || item.sourceId] = {...(d.config || {}), visible:true};
+      else if (d.menu && !state.customMenus.some(x => x.id === d.menu.id)) state.customMenus.push({...d.menu, visible:true});
+    }
+    if (item.type === 'adminPage') {
+      if (d.kind === 'fixed') {
+        const key=d.key || item.sourceId;
+        state.pageOverrides[key] = {...(state.pageOverrides[key]||{}), ...(d.page||{}), deleted:false, visible:true};
+        state.menu[key] = {...(d.menu||state.menu[key]||{}), visible:true};
+      } else if (d.page && !state.customPages.some(x => x.id === d.page.id)) state.customPages.push({...d.page, visible:true});
+    }
+    if (item.type === 'adminTheme' && d.theme) state.themes.push(d.theme);
+    state.updatedAt = serverTimestamp();
+    await setDoc(ref, state, {merge:false});
+    await deleteDoc(doc(db, 'recycleBin', id));
+    alert('✅ Admin item restored successfully');
+    return;
+  }
 
   const targetCollection =
     getRestoreCollection(
