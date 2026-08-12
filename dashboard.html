@@ -105,6 +105,7 @@
         <button class="secondary-btn active" type="button" data-ae-tab="menu">☰ Menu Manager</button>
         <button class="secondary-btn" type="button" data-ae-tab="pages">📄 Admin Pages</button>
         <button class="secondary-btn" type="button" data-ae-tab="theme">🎨 Admin Theme</button>
+        <button class="secondary-btn" type="button" data-ae-tab="buttons">🔘 Button Manager</button>
       </div>
       <div id="aeMenuPanel" class="admin-editor-panel active">
         <div class="manager-layout">
@@ -154,6 +155,24 @@
             <div class="settings-actions"><button id="aePreviewTheme" class="secondary-btn" type="button">Preview</button><button id="aeSaveTheme" class="primary-btn" type="button">Save & Apply</button><button id="aeResetTheme" class="secondary-btn" type="button">Original Theme</button></div>
           </div>
           <div class="manager-content"><h3>Saved Admin Themes</h3><p class="field-help">Create, Edit, Update, Apply aur Delete. Delete theme Recycle Bin me jayegi.</p><div id="aeThemeList" class="content-grid"></div></div>
+        </div>
+      </div>
+      <div id="aeButtonsPanel" class="admin-editor-panel">
+        <div id="bmPanel" class="manager-layout">
+          <div class="manager-form">
+            <div class="form-title"><span>🔘</span><div><h3>Add / Edit Button</h3><p>Admin Dashboard aur normal website ke kisi bhi old/new page par button lagayein.</p></div></div>
+            <label>Button Text</label><input id="bmText" placeholder="Website">
+            <label>Icon Class</label><input id="bmIcon" value="fa-solid fa-link" placeholder="fa-solid fa-globe">
+            <label>Button Link / URL</label><input id="bmUrl" placeholder="https://9637832490.online/">
+            <div class="form-grid two"><div><label>Show On</label><select id="bmArea"><option value="admin">Admin Dashboard</option><option value="public">Normal Website</option></select></div><div><label>Page</label><select id="bmPage"></select></div></div>
+            <div class="form-grid two"><div><label>Position</label><select id="bmPosition"></select></div><div><label>Open</label><select id="bmTarget"><option value="_blank">New Tab</option><option value="_self">Same Window</option></select></div></div>
+            <div class="form-grid two"><div><label>Order</label><input id="bmOrder" type="number" value="50"></div><div><label>Visible</label><select id="bmVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
+            <div class="form-grid two"><div><label>Button Color</label><input id="bmBg" type="color" value="#2979ff"></div><div><label>Text Color</label><input id="bmTextColor" type="color" value="#ffffff"></div></div>
+            <div class="form-grid two"><div><label>Roundness</label><input id="bmRadius" type="number" min="0" max="50" value="12"></div><div><label>Text Size</label><input id="bmFontSize" type="number" min="10" max="28" value="15"></div></div>
+            <div class="settings-actions"><button id="bmSave" class="primary-btn" type="button">Add Button</button><button id="bmClear" class="secondary-btn" type="button">Clear</button></div>
+            <div id="bmMessage" class="settings-message info">Button Manager ready.</div>
+          </div>
+          <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">TOTAL CONTROL</span><h2>All Custom Buttons</h2></div></div><p class="field-help">Admin/Public, old/new page, position, link, color, Hide/Show, Edit/Update/Delete.</p><div id="bmList" class="content-grid"></div></div>
         </div>
       </div>
       <div id="aeMessage" class="settings-message info">Admin Editor ready.</div>
@@ -522,6 +541,7 @@
 <script type="module" src="analytics.js"></script>
 <script type="module" src="seo-manager.js"></script>
 <script type="module" src="admin-editor.js"></script>
+<script type="module" src="button-manager.js"></script>
 <script type="module" src="menu.js"></script>
 <script type="module" src="images.js"></script>
 <script type="module" src="documents.js"></script>

@@ -22,6 +22,7 @@ service cloud.firestore {
     match /visitorDaily/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
     match /serviceAnalytics/{id} { allow read: if signedIn(); allow create, update: if true; allow delete: if signedIn(); }
     match /seoSettings/{id} { allow read: if true; allow write: if signedIn(); }
+    match /customButtons/{id} { allow read: if true; allow write: if signedIn(); }
     match /{document=**} { allow read, write: if false; }
   }
 }
