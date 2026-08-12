@@ -449,3 +449,10 @@ body.admin-editor-themed .dashboard-info-box,body.admin-editor-themed .analytics
 
 /* ===== BUTTON MANAGER ===== */
 .button-manager-host{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}.bm-admin-topbar{margin:0 8px 0 0}.bm-admin-page-top{justify-content:flex-end}.bm-admin-page-top.bm-left{justify-content:flex-start}.bm-admin-bottom{justify-content:center;margin-top:22px}.managed-custom-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--bm-bg,#2979ff);color:var(--bm-text,#fff)!important;border-radius:var(--bm-radius,12px);font-size:var(--bm-size,15px);font-weight:800;text-decoration:none;padding:11px 17px;box-shadow:0 8px 20px rgba(15,23,42,.14);transition:.18s}.managed-custom-button:hover{transform:translateY(-1px);filter:brightness(.96)}.managed-custom-button.bm-floating{position:fixed;right:22px;bottom:22px;z-index:9998}.manager-form input[type=color]{min-height:44px;padding:4px}
+
+/* ===== BUTTON MANAGER EXISTING BUTTON UPGRADE ===== */
+#bmList .box-kicker{letter-spacing:.06em}
+#bmList .field-help{word-break:break-word}
+#bmList .card-actions{flex-wrap:wrap}
+#bmList .content-card:has(.box-kicker){position:relative}
+#bmArea:disabled,#bmPage:disabled,#bmUrl:disabled{opacity:.72;cursor:not-allowed;background:#f3f4f6}

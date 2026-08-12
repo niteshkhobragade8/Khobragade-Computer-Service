@@ -1,0 +1,11 @@
+BUTTON MANAGER — EXISTING + NEW UPGRADE
+
+- Existing Admin Dashboard buttons auto-discovered.
+- Existing public website static buttons auto-discovered from Home/Services/Yojana/Divyang/Documents/Contact.
+- Dynamic public groups supported: Service/Yojana/Divyang WhatsApp, Documents buttons, YouTube watch buttons.
+- Existing button Edit/Update/Color/Hide/Show supported.
+- Existing button Delete is SAFE HIDE only; core HTML/JS action is not physically deleted.
+- Restore Original removes the override and restores the original button.
+- Existing action buttons keep their original JavaScript action. If moved, a proxy button triggers the original action.
+- New custom buttons keep full Button Manager behavior.
+- No Firestore rule change needed beyond existing customButtons rule.
