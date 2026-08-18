@@ -180,6 +180,14 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  const adminSnap = await getDoc(doc(db, "admins", user.uid));
+  if (!adminSnap.exists()) {
+    cleanupDashboardListeners();
+    await signOut(auth);
+    alert("Admin access required.");
+    window.location.replace("login.html");
+    return;
+  }
   if (adminIdentity) adminIdentity.textContent = user.email || "Administrator";
   await loadDashboard();
 });

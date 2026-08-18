@@ -25,6 +25,10 @@
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
       <li data-page="admineditor"><i class="fa-solid fa-sliders"></i><span>Admin Editor</span></li>
+      <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
+      <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
+      <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
+      <li data-page="portalbuilder"><i class="fa-solid fa-list-check"></i><span>Service Actions & Forms</span></li>
       <li data-page="updates"><i class="fa-solid fa-bullhorn"></i><span>Government Updates</span></li>
       <li data-page="services"><i class="fa-solid fa-toolbox"></i><span>Services</span></li>
       <li data-page="categories"><i class="fa-solid fa-folder"></i><span>Categories</span></li>
@@ -77,6 +81,13 @@
         <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
         <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
         <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div></article>
+      </div>
+
+      <div class="dashboard-cards portal-stats">
+        <article class="dashboard-stat-card blue"><span class="stat-icon">📝</span><div><p>Total Applications</p><h2 id="totalApplications">0</h2></div></article>
+        <article class="dashboard-stat-card pink"><span class="stat-icon">⏳</span><div><p>Pending / Processing</p><h2 id="activeApplications">0</h2></div></article>
+        <article class="dashboard-stat-card green"><span class="stat-icon">✅</span><div><p>Completed</p><h2 id="completedApplications">0</h2></div></article>
+        <article class="dashboard-stat-card yellow"><span class="stat-icon">₹</span><div><p>Total Paid</p><h2 id="totalPaidAmount">₹0</h2></div></article>
       </div>
 
       <div class="secondary-stats">
@@ -213,13 +224,14 @@
             <div><label>Icon</label><input type="text" id="serviceIcon" placeholder="📄"></div>
           </div>
           <div class="form-grid two">
-            <div><label>Status</label><select id="serviceStatus"><option>Published</option><option>Draft</option></select></div>
+            <div><label>Publish Status</label><select id="serviceStatus"><option>Published</option><option>Draft</option></select></div>
+            <div><label>Service Availability</label><select id="serviceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
             <label class="check-row standalone"><input type="checkbox" id="serviceFeatured"><span>Featured Service</span></label>
           </div>
           <button id="saveService" class="primary-btn" type="button">Save Service</button><button id="loadDefaultCatalog" class="secondary-btn" type="button" style="margin-top:10px;width:100%">⚡ Load Complete CSC + Yojana + Divyang Catalog</button>
         </div>
         <div class="manager-content">
-          <div class="toolbar triple"><input type="search" id="serviceSearch" placeholder="🔍 Search services..."><select id="serviceCategoryFilter"><option value="all">All Categories</option></select><select id="serviceStatusFilter"><option value="all">All Status</option><option>Published</option><option>Draft</option></select></div>
+          <div class="toolbar triple"><input type="search" id="serviceSearch" placeholder="🔍 Search services..."><select id="serviceCategoryFilter"><option value="all">All Categories</option></select><select id="serviceStatusFilter"><option value="all">All Publish Status</option><option>Published</option><option>Draft</option></select><select id="serviceAvailabilityFilter"><option value="all">All Availability</option><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
           <div id="servicesList" class="content-grid">No Services Available</div>
         </div>
       </div>
@@ -501,6 +513,42 @@
       </div>
     </section>
 
+
+<section id="applicationsPage" class="page">
+  <div class="page-intro"><div><h2>📝 Applications</h2><p>Customer applications, payment, documents, status, rejection/resubmit aur completed files manage karein.</p></div><button class="secondary-btn" id="refreshApplications" type="button">↻ Refresh</button></div>
+  <div class="manager-content">
+    <div class="toolbar portal-toolbar"><input id="applicationSearch" type="search" placeholder="🔍 Application ID / Name / Mobile"><select id="applicationStatusFilter"><option value="all">All Status</option><option>Pending Payment</option><option>Pending</option><option>Processing</option><option>Need Documents</option><option>On Hold</option><option>Completed</option><option>Rejected</option><option>Payment Failed</option></select><select id="applicationPaymentFilter"><option value="all">All Payments</option><option value="Paid">Paid</option><option value="Pending">Pending</option><option value="Failed">Failed</option></select></div>
+    <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>Customer</th><th>Service</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="applicationsTable"><tr><td colspan="8">Loading...</td></tr></tbody></table></div>
+  </div>
+  <div id="applicationEditor" class="manager-content portal-editor" style="display:none">
+    <div class="box-heading"><div><span class="box-kicker">APPLICATION WORKFLOW</span><h2 id="applicationEditorTitle">Application</h2></div><button id="closeApplicationEditor" class="secondary-btn">Close</button></div>
+    <div class="form-grid three"><div><label>Status</label><select id="appStatus"><option>Pending Payment</option><option>Pending</option><option>Processing</option><option>Need Documents</option><option>On Hold</option><option>Completed</option><option>Rejected</option><option>Payment Failed</option></select></div><div><label>Payment Status</label><select id="appPaymentStatus"><option>Pending</option><option>Paid</option><option>Failed</option></select></div><div><label>Amount ₹</label><input id="appAmount" type="number" min="0"></div></div>
+    <label>User Message / Need Documents</label><textarea id="appUserMessage" placeholder="Address proof clear upload karein..."></textarea>
+    <label>Internal Admin Note</label><textarea id="appInternalNote" placeholder="Only admin can see this note"></textarea>
+    <label>Rejection Reason</label><textarea id="appRejectionReason" placeholder="Required when status is Rejected"></textarea>
+    <div class="form-grid two"><div><label>Completed Slip / PDF</label><input id="appCompletedUpload" type="file" accept="image/*,.pdf"><input id="appCompletedFile" type="url" placeholder="or paste https://..."></div><div><label>Status Screenshot / Final File</label><input id="appFinalUpload" type="file" accept="image/*,.pdf"><input id="appFinalFile" type="url" placeholder="or paste https://..."></div></div><div id="applicationDetailsBox" class="settings-message info">Customer form details and uploaded documents appear here.</div>
+    <div class="settings-actions"><button id="saveApplication" class="primary-btn">Save / Update Application</button><button id="markApplicationComplete" class="secondary-btn">Mark Completed</button></div>
+    <div id="applicationEditorMessage" class="settings-message info">Select an application.</div>
+  </div>
+</section>
+
+<section id="usersPage" class="page">
+  <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Registered customer profiles aur unki application summary.</p></div></div>
+  <div class="manager-content"><div class="toolbar"><input id="userSearch" type="search" placeholder="🔍 Name / mobile / email"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Applications</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
+</section>
+
+<section id="paymentsPage" class="page">
+  <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions read-only audit + secure PayU backend configuration.</p></div></div>
+  <div class="dashboard-cards"><article class="dashboard-stat-card green"><span class="stat-icon">₹</span><div><p>Total Collection</p><h2 id="paymentTotalCollection">₹0</h2></div></article><article class="dashboard-stat-card blue"><span class="stat-icon">✅</span><div><p>Success</p><h2 id="paymentSuccessCount">0</h2></div></article><article class="dashboard-stat-card yellow"><span class="stat-icon">⏳</span><div><p>Pending</p><h2 id="paymentPendingCount">0</h2></div></article><article class="dashboard-stat-card red"><span class="stat-icon">❌</span><div><p>Failed</p><h2 id="paymentFailedCount">0</h2></div></article></div>
+  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>🔐</span><div><h3>PayU Integration</h3><p>Merchant Salt/Secret public JS ya Firestore me save nahi hoga.</p></div></div><label>Environment</label><select id="payuEnvironment"><option value="test">Test</option><option value="production">Production</option></select><label>Merchant Key (public identifier)</label><input id="payuMerchantKey" placeholder="PayU merchant key"><label>Secure Backend Payment URL</label><input id="payuBackendUrl" type="url" placeholder="https://your-backend.example.com/api/payu"><label>Success URL</label><input id="payuSuccessUrl" type="url"><label>Failure URL</label><input id="payuFailureUrl" type="url"><label>Portal Return URL</label><input id="payuPortalReturnUrl" type="url" placeholder="https://test-domain/portal/my-applications.html"><div class="settings-message info">Customer-facing merchant/display name PayU Dashboard se set hota hai. Personal account-holder name ko checkout branding me use na karein.</div><div class="settings-actions"><button id="savePayuSettings" class="primary-btn">Save PayU Settings</button></div><div id="payuMessage" class="settings-message info">Secret/Salt must remain backend-only.</div></div><div class="manager-content"><h3>Transaction Records</h3><p class="field-help">Critical payment records intentionally have no permanent Delete button.</p><div class="table-wrap"><table class="admin-table"><thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th></tr></thead><tbody id="paymentsTable"><tr><td colspan="6">Loading...</td></tr></tbody></table></div></div></div>
+</section>
+
+<section id="portalbuilderPage" class="page">
+  <div class="page-intro"><div><h2>🧩 Service Actions & Form Builder</h2><p>Har service ke actions, charge, availability, required documents aur dynamic form fields control karein.</p></div></div>
+  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>⚡</span><div><h3>Service Action</h3><p>Example: Voter ID → New Apply / Correction / Address Change.</p></div></div><label>Service</label><select id="actionService"></select><label>Action Name</label><input id="actionName" placeholder="New Apply"><div class="form-grid two"><div><label>Service Charge ₹</label><input id="actionCharge" type="number" min="0" value="0"></div><div><label>Official Fee ₹</label><input id="actionOfficialFee" type="number" min="0" value="0"></div></div><label>Description</label><textarea id="actionDescription"></textarea><label>Required Documents (one per line)</label><textarea id="actionDocuments" placeholder="Aadhaar\nPhoto\nSignature"></textarea><div class="form-grid two"><div><label>Availability</label><select id="actionAvailable"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Order</label><input id="actionOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveServiceAction" class="primary-btn">Save Action</button><button id="clearServiceAction" class="secondary-btn">Clear</button></div></div><div class="manager-content"><div class="toolbar"><select id="actionServiceFilter"><option value="all">All Services</option></select></div><div id="serviceActionsList" class="content-grid"></div></div></div>
+  <div class="manager-layout portal-form-builder"><div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Dynamic Form Field</h3><p>Selected service/action ke Apply form ke fields.</p></div></div><label>Action</label><select id="fieldAction"></select><label>Field Label</label><input id="fieldLabel" placeholder="Full Name"><label>Field Type</label><select id="fieldType"><option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="email">Email</option><option value="select">Dropdown</option><option value="checkbox">Checkbox</option><option value="file">File Upload</option></select><label>Options (dropdown, comma separated)</label><input id="fieldOptions"><div class="form-grid two"><div><label>Required</label><select id="fieldRequired"><option value="true">Required</option><option value="false">Optional</option></select></div><div><label>Order</label><input id="fieldOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveFormField" class="primary-btn">Save Field</button><button id="clearFormField" class="secondary-btn">Clear</button></div></div><div class="manager-content"><h3>Form Fields</h3><div id="formFieldsList" class="content-grid"></div></div></div>
+</section>
+
 <section id="settingsPage" class="page">
       <div class="page-intro"><div><h2>⚙️ Website Settings</h2><p>Changes saved here are designed to update the public website automatically.</p></div></div>
       <div class="settings-shell">
@@ -554,5 +602,9 @@
 <script type="module" src="recycle-bin.js"></script>
 <script type="module" src="theme-manager.js"></script>
 <script type="module" src="data-recovery.js"></script>
+<script type="module" src="applications-admin.js"></script>
+<script type="module" src="users-admin.js"></script>
+<script type="module" src="payments-admin.js"></script>
+<script type="module" src="portal-builder.js"></script>
 </body>
 </html>

@@ -1,8 +1,10 @@
-import { auth } from "./firebase-config.js";
+import { auth, db } from "./firebase-config.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 import {
     signInWithEmailAndPassword,
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
 const loginForm = document.getElementById("loginForm");
@@ -46,11 +48,16 @@ loginForm.addEventListener("submit", async (e) => {
 
     try {
 
-        await signInWithEmailAndPassword(
+        const credential = await signInWithEmailAndPassword(
             auth,
             userEmail,
             userPassword
         );
+        const adminSnap = await getDoc(doc(db, "admins", credential.user.uid));
+        if (!adminSnap.exists()) {
+            await signOut(auth);
+            throw new Error("This account is not an administrator.");
+        }
 
         localStorage.setItem("activePage", "dashboard");
 
@@ -101,13 +108,11 @@ loginForm.addEventListener("submit", async (e) => {
 
 });
 
-onAuthStateChanged(auth, (user) => {
-
-    if (user) {
-
+onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+    const adminSnap = await getDoc(doc(db, "admins", user.uid));
+    if (adminSnap.exists()) {
         localStorage.setItem("activePage", "dashboard");
         window.location.replace("dashboard.html");
-
     }
-
 });

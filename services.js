@@ -18,6 +18,7 @@ const list = $("servicesList");
 const searchInput = $("serviceSearch");
 const categoryFilter = $("serviceCategoryFilter");
 const statusFilter = $("serviceStatusFilter");
+const availabilityFilter = $("serviceAvailabilityFilter");
 let editId = null;
 let allServices = [];
 
@@ -48,12 +49,15 @@ function renderServices() {
   const search = (searchInput?.value || "").trim().toLowerCase();
   const category = categoryFilter?.value || "all";
   const status = statusFilter?.value || "all";
+  const availability = availabilityFilter?.value || "all";
   const filtered = allServices.filter((item) => {
     const matchesSearch = !search || `${item.name || ""} ${item.description || ""} ${item.category || ""}`.toLowerCase().includes(search);
     const matchesCategory = category === "all" || item.category === category;
     const itemStatus = item.status || "Published";
     const matchesStatus = status === "all" || itemStatus === status;
-    return matchesSearch && matchesCategory && matchesStatus;
+    const itemAvailability = item.availabilityStatus || "Available";
+    const matchesAvailability = availability === "all" || itemAvailability === availability;
+    return matchesSearch && matchesCategory && matchesStatus && matchesAvailability;
   });
 
   if (!filtered.length) {
@@ -68,6 +72,7 @@ function renderServices() {
         <div>
           <span class="status-badge ${String(item.status || "Published").toLowerCase()}">${escapeHTML(item.status || "Published")}</span>
           ${item.featured ? '<span class="featured-badge">★ Featured</span>' : ''}
+          <span class="status-badge ${String(item.availabilityStatus || "Available").toLowerCase().replace(/\s+/g,"-")}">${escapeHTML(item.availabilityStatus || "Available")}</span>
         </div>
       </div>
       <h3>${escapeHTML(item.name)}</h3>
@@ -88,6 +93,7 @@ function resetForm() {
   $("serviceCategory").selectedIndex = 0;
   $("serviceIcon").value = "";
   if ($("serviceStatus")) $("serviceStatus").value = "Published";
+  if ($("serviceAvailability")) $("serviceAvailability").value = "Available";
   if ($("serviceFeatured")) $("serviceFeatured").checked = false;
   editId = null;
   if (saveButton) saveButton.textContent = "Save Service";
@@ -102,6 +108,7 @@ async function saveService() {
   const icon = $("serviceIcon")?.value.trim() || "📄";
   const status = $("serviceStatus")?.value || "Published";
   const featured = Boolean($("serviceFeatured")?.checked);
+  const availabilityStatus = $("serviceAvailability")?.value || "Available";
   if (!name) {
     alert("Enter Service Name");
     return;
@@ -116,10 +123,10 @@ async function saveService() {
   saveButton.disabled = true;
   try {
     if (editId) {
-      await updateDoc(doc(db, "services", editId), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, featured, updatedAt: serverTimestamp() });
+      await updateDoc(doc(db, "services", editId), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, availabilityStatus, featured, updatedAt: serverTimestamp() });
       alert("Service Updated Successfully");
     } else {
-      await addDoc(collection(db, "services"), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, featured, createdAt: serverTimestamp() });
+      await addDoc(collection(db, "services"), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, availabilityStatus, featured, createdAt: serverTimestamp() });
       alert("Service Saved Successfully");
     }
     resetForm();
@@ -143,7 +150,7 @@ async function loadDefaultCatalog() {
     for (const item of catalog) {
       const key = String(item.name || "").replace(/\s+/g," ").trim().toLocaleLowerCase();
       if (!key || existing.has(key)) { skipped++; continue; }
-      await addDoc(collection(db,"services"), {...item,status:"Published",featured:false,createdAt:serverTimestamp()});
+      await addDoc(collection(db,"services"), {...item,status:"Published",availabilityStatus:"Available",featured:false,createdAt:serverTimestamp()});
       existing.add(key); added++;
     }
     await setDoc(doc(db,"settings","website"),{catalogMode:"firebase",updatedAt:serverTimestamp()},{merge:true});
@@ -162,6 +169,7 @@ function editService(id) {
   $("serviceCategory").value = item.category || "Government";
   $("serviceIcon").value = item.icon || "";
   if ($("serviceStatus")) $("serviceStatus").value = item.status || "Published";
+  if ($("serviceAvailability")) $("serviceAvailability").value = item.availabilityStatus || "Available";
   if ($("serviceFeatured")) $("serviceFeatured").checked = Boolean(item.featured);
   saveButton.textContent = "Update Service";
   document.querySelector(".service-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -185,6 +193,7 @@ list?.addEventListener("click", (event) => {
 searchInput?.addEventListener("input", renderServices);
 categoryFilter?.addEventListener("change", renderServices);
 statusFilter?.addEventListener("change", renderServices);
+availabilityFilter?.addEventListener("change", renderServices);
 
 const unsubscribe = onSnapshot(collection(db, "services"), (snapshot) => {
   allServices = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))

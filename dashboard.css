@@ -456,3 +456,18 @@ body.admin-editor-themed .dashboard-info-box,body.admin-editor-themed .analytics
 #bmList .card-actions{flex-wrap:wrap}
 #bmList .content-card:has(.box-kicker){position:relative}
 #bmArea:disabled,#bmPage:disabled,#bmUrl:disabled{opacity:.72;cursor:not-allowed;background:#f3f4f6}
+
+/* Applications & Payments Portal additions */
+.dashboard-stat-card.blue{border-left-color:var(--blue)}
+.portal-stats{margin-top:0;margin-bottom:14px}
+.table-wrap{width:100%;overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
+.admin-table{width:100%;border-collapse:collapse;min-width:850px}
+.admin-table th,.admin-table td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:top}
+.admin-table th{background:#f7f9ff;color:#253047;font-weight:900;position:sticky;top:0;z-index:1}
+.admin-table tr:hover td{background:#fbfcff}
+.portal-toolbar{display:grid;grid-template-columns:1fr 190px 180px;gap:10px;margin-bottom:14px}
+.portal-editor{margin-top:18px;border-top:5px solid var(--pink)}
+.portal-form-builder{margin-top:22px}
+.status-pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900;background:#eef2ff;color:#1d4ed8}
+.status-pill.paid,.status-pill.completed{background:#dcfce7;color:#166534}.status-pill.failed,.status-pill.rejected{background:#fee2e2;color:#991b1b}.status-pill.pending,.status-pill.need-documents{background:#fef3c7;color:#92400e}.status-pill.processing{background:#dbeafe;color:#1e40af}
+@media(max-width:900px){.portal-toolbar{grid-template-columns:1fr}.portal-stats{grid-template-columns:1fr 1fr}}
