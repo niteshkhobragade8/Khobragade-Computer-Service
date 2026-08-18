@@ -84,3 +84,9 @@ NOTES
 - Existing current public site files remain in the package for reference/admin CMS compatibility.
 - The new application portal is isolated under /portal/ for safe testing.
 - Later, if approved, /portal/index.html can be promoted to the root homepage in a separate final migration step.
+
+
+FINAL UI UPDATE:
+- Home page now only Login/Register + professional computer welcome display.
+- Services/Track/My Account navigation appears after login.
+- Admin Service Actions & Forms includes direct All Service Charges manager with Edit/Update/Delete Charge (sets ₹0).
