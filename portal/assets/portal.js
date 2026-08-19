@@ -1,8 +1,7 @@
-import {auth,db,storage} from '../../firebase-config.js';
+import {auth,db} from './portal-firebase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {ref,uploadBytes,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260819-final13';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260819-final17';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -95,13 +94,15 @@ async function fields(actionDocId){
 }
 async function uploadFile(file,path){
  const cloudName='jkia38fa',preset='khobragade_csc';
- // Firebase Storage first when enabled; existing deployments can keep using it.
- try{const r=ref(storage,path);await uploadBytes(r,file);return await getDownloadURL(r)}catch(storageErr){
-   console.warn('Firebase Storage unavailable; using Cloudinary fallback.',storageErr);
-   const fd=new FormData();fd.append('file',file);fd.append('upload_preset',preset);const folder='kcsc-portal/'+String(path||'uploads').replace(/\\/g,'/').replace(/\/[^/]+$/,'');fd.append('folder',folder);
-   const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,{method:'POST',body:fd});
-   const j=await res.json().catch(()=>({}));if(!res.ok||!j.secure_url)throw new Error(j.error?.message||'Document upload failed.');return j.secure_url
- }
+ const fd=new FormData();
+ fd.append('file',file);
+ fd.append('upload_preset',preset);
+ const folder='kcsc-portal/'+String(path||'uploads').replace(/\\/g,'/').replace(/\/[^/]+$/,'');
+ fd.append('folder',folder);
+ const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,{method:'POST',body:fd});
+ const j=await res.json().catch(()=>({}));
+ if(!res.ok||!j.secure_url)throw new Error(j.error?.message||'Document upload failed.');
+ return j.secure_url;
 }
 async function createApplication({service,action,formData,files:uploadList}){if(!auth.currentUser)throw new Error('Please login first.');const profileData=await profile(auth.currentUser.uid);const id=appId();const uploaded=[];for(const item of uploadList||[]){if(item?.url){uploaded.push({label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'});continue}if(!item?.file)continue;const url=await uploadFile(item.file,`applications/${auth.currentUser.uid}/${id}/${Date.now()}-${item.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);uploaded.push({label:item.label,name:item.file.name,url,source:'application'})}const amount=Number(action.serviceCharge||0);const appRef=doc(db,'applications',id);await setDoc(appRef,{applicationId:id,userId:auth.currentUser.uid,userName:profileData?.fullName||'',mobile:profileData?.mobile||'',email:profileData?.email||'',serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',amount,officialFee:Number(action.officialFee||0),paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',formData,documents:uploaded,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});await setDoc(doc(db,'publicApplicationStatus',id),{applicationId:id,mobileLast4:(profileData?.mobile||'').slice(-4),serviceName:service.name||'',actionName:action.name||'',paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',updatedAt:serverTimestamp()});return {docId:id,applicationId:id,amount}}
 async function payuSettings(){const s=await getDoc(doc(db,'settings','payu'));return s.exists()?s.data():{}}
