@@ -1,6 +1,6 @@
 import {db} from './firebase-config.js';
 import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,setDoc,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {MASTER_SERVICES,MASTER_CATALOG_VERSION,actionId,fieldsFor} from './master-catalog.js';
+import {MASTER_SERVICES,MASTER_CATALOG_VERSION,actionId,fieldsFor} from './master-catalog.js?v=20260819-final11';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let services=[],actions=[],fields=[],editAction=null,editField=null;
@@ -37,12 +37,12 @@ async function installMasterCatalog(){
   for(const svc of MASTER_SERVICES){
    let current=svcByName.get(norm(svc.name));
    const serviceDocId=current?.id||`svc_${svc.id}`;
-   if(!current){writes.push(['set','services',serviceDocId,{name:svc.name,category:svc.category,icon:svc.icon,description:svc.description,status:'Published',availabilityStatus:'Available',featured:false,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedServices++;}
+   if(!current){writes.push(['set','services',serviceDocId,{name:svc.name,category:svc.category,icon:svc.icon,description:svc.description,status:'Published',availabilityStatus:'Available',featured:false,masterServiceId:svc.id,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedServices++;}else if(current.masterServiceId!==svc.id){writes.push(['set','services',serviceDocId,{masterServiceId:svc.id,masterCatalogVersion:MASTER_CATALOG_VERSION,updatedAt:serverTimestamp()}]);}
    for(let ai=0;ai<svc.actions.length;ai++){
     const a=svc.actions[ai],name=a[0],charge=Number(a[1]||0),availability=a[2]||'Available',docs=a[3]||[];
     let currentAction=actionByKey.get(`${serviceDocId}|${norm(name)}`);
     const aid=currentAction?.id||actionId(svc.id,name);
-    if(!currentAction){writes.push(['set','serviceActions',aid,{serviceId:serviceDocId,name,serviceCharge:charge,officialFee:0,description:`${svc.name} - ${name} service/assistance request.`,requiredDocuments:docs,availabilityStatus:availability,available:availability==='Available',order:(ai+1)*10,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedActions++;}
+    if(!currentAction){writes.push(['set','serviceActions',aid,{serviceId:serviceDocId,name,serviceCharge:charge,officialFee:0,description:`${svc.name} - ${name} service/assistance request.`,requiredDocuments:docs,availabilityStatus:availability,available:availability==='Available',order:(ai+1)*10,masterServiceId:svc.id,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedActions++;}
     const fdefs=fieldsFor(a);
     for(let fi=0;fi<fdefs.length;fi++){
       const f=fdefs[fi];const key=`${aid}|${norm(f.label)}`;
@@ -53,7 +53,7 @@ async function installMasterCatalog(){
    }
   }
   for(let i=0;i<writes.length;i+=350){const batch=writeBatch(db);for(const [op,col,id,data] of writes.slice(i,i+350)){batch.set(doc(db,col,id),data,{merge:true})}await batch.commit()}
-  await setDoc(doc(db,'settings','masterCatalog'),{version:MASTER_CATALOG_VERSION,installedAt:serverTimestamp(),serviceCount:MASTER_SERVICES.length},{merge:true});
+  await setDoc(doc(db,'settings','masterCatalog'),{version:MASTER_CATALOG_VERSION,installedAt:serverTimestamp(),serviceCount:MASTER_SERVICES.length,actionCount:MASTER_SERVICES.reduce((n,s)=>n+s.actions.length,0),installedComplete:true},{merge:true});
   if(msg)msg.textContent=`✅ Master Catalogue ready: ${addedServices} new services, ${addedActions} new actions, ${addedFields} form fields added. Existing prices/actions preserved.`;
   alert('Complete master service catalogue installed / synced successfully.');
  }catch(e){console.error(e);if(msg)msg.textContent='❌ '+e.message;alert('Master catalogue error: '+e.message)}finally{if(btn){btn.disabled=false;btn.textContent='Install / Sync Complete Master Catalogue'}}

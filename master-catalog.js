@@ -1,4 +1,4 @@
-export const MASTER_CATALOG_VERSION = 9;
+export const MASTER_CATALOG_VERSION = 11;
 
 const commonDocs = ['Aadhaar Card / ID Proof','Passport Size Photo','Mobile Number'];
 const addressDocs = [...commonDocs,'Address Proof'];

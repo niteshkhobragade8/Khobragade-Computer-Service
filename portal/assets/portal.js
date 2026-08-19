@@ -2,7 +2,7 @@ import {auth,db,storage} from '../../firebase-config.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 import {ref,uploadBytes,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from '../../master-catalog.js';
+import {MASTER_SERVICES,actionId,fieldsFor} from '../../master-catalog.js?v=20260819-final11';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -52,10 +52,47 @@ onAuthStateChanged(auth,async u=>{currentUser=u;currentProfile=u?await profile(u
 async function register(data){const mobile=String(data.mobile||'').replace(/\D/g,'');if(mobile.length!==10)throw new Error('10-digit mobile number required.');if(!data.fullName?.trim())throw new Error('Full Name required.');if((data.password||'').length<6)throw new Error('Password minimum 6 characters.');if(data.password!==data.confirmPassword)throw new Error('Password aur Confirm Password match nahi karte.');const c=await createUserWithEmailAndPassword(auth,alias(mobile),data.password);await setDoc(doc(db,'users',c.user.uid),{fullName:data.fullName.trim(),email:(data.email||'').trim(),mobile,status:'Active',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});return c.user}
 async function login(mobile,password){const m=String(mobile||'').replace(/\D/g,'');if(m.length!==10)throw new Error('10-digit mobile number required.');const c=await signInWithEmailAndPassword(auth,alias(m),password);const p=await profile(c.user.uid);if(p?.status==='Disabled'){await signOut(auth);throw new Error('Account disabled. Contact support.')}return c.user}
 async function logout(){await signOut(auth);location.href='index.html'}
-function masterServiceRows(){return MASTER_SERVICES.map(s=>({id:`svc_${s.id}`,name:s.name,category:s.category,icon:s.icon,description:s.description,status:'Published',availabilityStatus:'Available',featured:false,_master:s}))}
-async function services(){let live=[];try{const s=await getDocs(collection(db,'services'));live=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published')}catch(e){console.warn('Services Firestore read failed; using bundled catalogue.',e)}const byName=new Map(live.map(x=>[String(x.name||'').trim().toLowerCase(),x]));for(const m of masterServiceRows()){if(!byName.has(m.name.toLowerCase()))live.push(m)}return live}
-async function actions(serviceId){let live=[];try{const s=await getDocs(query(collection(db,'serviceActions'),where('serviceId','==',serviceId)));live=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Actions Firestore read failed; using bundled catalogue.',e)}const svc=MASTER_SERVICES.find(x=>`svc_${x.id}`===serviceId);if(svc){const byName=new Map(live.map(x=>[String(x.name||'').trim().toLowerCase(),x]));svc.actions.forEach((a,i)=>{if(!byName.has(String(a[0]).toLowerCase()))live.push({id:actionId(svc.id,a[0]),serviceId,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${svc.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10,_masterAction:a})})}return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0))}
-async function fields(actionDocId){let live=[];try{const s=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=s.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields Firestore read failed; using bundled catalogue.',e)}if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}return []}
+const normServiceName=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ');
+const serviceMasterMap=new Map();
+const actionMasterMap=new Map();
+function masterServiceRows(){return MASTER_SERVICES.map(s=>({id:`svc_${s.id}`,name:s.name,category:s.category,icon:s.icon,description:s.description,status:'Published',availabilityStatus:'Available',featured:false,masterServiceId:s.id,_master:s}))}
+async function masterInstallState(){try{const snap=await getDoc(doc(db,'settings','masterCatalog'));return snap.exists()?snap.data():{}}catch(_){return {}}}
+async function services(){
+ let allLive=[],readOk=false;
+ try{const snap=await getDocs(collection(db,'services'));allLive=snap.docs.map(d=>({id:d.id,...d.data()}));readOk=true}catch(e){console.warn('Services Firestore read failed; using bundled catalogue.',e)}
+ serviceMasterMap.clear();
+ const masterByName=new Map(MASTER_SERVICES.map(m=>[normServiceName(m.name),m]));
+ for(const x of allLive){const m=masterByName.get(normServiceName(x.name));if(m){x.masterServiceId=x.masterServiceId||m.id;x._master=m;serviceMasterMap.set(x.id,m)}}
+ const published=allLive.filter(x=>(x.status||'Published')==='Published');
+ const state=await masterInstallState();
+ const complete=readOk&&state.installedComplete===true&&Number(state.serviceCount||0)>=MASTER_SERVICES.length;
+ if(complete)return published;
+ const byName=new Map(allLive.map(x=>[normServiceName(x.name),x]));
+ const rows=[...published];
+ for(const m of masterServiceRows()){if(!byName.has(normServiceName(m.name))){rows.push(m);serviceMasterMap.set(m.id,m)}}
+ return rows;
+}
+async function actions(serviceId){
+ let live=[];try{const snap=await getDocs(query(collection(db,'serviceActions'),where('serviceId','==',serviceId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Actions Firestore read failed; using bundled catalogue.',e)}
+ let svc=serviceMasterMap.get(serviceId)||MASTER_SERVICES.find(x=>`svc_${x.id}`===serviceId||x.id===serviceId);
+ if(!svc&&live.length){const msid=live.find(x=>x.masterServiceId)?.masterServiceId;if(msid)svc=MASTER_SERVICES.find(x=>x.id===msid)}
+ if(svc){
+   const byName=new Map(live.map(x=>[normServiceName(x.name),x]));
+   svc.actions.forEach((a,i)=>{
+     const existing=byName.get(normServiceName(a[0]));
+     if(existing){existing._masterAction=a;actionMasterMap.set(existing.id,{service:svc,action:a});return}
+     const id=actionId(svc.id,a[0]);const row={id,serviceId,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${svc.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10,masterServiceId:svc.id,_masterAction:a};live.push(row);actionMasterMap.set(id,{service:svc,action:a})
+   })
+ }
+ return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0))
+}
+async function fields(actionDocId){
+ let live=[];try{const snap=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields Firestore read failed; using bundled catalogue.',e)}
+ if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+ const mapped=actionMasterMap.get(actionDocId);if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
+ for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}
+ return []
+}
 async function uploadFile(file,path){const r=ref(storage,path);await uploadBytes(r,file);return getDownloadURL(r)}
 async function createApplication({service,action,formData,files:uploadList}){if(!auth.currentUser)throw new Error('Please login first.');const profileData=await profile(auth.currentUser.uid);const id=appId();const uploaded=[];for(const item of uploadList||[]){if(item?.url){uploaded.push({label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'});continue}if(!item?.file)continue;const url=await uploadFile(item.file,`applications/${auth.currentUser.uid}/${id}/${Date.now()}-${item.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);uploaded.push({label:item.label,name:item.file.name,url,source:'application'})}const amount=Number(action.serviceCharge||0);const appRef=doc(db,'applications',id);await setDoc(appRef,{applicationId:id,userId:auth.currentUser.uid,userName:profileData?.fullName||'',mobile:profileData?.mobile||'',email:profileData?.email||'',serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',amount,officialFee:Number(action.officialFee||0),paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',formData,documents:uploaded,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});await setDoc(doc(db,'publicApplicationStatus',id),{applicationId:id,mobileLast4:(profileData?.mobile||'').slice(-4),serviceName:service.name||'',actionName:action.name||'',paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',updatedAt:serverTimestamp()});return {docId:id,applicationId:id,amount}}
 async function payuSettings(){const s=await getDoc(doc(db,'settings','payu'));return s.exists()?s.data():{}}
