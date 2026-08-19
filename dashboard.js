@@ -180,8 +180,8 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  const adminSnap = await getDoc(doc(db, "admins", user.uid));
-  if (!adminSnap.exists()) {
+  const ADMIN_EMAIL = "niteshkhobragade8@gmail.com";
+  if ((user.email || "").toLowerCase() !== ADMIN_EMAIL) {
     cleanupDashboardListeners();
     await signOut(auth);
     alert("Admin access required.");

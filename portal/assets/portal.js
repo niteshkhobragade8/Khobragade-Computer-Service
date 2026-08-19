@@ -98,7 +98,7 @@ async function uploadFile(file,path){
  // Firebase Storage first when enabled; existing deployments can keep using it.
  try{const r=ref(storage,path);await uploadBytes(r,file);return await getDownloadURL(r)}catch(storageErr){
    console.warn('Firebase Storage unavailable; using Cloudinary fallback.',storageErr);
-   const fd=new FormData();fd.append('file',file);fd.append('upload_preset',preset);fd.append('folder','kcsc-portal/'+String(path||'uploads').replace(/\/g,'/').replace(/\/[^/]+$/,''));
+   const fd=new FormData();fd.append('file',file);fd.append('upload_preset',preset);const folder='kcsc-portal/'+String(path||'uploads').replace(/\\/g,'/').replace(/\/[^/]+$/,'');fd.append('folder',folder);
    const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,{method:'POST',body:fd});
    const j=await res.json().catch(()=>({}));if(!res.ok||!j.secure_url)throw new Error(j.error?.message||'Document upload failed.');return j.secure_url
  }
