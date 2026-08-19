@@ -1,5 +1,4 @@
 import { auth, db } from "./firebase-config.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 import {
     signInWithEmailAndPassword,
@@ -53,8 +52,8 @@ loginForm.addEventListener("submit", async (e) => {
             userEmail,
             userPassword
         );
-        const adminSnap = await getDoc(doc(db, "admins", credential.user.uid));
-        if (!adminSnap.exists()) {
+        const ADMIN_EMAIL = "niteshkhobragade8@gmail.com";
+        if ((credential.user.email || "").toLowerCase() !== ADMIN_EMAIL) {
             await signOut(auth);
             throw new Error("This account is not an administrator.");
         }
