@@ -6,15 +6,16 @@
 </head>
 <body class="member-dashboard">
 <div class="topbar"><div class="container">Khobragade Computer Service Centre · User Portal</div></div>
-<header class="nav"><div class="container nav-inner"><a class="brand" href="account.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="navlinks"><span id="navAuth"></span></div></div></header>
+<header class="nav"><div class="container nav-inner"><a class="brand" href="account.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="member-head-tools"><span class="head-bell" title="Notifications">🔔</span><span id="navAuth"></span></div></div></header>
 <main class="section member-main"><div class="container account-grid">
 <aside class="account-menu member-menu">
 <div class="member-menu-title">MY ACCOUNT</div>
-<a class="active" href="account.html">🏠 Dashboard</a><a href="services.html">➕ New Application</a><a href="my-applications.html">📋 My Applications</a><a href="track.html">🔎 Track Application</a><a href="profile.html">👤 Profile</a><button class="member-logout" onclick="Portal.logout()">↪ Logout</button>
+<a class="active" href="account.html">🏠 Dashboard</a><a href="services.html">🧰 All Services</a><a href="services.html">➕ New Application</a><a href="my-applications.html">📋 My Applications</a><a href="payments.html">💳 Payments</a><a href="track.html">🔎 Track Application</a><a href="my-documents.html">📁 My Documents</a><a href="downloads.html">📥 Downloads</a><a href="notifications.html">🔔 Notifications</a><a href="profile.html">👤 Profile</a><a href="../contact.html">💬 Help / Support</a><button class="member-logout" onclick="Portal.logout()">↪ Logout</button>
 </aside>
 <section class="dashboard-content">
 <div class="dashboard-welcome"><div><span class="dashboard-kicker">USER DASHBOARD</span><h1 id="hello">Welcome</h1><p>Applications, payments aur service status ek hi jagah manage karein.</p></div><a class="btn btn-primary dashboard-new" href="services.html">+ New Application</a></div>
 <div id="needAlert" class="dashboard-alert" hidden><div><b>⚠️ Document Required</b><span id="needAlertText">Aapki application me document action required hai.</span></div><a href="my-applications.html">View Applications →</a></div>
+<div class="dashboard-service-search"><div><span class="dashboard-kicker">FIND A SERVICE</span><h2>Search Services</h2></div><form action="services.html"><input name="q" placeholder="Voter ID, PAN, UDID, Certificate..." aria-label="Search services"><button class="btn btn-primary">Search</button></form></div>
 <div class="dashboard-summary">
 <a class="dash-stat stat-total" href="my-applications.html"><span class="dash-icon">📄</span><div><small>Total Applications</small><strong id="total">0</strong></div></a>
 <a class="dash-stat stat-pending" href="my-applications.html"><span class="dash-icon">⏳</span><div><small>Pending / Processing</small><strong id="active">0</strong></div></a>
