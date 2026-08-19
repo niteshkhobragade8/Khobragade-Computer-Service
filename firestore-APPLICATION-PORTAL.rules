@@ -13,7 +13,9 @@ service cloud.firestore {
     match /users/{uid} {
       allow create: if signedIn() && request.auth.uid == uid;
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
-      allow update: if isAdmin() || (signedIn() && request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName','email','updatedAt']));
+      allow update: if isAdmin() || (signedIn() && request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'fullName','email','dob','gender','address','villageCity','taluka','district','state','pinCode','photoURL','extraProfile','updatedAt'
+      ]));
       allow delete: if false;
     }
 
@@ -25,9 +27,8 @@ service cloud.firestore {
     }
 
     match /payments/{id} {
-      allow create: if false; // secure backend only via Admin SDK
+      allow create, update, delete: if false;
       allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow update, delete: if false;
     }
 
     match /publicApplicationStatus/{id} {

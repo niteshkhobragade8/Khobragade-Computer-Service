@@ -3,13 +3,18 @@ service firebase.storage {
   match /b/{bucket}/o {
     function signedIn(){ return request.auth != null; }
     function isAdmin(){ return signedIn() && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid)); }
+    function appOwner(appId){ return signedIn() && firestore.get(/databases/(default)/documents/applications/$(appId)).data.userId == request.auth.uid; }
 
+    match /profiles/{uid}/{fileName} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if signedIn() && request.auth.uid == uid && request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
+    }
     match /applications/{uid}/{appId}/{fileName} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow write: if signedIn() && request.auth.uid == uid && request.resource.size < 10 * 1024 * 1024;
     }
     match /completed/{appId}/{fileName} {
-      allow read: if signedIn();
+      allow read: if isAdmin() || appOwner(appId);
       allow write: if isAdmin() && request.resource.size < 15 * 1024 * 1024;
     }
     match /{allPaths=**} { allow read, write: if false; }

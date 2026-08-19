@@ -1,0 +1,49 @@
+KCSC APPLICATIONS + PAYMENTS COMPLETE V8
+
+WHAT IS COMPLETE
+- User Register/Login (mobile number mapped securely to Firebase Auth email alias)
+- Professional Home + User Dashboard + compact sidebar
+- Profile photo + full profile + application auto-fill
+- Complete master service catalogue installer with Maha ID and Passport Size Photo
+- Service -> Action -> Price -> Available/Unavailable/Coming Soon
+- Dynamic form fields + required documents
+- Application creation + Application ID
+- User document upload
+- PayU Hosted Checkout secure server-side hash generation
+- PayU callback hash validation + Verify Payment API reconciliation
+- PayU webhook endpoint + admin reconciliation endpoint
+- Admin Applications: Pending / Processing / Need Documents / On Hold / Completed / Rejected
+- Admin final Slip/PDF + Final File upload
+- User My Applications + status + re-upload + downloads
+- Admin price/action/form field edit/update/delete
+
+FIRST-TIME TEST SETUP
+1. Deploy this build to a TEST repo/domain. Do not replace live domain yet.
+2. Publish firestore.rules and storage.rules from this ZIP.
+3. Ensure your admin Firebase Auth UID has a Firestore document: admins/{UID}.
+4. Admin Dashboard -> Service Actions & Form Builder -> click Install / Sync Complete Master Catalogue once.
+5. Edit service/action charges and availability as desired.
+6. Firebase Functions:
+   cd functions
+   npm install
+   firebase functions:secrets:set PAYU_KEY
+   firebase functions:secrets:set PAYU_SALT
+   firebase deploy --only functions
+7. In Admin -> Payments / PayU:
+   - backendUrl = deployed initPayuPayment function URL
+   - successUrl = deployed payuCallback function URL
+   - failureUrl = same payuCallback URL
+   - portalReturnUrl = https://YOUR-TEST-DOMAIN/portal/my-applications.html
+8. In PayU Dashboard configure payment webhook to deployed payuWebhook URL for successful/failed payment events.
+9. Keep Environment=test until full test payment passes.
+
+IMPORTANT PAYU SECURITY
+- PAYU_SALT is backend secret only. Never put Salt/Secret in HTML, JS, Firestore or GitHub.
+- Customer payment is treated as Paid only after server-side PayU Verify Payment reconciliation.
+- Payment records intentionally cannot be deleted by client/admin UI.
+
+MASTER CATALOGUE
+Installer is idempotent for existing names/actions: it adds missing services/actions/fields and preserves existing action charges if already present.
+
+LIVE GO-LIVE
+Only after Register -> Profile -> Service -> Form -> Docs -> TEST PayU -> Application -> Admin Processing -> Need Documents -> Completed -> Slip Download all PASS.

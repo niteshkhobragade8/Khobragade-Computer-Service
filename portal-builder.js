@@ -1,5 +1,6 @@
 import {db} from './firebase-config.js';
-import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,setDoc,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {MASTER_SERVICES,MASTER_CATALOG_VERSION,actionId,fieldsFor} from './master-catalog.js';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let services=[],actions=[],fields=[],editAction=null,editField=null;
@@ -19,3 +20,42 @@ $('chargeServiceFilter')?.addEventListener('change',renderCharges);$('chargeSear
 $('saveFormField')?.addEventListener('click',async()=>{const data={actionId:$('fieldAction').value,label:$('fieldLabel').value.trim(),type:$('fieldType').value,options:$('fieldOptions').value.split(',').map(x=>x.trim()).filter(Boolean),required:$('fieldRequired').value==='true',profileKey:$('fieldProfileKey')?.value||'',order:Number($('fieldOrder').value||0),updatedAt:serverTimestamp()};if(!data.actionId||!data.label)return alert('Action aur Field Label required.');if(editField)await updateDoc(doc(db,'formFields',editField),data);else await addDoc(collection(db,'formFields'),{...data,createdAt:serverTimestamp()});clearF()});
 $('formFieldsList')?.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.fe){const x=fields.find(a=>a.id===b.dataset.fe);editField=x.id;$('fieldAction').value=x.actionId;$('fieldLabel').value=x.label||'';$('fieldType').value=x.type||'text';$('fieldOptions').value=(x.options||[]).join(', ');$('fieldRequired').value=String(x.required!==false);if($('fieldProfileKey'))$('fieldProfileKey').value=x.profileKey||'';$('fieldOrder').value=x.order||1}else if(b.dataset.fd&&confirm('Field delete karein?'))await deleteDoc(doc(db,'formFields',b.dataset.fd))});
 $('clearFormField')?.addEventListener('click',clearF);init();
+
+
+async function installMasterCatalog(){
+ const btn=$('installMasterCatalog'),msg=$('masterCatalogMessage');
+ if(btn){btn.disabled=true;btn.textContent='Installing...'}
+ try{
+  const existingServices=(await getDocs(collection(db,'services'))).docs.map(d=>({id:d.id,...d.data()}));
+  const existingActions=(await getDocs(collection(db,'serviceActions'))).docs.map(d=>({id:d.id,...d.data()}));
+  const existingFields=(await getDocs(collection(db,'formFields'))).docs.map(d=>({id:d.id,...d.data()}));
+  const norm=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ');
+  const svcByName=new Map(existingServices.map(x=>[norm(x.name),x]));
+  const actionByKey=new Map(existingActions.map(x=>[`${x.serviceId}|${norm(x.name)}`,x]));
+  const fieldByKey=new Map(existingFields.map(x=>[`${x.actionId}|${norm(x.label)}`,x]));
+  const writes=[];let addedServices=0,addedActions=0,addedFields=0;
+  for(const svc of MASTER_SERVICES){
+   let current=svcByName.get(norm(svc.name));
+   const serviceDocId=current?.id||`svc_${svc.id}`;
+   if(!current){writes.push(['set','services',serviceDocId,{name:svc.name,category:svc.category,icon:svc.icon,description:svc.description,status:'Published',availabilityStatus:'Available',featured:false,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedServices++;}
+   for(let ai=0;ai<svc.actions.length;ai++){
+    const a=svc.actions[ai],name=a[0],charge=Number(a[1]||0),availability=a[2]||'Available',docs=a[3]||[];
+    let currentAction=actionByKey.get(`${serviceDocId}|${norm(name)}`);
+    const aid=currentAction?.id||actionId(svc.id,name);
+    if(!currentAction){writes.push(['set','serviceActions',aid,{serviceId:serviceDocId,name,serviceCharge:charge,officialFee:0,description:`${svc.name} - ${name} service/assistance request.`,requiredDocuments:docs,availabilityStatus:availability,available:availability==='Available',order:(ai+1)*10,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedActions++;}
+    const fdefs=fieldsFor(a);
+    for(let fi=0;fi<fdefs.length;fi++){
+      const f=fdefs[fi];const key=`${aid}|${norm(f.label)}`;
+      if(fieldByKey.has(key))continue;
+      const fid=`fld_${aid}_${fi+1}`.slice(0,120);
+      writes.push(['set','formFields',fid,{actionId:aid,...f,masterCatalogVersion:MASTER_CATALOG_VERSION,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}]);addedFields++;
+    }
+   }
+  }
+  for(let i=0;i<writes.length;i+=350){const batch=writeBatch(db);for(const [op,col,id,data] of writes.slice(i,i+350)){batch.set(doc(db,col,id),data,{merge:true})}await batch.commit()}
+  await setDoc(doc(db,'settings','masterCatalog'),{version:MASTER_CATALOG_VERSION,installedAt:serverTimestamp(),serviceCount:MASTER_SERVICES.length},{merge:true});
+  if(msg)msg.textContent=`✅ Master Catalogue ready: ${addedServices} new services, ${addedActions} new actions, ${addedFields} form fields added. Existing prices/actions preserved.`;
+  alert('Complete master service catalogue installed / synced successfully.');
+ }catch(e){console.error(e);if(msg)msg.textContent='❌ '+e.message;alert('Master catalogue error: '+e.message)}finally{if(btn){btn.disabled=false;btn.textContent='Install / Sync Complete Master Catalogue'}}
+}
+$('installMasterCatalog')?.addEventListener('click',installMasterCatalog);

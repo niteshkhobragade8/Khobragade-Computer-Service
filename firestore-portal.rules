@@ -1,33 +1,64 @@
 rules_version = '2';
-service cloud.firestore { match /databases/{database}/documents {
-  function signedIn(){return request.auth!=null;}
-  function isAdmin(){return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));}
-  match /admins/{uid}{ allow read: if request.auth.uid==uid; allow write: if false; }
-  match /services/{id}{allow read:if true;allow write:if isAdmin();}
-  match /serviceActions/{id}{allow read:if true;allow write:if isAdmin();}
-  match /formFields/{id}{allow read:if true;allow write:if isAdmin();}
-  match /users/{uid}{allow read,update:if signedIn()&&(request.auth.uid==uid||isAdmin());allow create:if signedIn()&&request.auth.uid==uid;allow delete:if isAdmin();}
-  match /applications/{id}{allow create:if signedIn()&&request.resource.data.userId==request.auth.uid;allow read:if signedIn()&&(resource.data.userId==request.auth.uid||isAdmin());allow update:if isAdmin()||(signedIn()&&resource.data.userId==request.auth.uid&&resource.data.status in ['Need Documents','Rejected']);allow delete:if false;}
-  match /payments/{id}{allow create:if signedIn()&&request.resource.data.userId==request.auth.uid;allow read:if signedIn()&&(resource.data.userId==request.auth.uid||isAdmin());allow update:if isAdmin();allow delete:if false;}
-  match /settings/{id}{allow read:if true;allow write:if isAdmin();}
-  match /categories/{id}{allow read:if true;allow write:if isAdmin();}
-  match /updates/{id}{allow read:if true;allow write:if isAdmin();}
-  match /notifications/{id}{allow read:if true;allow write:if isAdmin();}
-  match /images/{id}{allow read:if true;allow write:if isAdmin();}
-  match /documents/{id}{allow read:if true;allow write:if isAdmin();}
-  match /documentChecklists/{id}{allow read:if true;allow write:if isAdmin();}
-  match /youtube/{id}{allow read:if true;allow write:if isAdmin();}
-  match /themes/{id}{allow read:if true;allow write:if isAdmin();}
-  match /pageContent/{id}{allow read:if true;allow write:if isAdmin();}
-  match /siteSections/{id}{allow read:if true;allow write:if isAdmin();}
-  match /dynamicPages/{id}{allow read:if true;allow write:if isAdmin();}
-  match /dynamicSections/{id}{allow read:if true;allow write:if isAdmin();}
-  match /menuItems/{id}{allow read:if true;allow write:if isAdmin();}
-  match /recycleBin/{id}{allow read,write:if isAdmin();}
-  match /seoSettings/{id}{allow read:if true;allow write:if isAdmin();}
-  match /customButtons/{id}{allow read:if true;allow write:if isAdmin();}
-  match /analytics/{id}{allow read:if isAdmin();allow create,update:if true;allow delete:if isAdmin();}
-  match /visitorDaily/{id}{allow read:if isAdmin();allow create,update:if true;allow delete:if isAdmin();}
-  match /serviceAnalytics/{id}{allow read:if isAdmin();allow create,update:if true;allow delete:if isAdmin();}
-  match /{document=**}{allow read,write:if false;}
-}}
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn(){ return request.auth != null; }
+    function isAdmin(){ return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+
+    match /admins/{uid} { allow read: if signedIn() && request.auth.uid == uid; allow write: if false; }
+
+    match /services/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /serviceActions/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /formFields/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    match /users/{uid} {
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow update: if isAdmin() || (signedIn() && request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'fullName','email','dob','gender','address','villageCity','taluka','district','state','pinCode','photoURL','extraProfile','updatedAt'
+      ]));
+      allow delete: if false;
+    }
+
+    match /applications/{id} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow update: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid && resource.data.status == 'Need Documents' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['documents','status','userMessage','updatedAt']));
+      allow delete: if false;
+    }
+
+    match /payments/{id} {
+      allow create, update, delete: if false;
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    match /publicApplicationStatus/{id} {
+      allow read: if true;
+      allow create: if signedIn() && exists(/databases/$(database)/documents/applications/$(id)) && get(/databases/$(database)/documents/applications/$(id)).data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    match /settings/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /categories/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /updates/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /notifications/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /images/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /documents/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /documentChecklists/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /youtube/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /themes/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /pageContent/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /siteSections/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /dynamicPages/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /dynamicSections/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /menuItems/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /recycleBin/{id} { allow read, write: if isAdmin(); }
+    match /seoSettings/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /customButtons/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    match /analytics/{id} { allow read: if isAdmin(); allow create, update: if true; allow delete: if isAdmin(); }
+    match /visitorDaily/{id} { allow read: if isAdmin(); allow create, update: if true; allow delete: if isAdmin(); }
+    match /serviceAnalytics/{id} { allow read: if isAdmin(); allow create, update: if true; allow delete: if isAdmin(); }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}
