@@ -109,8 +109,8 @@ loginForm.addEventListener("submit", async (e) => {
 
 onAuthStateChanged(auth, async (user) => {
     if (!user) return;
-    const adminSnap = await getDoc(doc(db, "admins", user.uid));
-    if (adminSnap.exists()) {
+    const ADMIN_EMAIL = "niteshkhobragade8@gmail.com";
+    if ((user.email || "").toLowerCase() === ADMIN_EMAIL) {
         localStorage.setItem("activePage", "dashboard");
         window.location.replace("dashboard.html");
     }
