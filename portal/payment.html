@@ -1,0 +1,13 @@
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Complete Payment - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260819-final13"></head><body><main class="section"><div class="container" style="max-width:760px"><div id="paymentCard" class="card"><span class="dashboard-kicker">SECURE PAYMENT</span><h2>Complete Payment</h2><div id="payLoading" class="notice">Application loading...</div><div id="payDetails"></div><button id="payNowBtn" class="btn btn-primary" style="width:100%;margin-top:18px" hidden>Pay with PayU</button><a id="backApps" class="btn btn-soft" style="width:100%;margin-top:10px;text-align:center" href="my-applications.html">Back to My Applications</a><div id="payMsg" class="msg"></div></div></div></main><script type="module" src="assets/portal.js?v=20260819-final13"></script><script type="module">
+await new Promise(r=>document.addEventListener('portal-auth',r,{once:true}));
+if(!Portal.user){location.href='index.html?auth=login';throw new Error('login')}
+const id=new URLSearchParams(location.search).get('id');
+try{
+ const app=await Portal.getApplication(id);payLoading.hidden=true;
+ payDetails.innerHTML=`<div class="notice"><b>Application ID:</b> ${Portal.esc(app.applicationId||app.id)}<br><b>Service:</b> ${Portal.esc(app.serviceName||'')}<br><b>Action:</b> ${Portal.esc(app.actionName||'')}<br><b>Service / Assistance Charge:</b> ${Portal.money(app.amount||0)}<br><b>Payment Status:</b> ${Portal.esc(app.paymentStatus||'Pending')}</div>`;
+ if(app.paymentStatus==='Paid'){payMsg.textContent='Payment already completed.';payMsg.className='msg show ok'}
+ else if(Number(app.amount||0)<=0){payMsg.textContent='No payment required for this application.';payMsg.className='msg show ok'}
+ else payNowBtn.hidden=false;
+ payNowBtn.onclick=async()=>{payNowBtn.disabled=true;payNowBtn.textContent='Connecting to PayU...';try{await Portal.initiatePayu(app.id)}catch(e){payMsg.textContent=e.message;payMsg.className='msg show err';payNowBtn.disabled=false;payNowBtn.textContent='Pay with PayU'}};
+}catch(e){payLoading.textContent=e.message;payLoading.className='msg show err'}
+</script></body></html>

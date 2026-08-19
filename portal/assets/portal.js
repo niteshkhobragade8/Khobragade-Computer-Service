@@ -2,7 +2,7 @@ import {auth,db,storage} from '../../firebase-config.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 import {ref,uploadBytes,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260819-final12';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260819-final13';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -93,10 +93,21 @@ async function fields(actionDocId){
  for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}
  return []
 }
-async function uploadFile(file,path){const r=ref(storage,path);await uploadBytes(r,file);return getDownloadURL(r)}
+async function uploadFile(file,path){
+ const cloudName='jkia38fa',preset='khobragade_csc';
+ // Firebase Storage first when enabled; existing deployments can keep using it.
+ try{const r=ref(storage,path);await uploadBytes(r,file);return await getDownloadURL(r)}catch(storageErr){
+   console.warn('Firebase Storage unavailable; using Cloudinary fallback.',storageErr);
+   const fd=new FormData();fd.append('file',file);fd.append('upload_preset',preset);fd.append('folder','kcsc-portal/'+String(path||'uploads').replace(/\/g,'/').replace(/\/[^/]+$/,''));
+   const res=await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,{method:'POST',body:fd});
+   const j=await res.json().catch(()=>({}));if(!res.ok||!j.secure_url)throw new Error(j.error?.message||'Document upload failed.');return j.secure_url
+ }
+}
 async function createApplication({service,action,formData,files:uploadList}){if(!auth.currentUser)throw new Error('Please login first.');const profileData=await profile(auth.currentUser.uid);const id=appId();const uploaded=[];for(const item of uploadList||[]){if(item?.url){uploaded.push({label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'});continue}if(!item?.file)continue;const url=await uploadFile(item.file,`applications/${auth.currentUser.uid}/${id}/${Date.now()}-${item.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);uploaded.push({label:item.label,name:item.file.name,url,source:'application'})}const amount=Number(action.serviceCharge||0);const appRef=doc(db,'applications',id);await setDoc(appRef,{applicationId:id,userId:auth.currentUser.uid,userName:profileData?.fullName||'',mobile:profileData?.mobile||'',email:profileData?.email||'',serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',amount,officialFee:Number(action.officialFee||0),paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',formData,documents:uploaded,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});await setDoc(doc(db,'publicApplicationStatus',id),{applicationId:id,mobileLast4:(profileData?.mobile||'').slice(-4),serviceName:service.name||'',actionName:action.name||'',paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',updatedAt:serverTimestamp()});return {docId:id,applicationId:id,amount}}
 async function payuSettings(){const s=await getDoc(doc(db,'settings','payu'));return s.exists()?s.data():{}}
-async function startPayment(app){if(app.amount<=0)return {free:true};const s=await payuSettings();if(!s.backendUrl)throw new Error('PayU abhi connect nahi hai. Admin se payment settings complete karein.');const token=await auth.currentUser.getIdToken();const r=await fetch(s.backendUrl,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({applicationDocId:app.docId,applicationId:app.applicationId})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.message||'Payment initialization failed.');if(j.redirectUrl){location.href=j.redirectUrl;return}if(j.action&&j.fields){const f=document.createElement('form');f.method='POST';f.action=j.action;Object.entries(j.fields).forEach(([k,v])=>{const i=document.createElement('input');i.type='hidden';i.name=k;i.value=v;f.appendChild(i)});document.body.appendChild(f);f.submit();return}throw new Error('Invalid payment response from backend.')}
+async function startPayment(app){if(app.amount<=0)return {free:true};location.href='payment.html?id='+encodeURIComponent(app.docId||app.applicationId);return {redirected:true}}
+async function getApplication(id){if(!auth.currentUser)throw new Error('Please login first.');const d=await getDoc(doc(db,'applications',id));if(!d.exists())throw new Error('Application not found.');const x={id:d.id,...d.data()};if(x.userId!==auth.currentUser.uid)throw new Error('Application access denied.');return x}
+async function initiatePayu(applicationId){const app=await getApplication(applicationId);if(Number(app.amount||0)<=0)return {free:true};if(app.paymentStatus==='Paid')return {paid:true};const s=await payuSettings();if(!s.backendUrl)throw new Error('PayU connection pending: Admin Dashboard → Payments / PayU me Secure Backend Payment URL save karein.');const token=await auth.currentUser.getIdToken();const r=await fetch(s.backendUrl,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({applicationDocId:app.id,applicationId:app.applicationId})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.message||'Payment initialization failed.');if(j.redirectUrl){location.href=j.redirectUrl;return {redirected:true}}if(j.action&&j.fields){const f=document.createElement('form');f.method='POST';f.action=j.action;Object.entries(j.fields).forEach(([k,v])=>{const i=document.createElement('input');i.type='hidden';i.name=k;i.value=v;f.appendChild(i)});document.body.appendChild(f);f.submit();return {submitted:true}}throw new Error('Invalid payment response from backend.')}
 async function myApplications(){if(!auth.currentUser)return[];const s=await getDocs(query(collection(db,'applications'),where('userId','==',auth.currentUser.uid)));return s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0))}
 async function trackPublic(applicationId,mobile){const s=await getDoc(doc(db,'publicApplicationStatus',applicationId.trim()));if(!s.exists())return null;const x=s.data();if(x.mobileLast4!==String(mobile||'').replace(/\D/g,'').slice(-4))return null;return x}
 
@@ -106,6 +117,7 @@ const memberPages={
  'apply.html':{title:'New Application',key:'new'},
  'my-applications.html':{title:'My Applications',key:'applications'},
  'payments.html':{title:'Payments',key:'payments'},
+ 'payment.html':{title:'Complete Payment',key:'payments'},
  'track.html':{title:'Track Application',key:'track'},
  'my-documents.html':{title:'My Documents',key:'documents'},
  'downloads.html':{title:'Downloads',key:'downloads'},
@@ -135,4 +147,4 @@ function memberChrome(profileData,cms={}){
 }
 
 
-window.Portal={register,login,logout,services,actions,fields,createApplication,startPayment,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+window.Portal={register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};

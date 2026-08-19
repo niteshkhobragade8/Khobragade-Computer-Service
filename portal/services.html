@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All Services - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260819-final12">
+<link rel="stylesheet" href="assets/portal.css?v=20260819-final13">
 </head>
 <body>
 <div class="topbar"><div class="container">Online Digital Seva & Application Portal</div></div>
@@ -18,9 +18,9 @@
 <div id="actionModal" class="modal"><div class="modal-card"><button id="closeActionModal" class="btn btn-soft" style="float:right">✕</button><h2 id="modalTitle">Service</h2><div id="actionsBox"></div></div></div>
 
 <!-- Portal chrome/auth is loaded separately. Even if Firebase fails, catalogue below still renders. -->
-<script type="module" src="assets/portal.js?v=20260819-final12"></script>
+<script type="module" src="assets/portal.js?v=20260819-final13"></script>
 <script type="module">
-import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260819-final12';
+import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260819-final13';
 
 const els={
   q:document.getElementById('q'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
