@@ -23,7 +23,7 @@
 <div><span>Application ID</span><b id="applicationId">—</b></div>
 <div><span>Transaction ID</span><b id="txnid">—</b></div>
 </div>
-<div class="status-note">Payment verification ke baad portal me final payment status update hoga.</div>
+<div class="status-note" id="statusNote">Payment verify ho raha hai…</div>
 <div class="result-actions" style="margin-top:22px">
 <a class="btn btn-primary" href="my-applications.html">My Applications</a>
 <a class="btn btn-soft" href="payments.html">Payment Status</a>
@@ -32,8 +32,21 @@
 </main>
 <script>
 const q=new URLSearchParams(location.search);
-document.getElementById('applicationId').textContent=q.get('applicationId')||'—';
-document.getElementById('txnid').textContent=q.get('txnid')||'—';
+const applicationId=q.get('applicationId')||'';
+const txnid=q.get('txnid')||'';
+document.getElementById('applicationId').textContent=applicationId||'—';
+document.getElementById('txnid').textContent=txnid||'—';
+(async()=>{
+  const note=document.getElementById('statusNote');
+  if(!txnid){note.textContent='Transaction ID missing. My Applications me status check karein.';return;}
+  try{
+    const r=await fetch('https://kcsc-payu-backend.onrender.com/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});
+    const j=await r.json();
+    if(r.ok&&j.paymentStatus==='Paid'){note.textContent='Payment verified ✅ Portal status Paid update ho gaya.';}
+    else if(r.ok){note.textContent='Payment verification complete. Current status: '+(j.paymentStatus||'Pending');}
+    else{note.textContent='Payment received. Status sync pending: '+(j.error||'Please refresh My Applications after a moment.');}
+  }catch(e){note.textContent='Payment received. Status sync pending; My Applications me refresh karein.';}
+})();
 </script>
 </body>
 </html>
