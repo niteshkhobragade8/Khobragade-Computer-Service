@@ -9,7 +9,7 @@ const DEF_MENU=[
  {key:'services',label:'Services',icon:'🧰',visible:true,order:20,children:[{key:'services',label:'All Services',href:'services.html',order:10},{key:'new',label:'New Application',href:'services.html',order:20},{key:'applications',label:'My Applications',href:'my-applications.html',order:30},{key:'track',label:'Track Application',href:'track.html',order:40}]},
  {key:'payments',label:'Payments',icon:'💳',href:'payments.html',visible:true,order:30},
  {key:'documents',label:'Documents',icon:'📁',visible:true,order:40,children:[{key:'documents',label:'My Documents',href:'my-documents.html',order:10},{key:'downloads',label:'Downloads',href:'downloads.html',order:20}]},
- {key:'notifications',label:'Notifications',icon:'🔔',href:'notifications.html',visible:true,order:50},{key:'profile',label:'Profile',icon:'👤',href:'profile.html',visible:true,order:60},{key:'help',label:'Help / Support',icon:'💬',href:'../contact.html',visible:true,order:70}
+ {key:'notifications',label:'Notifications',icon:'🔔',href:'notifications.html',visible:true,order:50},{key:'profile',label:'Profile',icon:'👤',href:'profile.html',visible:true,order:60},{key:'help',label:'Help / Support',icon:'💬',href:'index.html#support',visible:true,order:70}
 ];
 let state={profileFields:structuredClone(DEF_FIELDS),memberMenu:structuredClone(DEF_MENU)},editField=null;
 function msg(t,ok=true){if(!$('upMessage'))return;$('upMessage').textContent=t;$('upMessage').className='settings-message '+(ok?'success':'danger')}

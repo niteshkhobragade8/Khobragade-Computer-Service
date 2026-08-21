@@ -38,7 +38,7 @@ const DEFAULT_MEMBER_MENU=[
  ]},
  {key:'notifications',label:'Notifications',icon:'🔔',href:'notifications.html',visible:true,order:50},
  {key:'profile',label:'Profile',icon:'👤',href:'profile.html',visible:true,order:60},
- {key:'help',label:'Help / Support',icon:'💬',href:'../contact.html',visible:true,order:70}
+ {key:'help',label:'Help / Support',icon:'💬',href:'index.html#support',visible:true,order:70}
 ];
 async function portalCms(){if(currentPortalCms)return currentPortalCms;try{const snap=await getDoc(doc(db,'settings','userPortalCms'));currentPortalCms=snap.exists()?snap.data():{};}catch(_){currentPortalCms={};}return currentPortalCms}
 function mergedProfileFields(cms={}){const rows=Array.isArray(cms.profileFields)&&cms.profileFields.length?cms.profileFields:DEFAULT_PROFILE_FIELDS;return [...rows].filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0))}
@@ -133,7 +133,7 @@ function memberChrome(profileData,cms={}){
  document.body.classList.add('member-dashboard','member-pro-layout');
  document.getElementById('memberProChrome')?.remove();
  const name=profileData?.fullName||'User',photo=profileData?.photoURL||'';
- const menu=(Array.isArray(cms.memberMenu)&&cms.memberMenu.length?cms.memberMenu:DEFAULT_MEMBER_MENU).filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+ const menu=(Array.isArray(cms.memberMenu)&&cms.memberMenu.length?cms.memberMenu:DEFAULT_MEMBER_MENU).map(x=>x.key==='help'?{...x,href:'index.html#support'}:x).filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
  const navHtml=menu.map(item=>{const kids=Array.isArray(item.children)?item.children.filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0)):[];if(kids.length){const active=kids.some(k=>meta.key===k.key);return `<details class="member-pro-group" ${active?'open':''}><summary class="${active?'active':''}"><span class="member-pro-nav-icon">${esc(item.icon||'•')}</span><span class="member-pro-nav-text">${esc(item.label||'Menu')}</span><span class="member-pro-chevron">⌄</span></summary><div class="member-pro-subnav">${kids.map(k=>`<a class="${meta.key===k.key?'active':''}" href="${esc(k.href||'#')}">${esc(k.label||'Link')}</a>`).join('')}</div></details>`}return `<a class="${meta.key===item.key?'active':''}" href="${esc(item.href||'#')}"><span class="member-pro-nav-icon">${esc(item.icon||'•')}</span><span class="member-pro-nav-text">${esc(item.label||'Menu')}</span>${item.key==='notifications'?'<span id="memberNotifCount" class="member-pro-nav-count" hidden>0</span>':''}</a>`}).join('');
  const avatar=photo?`<img class="member-pro-avatar member-pro-avatar-img" src="${esc(photo)}" alt="Profile">`:`<span class="member-pro-avatar">${esc(memberInitials(name))}</span>`;
  const root=document.createElement('div');root.id='memberProChrome';
@@ -146,6 +146,17 @@ function memberChrome(profileData,cms={}){
  document.body.addEventListener('click',e=>{if(document.body.classList.contains('member-menu-open')&&!root.querySelector('.member-pro-sidebar').contains(e.target)&&!toggle.contains(e.target))closeMenu()});
  myApplications().then(rows=>{const n=rows.filter(x=>['Need Documents','Rejected','Processing','Completed','Payment Failed'].includes(x.status)||x.paymentStatus==='Failed').length;for(const id of ['memberNotifCount','memberHeadNotif']){const el=document.getElementById(id);if(el&&n){el.textContent=n>99?'99+':String(n);el.hidden=false}}}).catch(()=>{});
 }
+
+
+function liveTime(v){if(!v)return 0;if(typeof v.toDate==='function')return v.toDate().getTime();if(v.seconds)return v.seconds*1000;return new Date(v).getTime()||0}
+function youtubeVideoId(url=''){try{const u=new URL(url);if(u.hostname.includes('youtu.be'))return u.pathname.slice(1);if(u.searchParams.get('v'))return u.searchParams.get('v');const m=u.pathname.match(/\/(?:shorts|embed)\/([^/?]+)/);return m?m[1]:''}catch(_){return''}}
+function bindLivePanels(){
+ const svcBox=$('liveServicesGrid'),updBox=$('liveUpdatesGrid'),ytBox=$('liveYoutubeGrid');
+ if(svcBox){onSnapshot(collection(db,'services'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,8);svcBox.innerHTML=rows.length?rows.map(x=>`<a class="live-card" href="${currentUser?'services.html':'index.html?auth=login#homeAuth'}"><span>${esc(x.icon||'🧰')}</span><div><b>${esc(x.name||'Service')}</b><small>${esc(x.category||'Digital Service')}</small></div><em>New / Updated</em></a>`).join(''):'<div class="live-empty">Services will appear here.</div>'},()=>{});}
+ if(updBox){onSnapshot(collection(db,'updates'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,6);updBox.innerHTML=rows.length?rows.map(x=>`<article class="live-update"><span>📢</span><div><b>${esc(x.title||'Latest Update')}</b><p>${esc(x.description||x.details||x.message||'')}</p></div></article>`).join(''):'<div class="live-empty">Latest updates will appear here.</div>'},()=>{});}
+ if(ytBox){onSnapshot(collection(db,'youtube'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,6);ytBox.innerHTML=rows.length?rows.map(x=>{const id=youtubeVideoId(x.link||'');const thumb=id?`https://img.youtube.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`:'';return `<a class="live-video" href="${esc(x.link||'#')}" target="_blank" rel="noopener">${thumb?`<img src="${thumb}" alt="${esc(x.title||'YouTube Video')}">`:'<div class="video-fallback">▶</div>'}<div><b>${esc(x.title||'YouTube Video')}</b><small>${esc(x.description||'Watch latest video')}</small></div></a>`}).join(''):'<div class="live-empty">Published YouTube videos will appear here.</div>'},()=>{});}
+}
+queueMicrotask(bindLivePanels);
 
 
 window.Portal={register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
