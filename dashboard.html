@@ -227,6 +227,7 @@
           <div class="form-grid two">
             <div><label>Publish Status</label><select id="serviceStatus"><option>Published</option><option>Draft</option></select></div>
             <div><label>Service Availability</label><select id="serviceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
+            <div><label>Open Target</label><select id="serviceTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div>
             <label class="check-row standalone"><input type="checkbox" id="serviceFeatured"><span>Featured Service</span></label>
           </div>
           <button id="saveService" class="primary-btn" type="button">Save Service</button><button id="loadDefaultCatalog" class="secondary-btn" type="button" style="margin-top:10px;width:100%">⚡ Load Complete CSC + Yojana + Divyang Catalog</button>
@@ -257,7 +258,14 @@
             <div><label>Type</label><select id="notificationType"><option value="breaking">Breaking News</option><option value="popup">Popup Notification</option><option value="normal">Normal Notification</option></select></div>
             <div><label>Priority</label><select id="notificationPriority"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
           </div>
-          <label>Status</label><select id="notificationStatus"><option>Published</option><option>Draft</option></select>
+          <div class="form-grid two">
+            <div><label>Status</label><select id="notificationStatus"><option>Published</option><option>Draft</option></select></div>
+            <div><label>Audience Target</label><select id="notificationAudience"><option value="all">Everyone</option><option value="guest">Login / Register Page Only</option><option value="members">Logged-in Users Only</option></select></div>
+          </div>
+          <div class="form-grid two">
+            <div><label>Action / Link URL (Optional)</label><input type="url" id="notificationLink" placeholder="https://... or portal page"></div>
+            <div><label>Link Target</label><select id="notificationTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div>
+          </div>
           <div class="form-grid two">
             <div><label>Notification Image</label><input type="file" id="notificationImageFile" accept="image/*"></div>
             <div><label>Or Image URL</label><input type="url" id="notificationImageUrl" placeholder="https://..."></div>
@@ -345,7 +353,7 @@
           <label>Video Title</label><input type="text" id="youtubeTitle" placeholder="Video Title">
           <label>YouTube Link</label><input type="url" id="youtubeLink" placeholder="https://youtube.com/....">
           <label>Description</label><textarea id="youtubeDescription" placeholder="Video Description"></textarea>
-          <label>Status</label><select id="youtubeStatus"><option>Published</option><option>Draft</option></select>
+          <div class="form-grid two"><div><label>Status</label><select id="youtubeStatus"><option>Published</option><option>Draft</option></select></div><div><label>Open Target</label><select id="youtubeTarget"><option value="_blank">New Tab</option><option value="_self">Same Window</option></select></div></div>
           <button id="saveYoutube" class="primary-btn" type="button">Save Video</button>
         </div>
         <div class="manager-content"><div class="toolbar"><input type="search" id="youtubeSearch" placeholder="🔍 Search videos..."></div><div id="youtubeList" class="youtube-grid">No Videos Available</div></div>
@@ -528,7 +536,7 @@
     <label>Internal Admin Note</label><textarea id="appInternalNote" placeholder="Only admin can see this note"></textarea>
     <label>Rejection Reason</label><textarea id="appRejectionReason" placeholder="Required when status is Rejected"></textarea>
     <div class="form-grid two"><div><label>Completed Slip / PDF</label><input id="appCompletedUpload" type="file" accept="image/*,.pdf"><input id="appCompletedFile" type="url" placeholder="or paste https://..."></div><div><label>Status Screenshot / Final File</label><input id="appFinalUpload" type="file" accept="image/*,.pdf"><input id="appFinalFile" type="url" placeholder="or paste https://..."></div></div><div id="applicationDetailsBox" class="settings-message info">Customer form details and uploaded documents appear here.</div>
-    <div class="settings-actions"><button id="saveApplication" class="primary-btn">Save / Update Application</button><button id="markApplicationComplete" class="secondary-btn">Mark Completed</button></div>
+    <div class="settings-actions"><button id="saveApplication" class="primary-btn">Save / Update Application</button><button id="markApplicationComplete" class="secondary-btn">Mark Completed</button><button id="printApplicationForm" class="secondary-btn" type="button">🖨 Print Full Form</button><button id="downloadApplicationPdf" class="secondary-btn" type="button">⬇ Download Full Form PDF</button></div>
     <div id="applicationEditorMessage" class="settings-message info">Select an application.</div>
   </div>
 </section>
@@ -547,7 +555,7 @@
 <section id="portalbuilderPage" class="page">
   <div class="page-intro"><div><h2>🧩 Service Actions & Form Builder</h2><p>Har service ke actions, charge, availability, required documents aur dynamic form fields control karein.</p></div></div>
   <div class="manager-content" style="margin-bottom:18px"><div class="box-heading"><div><span class="box-kicker">MASTER CATALOGUE</span><h2>📚 Complete Service Catalogue</h2><p class="field-help">Existing services ko preserve karke missing master services/actions/form fields add/sync karega. Duplicate names skip honge.</p></div></div><div class="settings-actions"><button id="installMasterCatalog" class="primary-btn" type="button">Install / Sync Complete Master Catalogue</button></div><div id="masterCatalogMessage" class="settings-message info">Installer ready. Existing prices/actions overwrite nahi honge.</div></div>
-  <div class="manager-layout portal-service-manager"><div class="manager-form"><div class="form-title"><span>🧰</span><div><h3>Add / Edit Service</h3><p>Existing ya new service ko yahin se manage karein.</p></div></div><label>Service Name</label><input id="builderServiceName" placeholder="PAN Card"><label>Description</label><textarea id="builderServiceDescription" placeholder="Service details"></textarea><div class="form-grid two"><div><label>Category</label><input id="builderServiceCategory" value="Government" placeholder="Identity / KYC / Certificate"></div><div><label>Icon / Emoji</label><input id="builderServiceIcon" placeholder="🧰"></div></div><div class="form-grid two"><div><label>Status</label><select id="builderServiceStatus"><option>Published</option><option>Draft</option></select></div><div><label>Availability</label><select id="builderServiceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div></div><div class="settings-actions"><button id="saveBuilderService" class="primary-btn" type="button">Add Service</button><button id="clearBuilderService" class="secondary-btn" type="button">Clear</button></div></div><div class="manager-content"><div class="box-heading"><div><span class="box-kicker">SERVICE CONTROL</span><h2>All Existing Services</h2></div></div><div class="toolbar"><input id="builderServiceSearch" type="search" placeholder="Search existing service"></div><div id="builderServicesList" class="content-grid"></div></div></div>
+  <div class="manager-layout portal-service-manager"><div class="manager-form"><div class="form-title"><span>🧰</span><div><h3>Add / Edit Service</h3><p>Existing ya new service ko yahin se manage karein.</p></div></div><label>Service Name</label><input id="builderServiceName" placeholder="PAN Card"><label>Description</label><textarea id="builderServiceDescription" placeholder="Service details"></textarea><div class="form-grid two"><div><label>Category</label><input id="builderServiceCategory" value="Government" placeholder="Identity / KYC / Certificate"></div><div><label>Icon / Emoji</label><input id="builderServiceIcon" placeholder="🧰"></div></div><div class="form-grid two"><div><label>Status</label><select id="builderServiceStatus"><option>Published</option><option>Draft</option></select></div><div><label>Availability</label><select id="builderServiceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Open Target</label><select id="builderServiceTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div></div><div class="settings-actions"><button id="saveBuilderService" class="primary-btn" type="button">Add Service</button><button id="clearBuilderService" class="secondary-btn" type="button">Clear</button></div></div><div class="manager-content"><div class="box-heading"><div><span class="box-kicker">SERVICE CONTROL</span><h2>All Existing Services</h2></div></div><div class="toolbar"><input id="builderServiceSearch" type="search" placeholder="Search existing service"></div><div id="builderServicesList" class="content-grid"></div></div></div>
   <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>⚡</span><div><h3>Service Action</h3><p>Example: Voter ID → New Apply / Correction / Address Change.</p></div></div><label>Service</label><select id="actionService"></select><label>Action Name</label><input id="actionName" placeholder="New Apply"><div class="form-grid two"><div><label>Service Charge ₹</label><input id="actionCharge" type="number" min="0" value="0"></div><div><label>Official Fee ₹</label><input id="actionOfficialFee" type="number" min="0" value="0"></div></div><label>Description</label><textarea id="actionDescription"></textarea><label>Required Documents (one per line)</label><textarea id="actionDocuments" placeholder="Aadhaar\nPhoto\nSignature"></textarea><div class="form-grid two"><div><label>Availability</label><select id="actionAvailable"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Order</label><input id="actionOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveServiceAction" class="primary-btn">Save Action</button><button id="clearServiceAction" class="secondary-btn">Clear</button></div></div><div class="manager-content"><div class="toolbar"><select id="actionServiceFilter"><option value="all">All Services</option></select></div><div id="serviceActionsList" class="content-grid"></div></div></div>
   <div class="manager-content portal-charge-manager"><div class="box-heading"><div><span class="box-kicker">PRICE CONTROL</span><h2>💰 All Service Charges</h2><p class="field-help">Har service action ka charge yahin se direct Edit / Update / Delete (₹0) karein. Service ya action delete nahi hoga.</p></div></div><div class="toolbar"><select id="chargeServiceFilter"><option value="all">All Services</option></select><input id="chargeSearch" type="search" placeholder="Search service / action"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Charge ₹</th><th>Availability</th><th>Control</th></tr></thead><tbody id="serviceChargesTable"><tr><td colspan="5">Loading charges...</td></tr></tbody></table></div></div>
   <div class="manager-layout portal-form-builder"><div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Dynamic Form Field</h3><p>Selected service/action ke Apply form ke fields.</p></div></div><label>Action</label><select id="fieldAction"></select><label>Field Label</label><input id="fieldLabel" placeholder="Full Name"><label>Field Type</label><select id="fieldType"><option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="email">Email</option><option value="select">Dropdown</option><option value="checkbox">Checkbox</option><option value="file">File Upload</option></select><label>Options (dropdown, comma separated)</label><input id="fieldOptions"><label>Auto-fill from User Profile</label><select id="fieldProfileKey"><option value="">Auto Detect / None</option><option value="fullName">Full Name</option><option value="email">Email</option><option value="mobile">Mobile</option><option value="dob">Date of Birth</option><option value="gender">Gender</option><option value="address">Full Address</option><option value="villageCity">Village / City</option><option value="taluka">Taluka</option><option value="district">District</option><option value="state">State</option><option value="pinCode">PIN Code</option></select><div class="form-grid two"><div><label>Required</label><select id="fieldRequired"><option value="true">Required</option><option value="false">Optional</option></select></div><div><label>Order</label><input id="fieldOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveFormField" class="primary-btn">Save Field</button><button id="clearFormField" class="secondary-btn">Clear</button></div></div><div class="manager-content"><h3>Form Fields</h3><div id="formFieldsList" class="content-grid"></div></div></div>
@@ -607,9 +615,9 @@
 <script type="module" src="firebase-config.js"></script>
 <script type="module" src="dashboard.js"></script>
 <script type="module" src="updates.js"></script>
-<script type="module" src="services.js?v=20260819-final11"></script>
+<script type="module" src="services.js?v=20260821-final24r2"></script>
 <script type="module" src="categories.js"></script>
-<script type="module" src="notification.js?v=5"></script>
+<script type="module" src="notification.js?v=20260821-final24r2"></script>
 <script type="module" src="analytics.js"></script>
 <script type="module" src="seo-manager.js"></script>
 <script type="module" src="admin-editor.js"></script>
@@ -617,7 +625,7 @@
 <script type="module" src="menu.js"></script>
 <script type="module" src="images.js"></script>
 <script type="module" src="documents.js"></script>
-<script type="module" src="youtube.js"></script>
+<script type="module" src="youtube.js?v=20260821-final24r2"></script>
 <script type="module" src="settings.js"></script>
 <script type="module" src="page-manager.js"></script>
 <script type="module" src="site-builder.js"></script>
@@ -626,10 +634,10 @@
 <script type="module" src="recycle-bin.js"></script>
 <script type="module" src="theme-manager.js"></script>
 <script type="module" src="data-recovery.js"></script>
-<script type="module" src="applications-admin.js?v=20260819-final11"></script>
+<script type="module" src="applications-admin.js?v=20260821-final24r2"></script>
 <script type="module" src="users-admin.js?v=20260819-final11"></script>
 <script type="module" src="payments-admin.js?v=20260819-final11"></script>
-<script type="module" src="portal-builder.js?v=20260819-final11"></script>
+<script type="module" src="portal-builder.js?v=20260821-final24r2"></script>
 <script type="module" src="user-portal-cms.js?v=20260819-final11"></script>
 </body>
 </html>

@@ -57,7 +57,7 @@ function renderNotifications() {
         <div class="content-card-head"><div><span class="status-badge ${String(item.status || "Published").toLowerCase()}">${escapeHTML(item.status || "Published")}</span> <span class="type-badge">${escapeHTML(item.type || "normal")}</span></div><small>${escapeHTML(formatDate(item.createdAt || item.updatedAt))}</small></div>
         ${item.imageUrl ? `<img src="${escapeHTML(item.imageUrl)}" alt="${escapeHTML(item.title || 'Notification')}" style="width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin:10px 0" loading="lazy">` : ""}
         <h3>${escapeHTML(item.title)}</h3><p>${escapeHTML(item.description)}</p>
-        <div class="notification-meta">Priority: <strong>${escapeHTML(item.priority || "Medium")}</strong></div>
+        <div class="notification-meta">Priority: <strong>${escapeHTML(item.priority || "Medium")}</strong> · Audience: <strong>${escapeHTML(item.audience || "all")}</strong> · Target: <strong>${escapeHTML(item.target === "_blank" ? "New Tab" : "Same Window")}</strong></div>
         <div class="card-actions"><button class="action-btn edit" data-action="edit" data-id="${item.id}">✏️ Edit</button><button class="action-btn delete" data-action="delete" data-id="${item.id}">🗑 Delete</button></div>
       </article>`).join("");
   }
@@ -98,6 +98,9 @@ function resetForm() {
   $("notificationType").selectedIndex = 0;
   $("notificationPriority").selectedIndex = 0;
   if ($("notificationStatus")) $("notificationStatus").value = "Published";
+  if ($("notificationAudience")) $("notificationAudience").value = "all";
+  if ($("notificationLink")) $("notificationLink").value = "";
+  if ($("notificationTarget")) $("notificationTarget").value = "_self";
   if ($("notificationImageFile")) $("notificationImageFile").value = "";
   if ($("notificationImageUrl")) $("notificationImageUrl").value = "";
   currentImageUrl = "";
@@ -112,13 +115,16 @@ async function saveNotification() {
   const type = $("notificationType")?.value || "breaking";
   const priority = $("notificationPriority")?.value || "Medium";
   const status = $("notificationStatus")?.value || "Published";
+  const audience = $("notificationAudience")?.value || "all";
+  const link = $("notificationLink")?.value.trim() || "";
+  const target = $("notificationTarget")?.value || "_self";
   if (!title || !description) return alert("Notification Title aur Description bhariye.");
   saveButton.disabled = true;
   const originalText = saveButton.textContent;
   saveButton.textContent = "Saving...";
   try {
     const imageUrl = await uploadNotificationImage();
-    const payload = { title, description, type, priority, status, imageUrl, updatedAt: serverTimestamp() };
+    const payload = { title, description, type, priority, status, audience, link, target, imageUrl, updatedAt: serverTimestamp() };
     if (editId) {
       await updateDoc(doc(db, "notifications", editId), payload);
       alert("Notification Updated Successfully");
@@ -148,6 +154,9 @@ function editNotification(id) {
   $("notificationType").value = item.type || "breaking";
   $("notificationPriority").value = item.priority || "Medium";
   if ($("notificationStatus")) $("notificationStatus").value = item.status || "Published";
+  if ($("notificationAudience")) $("notificationAudience").value = item.audience || "all";
+  if ($("notificationLink")) $("notificationLink").value = item.link || "";
+  if ($("notificationTarget")) $("notificationTarget").value = item.target || "_self";
   if ($("notificationImageUrl")) $("notificationImageUrl").value = currentImageUrl;
   if ($("notificationImageFile")) $("notificationImageFile").value = "";
   saveButton.textContent = "Update Notification";
@@ -180,7 +189,7 @@ typeFilter?.addEventListener("change", renderNotifications);
 $("publishAll")?.addEventListener("click", publishAllNotifications);
 $("deleteAll")?.addEventListener("click", deleteAllNotifications);
 $("refreshNotifications")?.addEventListener("click", renderNotifications);
-["notificationTitle", "notificationDescription", "notificationType", "notificationPriority", "notificationImageUrl", "notificationImageFile"].forEach((id) => { $(id)?.addEventListener("input", updatePreview); $(id)?.addEventListener("change", updatePreview); });
+["notificationTitle", "notificationDescription", "notificationType", "notificationPriority", "notificationAudience", "notificationLink", "notificationTarget", "notificationImageUrl", "notificationImageFile"].forEach((id) => { $(id)?.addEventListener("input", updatePreview); $(id)?.addEventListener("change", updatePreview); });
 
 const unsubscribe = onSnapshot(collection(db, "notifications"), (snapshot) => {
   allNotifications = snapshot.docs.map((item) => ({ id: item.id, ...item.data() })).sort((a, b) => timeValue(b.createdAt || b.updatedAt) - timeValue(a.createdAt || a.updatedAt));

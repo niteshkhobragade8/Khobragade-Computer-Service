@@ -94,6 +94,7 @@ function resetForm() {
   $("serviceIcon").value = "";
   if ($("serviceStatus")) $("serviceStatus").value = "Published";
   if ($("serviceAvailability")) $("serviceAvailability").value = "Available";
+  if ($("serviceTarget")) $("serviceTarget").value = "_self";
   if ($("serviceFeatured")) $("serviceFeatured").checked = false;
   editId = null;
   if (saveButton) saveButton.textContent = "Save Service";
@@ -109,6 +110,7 @@ async function saveService() {
   const status = $("serviceStatus")?.value || "Published";
   const featured = Boolean($("serviceFeatured")?.checked);
   const availabilityStatus = $("serviceAvailability")?.value || "Available";
+  const target = $("serviceTarget")?.value || "_self";
   if (!name) {
     alert("Enter Service Name");
     return;
@@ -123,10 +125,10 @@ async function saveService() {
   saveButton.disabled = true;
   try {
     if (editId) {
-      await updateDoc(doc(db, "services", editId), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, availabilityStatus, featured, updatedAt: serverTimestamp() });
+      await updateDoc(doc(db, "services", editId), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, availabilityStatus, target, featured, updatedAt: serverTimestamp() });
       alert("Service Updated Successfully");
     } else {
-      await addDoc(collection(db, "services"), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, availabilityStatus, featured, createdAt: serverTimestamp() });
+      await addDoc(collection(db, "services"), { name, nameHI, nameMR, description, descriptionHI, descriptionMR, category, icon, status, availabilityStatus, target, featured, createdAt: serverTimestamp() });
       alert("Service Saved Successfully");
     }
     resetForm();
@@ -170,6 +172,7 @@ function editService(id) {
   $("serviceIcon").value = item.icon || "";
   if ($("serviceStatus")) $("serviceStatus").value = item.status || "Published";
   if ($("serviceAvailability")) $("serviceAvailability").value = item.availabilityStatus || "Available";
+  if ($("serviceTarget")) $("serviceTarget").value = item.target || "_self";
   if ($("serviceFeatured")) $("serviceFeatured").checked = Boolean(item.featured);
   saveButton.textContent = "Update Service";
   document.querySelector(".service-form")?.scrollIntoView({ behavior: "smooth", block: "start" });

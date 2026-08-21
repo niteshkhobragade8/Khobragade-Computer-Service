@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All Services - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260821-final24">
+<link rel="stylesheet" href="assets/portal.css?v=20260821-final24r2">
 </head>
 <body>
 <div class="topbar"><div class="container">Online Digital Seva & Application Portal</div></div>
@@ -21,9 +21,9 @@
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260821-final24';
+import './assets/portal.js?v=20260821-final24r2';
 
-import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-final24';
+import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-final24r2';
 
 const els={
   q:document.getElementById('q'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
@@ -77,7 +77,7 @@ els.grid.addEventListener('click',async e=>{
     const ms=svc._master||MASTER_SERVICES.find(m=>m.id===svc.masterServiceId||norm(m.name)===norm(svc.name));
     if(ms)acts=ms.actions.map((a,i)=>({id:actionId(ms.id,a[0]),serviceId:svc.id,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${ms.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10}));
   }
-  els.actions.innerHTML=acts.length?acts.map(a=>{const st=a.availabilityStatus||((a.available!==false)?'Available':'Unavailable');return `<article class="card" style="margin-top:12px"><span class="status ${statusClass(st)}">${esc(st)}</span><h3>${esc(a.name)}</h3><p>${esc(a.description||'')}</p><div class="price">${money(a.serviceCharge||0)} <small>Service Charge</small></div>${Number(a.officialFee||0)>0?`<p>Official Fee: ${money(a.officialFee)}</p>`:''}<ol class="doc-list">${(a.requiredDocuments||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ol><div class="actions"><a class="btn btn-primary ${st!=='Available'?'disabled':''}" ${st==='Available'?`href="apply.html?service=${encodeURIComponent(svc.id)}&action=${encodeURIComponent(a.id)}"`:'style="pointer-events:none;opacity:.5"'}>Apply Now</a></div></article>`}).join(''):'<div class="notice">Is service ke actions available nahi hain.</div>';
+  els.actions.innerHTML=acts.length?acts.map(a=>{const st=a.availabilityStatus||((a.available!==false)?'Available':'Unavailable');return `<article class="card" style="margin-top:12px"><span class="status ${statusClass(st)}">${esc(st)}</span><h3>${esc(a.name)}</h3><p>${esc(a.description||'')}</p><div class="price">${money(a.serviceCharge||0)} <small>Service Charge</small></div>${Number(a.officialFee||0)>0?`<p>Official Fee: ${money(a.officialFee)}</p>`:''}<ol class="doc-list">${(a.requiredDocuments||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ol><div class="actions"><a class="btn btn-primary ${st!=='Available'?'disabled':''}" ${st==='Available'?`href="apply.html?service=${encodeURIComponent(svc.id)}&action=${encodeURIComponent(a.id)}" target="${svc.target==='_blank'?'_blank':'_self'}" ${svc.target==='_blank'?'rel="noopener"':''}`:'style="pointer-events:none;opacity:.5"'}>Apply Now</a></div></article>`}).join(''):'<div class="notice">Is service ke actions available nahi hain.</div>';
   els.modal.classList.add('show');
 });
 </script>
