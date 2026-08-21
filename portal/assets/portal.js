@@ -1,7 +1,7 @@
 import {auth,db} from './portal-firebase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final25';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final24r3';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -83,29 +83,30 @@ async function actions(serviceId){
    svc.actions.forEach((a,i)=>{
      const existing=byName.get(normServiceName(a[0]));
      if(existing){existing._masterAction=a;actionMasterMap.set(existing.id,{service:svc,action:a});return}
-     const id=actionId(svc.id,a[0]);const row={id,serviceId,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${svc.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],requiredDocumentItems:(a[3]||[]).map((name,j)=>({name,required:true,order:(j+1)*10})),availabilityStatus:'Available',available:true,order:(i+1)*10,masterServiceId:svc.id,_masterAction:a};live.push(row);actionMasterMap.set(id,{service:svc,action:a})
+     const id=actionId(svc.id,a[0]);const row={id,serviceId,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${svc.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10,masterServiceId:svc.id,_masterAction:a};live.push(row);actionMasterMap.set(id,{service:svc,action:a})
    })
  }
- // V25 safety: every visible service must always open an application form.
- if(!live.length){
-   const serviceRow=(await services()).find(x=>x.id===serviceId)||{id:serviceId,name:'Service'};
-   live=[{id:`virtual_${serviceId}`,serviceId,name:'Service Application',serviceCharge:0,officialFee:0,description:`${serviceRow.name||'Service'} application / assistance.`,requiredDocuments:[],requiredDocumentItems:[],availabilityStatus:'Available',available:true,order:10,virtual:true}];
+ if(!live.some(x=>(x.availabilityStatus||((x.available!==false)?'Available':'Unavailable'))==='Available')){
+   const fallbackId=`generic_${String(serviceId).replace(/[^a-zA-Z0-9_-]/g,'_')}`;
+   const fallback={id:fallbackId,serviceId,name:'Online Application',serviceCharge:99,officialFee:0,description:'General online application / form assistance.',requiredDocuments:['Aadhaar Card','Passport Size Photo','Signature','Supporting Document (if applicable)'],availabilityStatus:'Available',available:true,order:10,_generic:true};
+   live.push(fallback);actionMasterMap.set(fallbackId,{generic:true,serviceId});
  }
- return live.map(x=>({...x,availabilityStatus:'Available',available:true})).sort((a,b)=>Number(a.order||0)-Number(b.order||0))
+ return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0))
 }
 async function fields(actionDocId){
  let live=[];try{const snap=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields Firestore read failed; using bundled catalogue.',e)}
- if(live.length)return live.filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
- const mapped=actionMasterMap.get(actionDocId);if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,key:f.key||'',visible:true,...f,actionId:actionDocId}));
- for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,key:f.key||'',visible:true,...f,actionId:actionDocId}))}
- // V25 generic professional form fallback for custom services/actions without fields.
- return [
-  {id:`fld_${actionDocId}_name`,actionId:actionDocId,key:'fullName',label:'Full Name',type:'text',required:true,profileKey:'fullName',order:10,visible:true},
-  {id:`fld_${actionDocId}_dob`,actionId:actionDocId,key:'dob',label:'Date of Birth',type:'date',required:false,profileKey:'dob',order:20,visible:true},
-  {id:`fld_${actionDocId}_gender`,actionId:actionDocId,key:'gender',label:'Gender',type:'select',options:['Male','Female','Other'],required:false,profileKey:'gender',order:30,visible:true},
-  {id:`fld_${actionDocId}_address`,actionId:actionDocId,key:'address',label:'Full Address',type:'textarea',required:false,profileKey:'address',order:40,visible:true},
-  {id:`fld_${actionDocId}_purpose`,actionId:actionDocId,key:'purpose',label:'Application / Service Details',type:'textarea',required:true,order:50,visible:true}
- ]
+ if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+ const mapped=actionMasterMap.get(actionDocId);if(mapped?.generic)return [
+ {id:`fld_${actionDocId}_1`,actionId:actionDocId,label:'Full Name',type:'text',required:true,order:10,profileKey:'fullName'},
+ {id:`fld_${actionDocId}_2`,actionId:actionDocId,label:'Mobile Number',type:'text',required:true,order:20,profileKey:'mobile'},
+ {id:`fld_${actionDocId}_3`,actionId:actionDocId,label:'Email',type:'email',required:false,order:30,profileKey:'email'},
+ {id:`fld_${actionDocId}_4`,actionId:actionDocId,label:'Date of Birth',type:'date',required:false,order:40,profileKey:'dob'},
+ {id:`fld_${actionDocId}_5`,actionId:actionDocId,label:'Full Address',type:'textarea',required:false,order:50,profileKey:'address'},
+ {id:`fld_${actionDocId}_6`,actionId:actionDocId,label:'Application / Form Name',type:'text',required:true,order:60},
+ {id:`fld_${actionDocId}_7`,actionId:actionDocId,label:'Additional Details',type:'textarea',required:false,order:70}
+ ];if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
+ for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}
+ return []
 }
 async function uploadFile(file,path){
  const cloudName='jkia38fa',preset='khobragade_csc';
@@ -139,8 +140,7 @@ const memberPages={
  'downloads.html':{title:'Downloads',key:'downloads'},
  'notifications.html':{title:'Notifications',key:'notifications'},
  'profile.html':{title:'My Profile',key:'profile'},
- 'reupload.html':{title:'Upload Documents',key:'applications'},
- 'custom-page.html':{title:'Custom Page',key:'custom'}
+ 'reupload.html':{title:'Upload Documents',key:'applications'}
 };
 function memberInitials(name='User'){return String(name).trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'U'}
 function memberChrome(profileData,cms={}){
@@ -150,7 +150,7 @@ function memberChrome(profileData,cms={}){
  document.getElementById('memberProChrome')?.remove();
  const name=profileData?.fullName||'User',photo=profileData?.photoURL||'';
  const menu=(Array.isArray(cms.memberMenu)&&cms.memberMenu.length?cms.memberMenu:DEFAULT_MEMBER_MENU).map(x=>x.key==='help'?{...x,href:'index.html#support'}:x).filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
- const navHtml=menu.map(item=>{const kids=Array.isArray(item.children)?item.children.filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0)):[];if(kids.length){const active=kids.some(k=>meta.key===k.key);return `<details class="member-pro-group" ${active?'open':''}><summary class="${active?'active':''}"><span class="member-pro-nav-icon">${esc(item.icon||'•')}</span><span class="member-pro-nav-text">${esc(item.label||'Menu')}</span><span class="member-pro-chevron">⌄</span></summary><div class="member-pro-subnav">${kids.map(k=>{const t=safeTarget(k.target,'_self');return `<a class="${meta.key===k.key?'active':''}" href="${esc(k.href||'#')}" target="${t}" ${t==='_blank'?'rel="noopener"':''}>${esc(k.label||'Link')}</a>`}).join('')}</div></details>`}const t=safeTarget(item.target,'_self');return `<a class="${meta.key===item.key?'active':''}" href="${esc(item.href||'#')}" target="${t}" ${t==='_blank'?'rel="noopener"':''}><span class="member-pro-nav-icon">${esc(item.icon||'•')}</span><span class="member-pro-nav-text">${esc(item.label||'Menu')}</span>${item.key==='notifications'?'<span id="memberNotifCount" class="member-pro-nav-count" hidden>0</span>':''}</a>`}).join('');
+ const navHtml=menu.map(item=>{const kids=Array.isArray(item.children)?item.children.filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0)):[];if(kids.length){const active=kids.some(k=>meta.key===k.key);return `<details class="member-pro-group" ${active?'open':''}><summary class="${active?'active':''}"><span class="member-pro-nav-icon">${esc(item.icon||'•')}</span><span class="member-pro-nav-text">${esc(item.label||'Menu')}</span><span class="member-pro-chevron">⌄</span></summary><div class="member-pro-subnav">${kids.map(k=>`<a class="${meta.key===k.key?'active':''}" href="${esc(k.href||'#')}">${esc(k.label||'Link')}</a>`).join('')}</div></details>`}return `<a class="${meta.key===item.key?'active':''}" href="${esc(item.href||'#')}"><span class="member-pro-nav-icon">${esc(item.icon||'•')}</span><span class="member-pro-nav-text">${esc(item.label||'Menu')}</span>${item.key==='notifications'?'<span id="memberNotifCount" class="member-pro-nav-count" hidden>0</span>':''}</a>`}).join('');
  const avatar=photo?`<img class="member-pro-avatar member-pro-avatar-img" src="${esc(photo)}" alt="Profile">`:`<span class="member-pro-avatar">${esc(memberInitials(name))}</span>`;
  const root=document.createElement('div');root.id='memberProChrome';
  root.innerHTML=`<aside class="member-pro-sidebar"><a class="member-pro-brand" href="account.html"><span class="member-pro-logo">K</span><span class="member-pro-brand-copy"><b>Khobragade Computer Service Centre</b><small>SECURE USER PORTAL</small></span></a><div class="member-pro-nav-label">MY ACCOUNT</div><nav class="member-pro-nav">${navHtml}</nav><div class="member-pro-sidebar-bottom"><button class="member-pro-side-logout" type="button">↪ Logout</button><div class="member-pro-security"><span>🛡️</span><div><b>Secure Account</b><br>Protected application portal</div></div></div></aside><header class="member-pro-header"><div class="member-pro-header-inner"><button class="member-pro-mobile-toggle" type="button" aria-label="Open menu">☰</button><div class="member-pro-page-meta"><small>USER PORTAL</small><strong>${esc(meta.title)}</strong></div><div class="member-pro-head-actions"><a class="member-pro-icon-btn" href="notifications.html" title="Notifications">🔔<span id="memberHeadNotif" class="member-pro-badge" hidden>0</span></a><a class="member-pro-user" href="profile.html">${avatar}<span class="member-pro-user-copy"><b>${esc(name)}</b><small>Member Account</small></span></a></div></div></header>`;

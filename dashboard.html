@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" href="favicon.ico">
+<link rel="manifest" href="admin-manifest.webmanifest">
+<meta name="theme-color" content="#172554">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="admin-icon-192.png">
 </head>
 <body>
 
@@ -27,8 +31,10 @@
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
-      <li data-page="portalbuilder"><i class="fa-solid fa-list-check"></i><span>Services / Actions / Forms</span></li>
-      <li data-page="servicecharges"><i class="fa-solid fa-tags"></i><span>Service Charges</span></li>
+      <li data-page="servicesmanager"><i class="fa-solid fa-layer-group"></i><span>Services</span></li>
+      <li data-page="actionsmanager"><i class="fa-solid fa-bolt"></i><span>Actions</span></li>
+      <li data-page="formsmanager"><i class="fa-solid fa-file-pen"></i><span>Forms</span></li>
+      <li data-page="servicecharges"><i class="fa-solid fa-indian-rupee-sign"></i><span>Service Charges</span></li>
       <li data-page="userportalcms"><i class="fa-solid fa-window-maximize"></i><span>Website CMS</span></li>
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
@@ -64,6 +70,7 @@
     </header>
 
     <section id="dashboardPage" class="page active">
+      <div class="manager-content" style="margin-bottom:18px"><div class="box-heading"><div><span class="box-kicker">MOBILE ADMIN APP</span><h2>📱 Install Admin Dashboard App</h2><p class="field-help">Android Chrome me install karke mobile se isi live Admin Dashboard ko app ki tarah control karein.</p></div><button id="installAdminApp" class="primary-btn" type="button">Install App</button></div><div id="adminAppInstallMessage" class="settings-message info">Install button supported mobile/browser par active hoga.</div></div>
       <div class="page-intro">
         <div><h2>Overview</h2><p>Live website content, visitors and publishing activity.</p></div>
         <button class="secondary-btn" type="button" onclick="refreshDashboard()"><i class="fa-solid fa-rotate"></i> Refresh</button>
@@ -547,47 +554,38 @@
   <div class="manager-content" style="margin-bottom:18px"><div class="box-heading"><div><span class="box-kicker">MASTER CATALOGUE</span><h2>📚 Complete Service Catalogue</h2><p class="field-help">Existing services ko preserve karke missing master services/actions/form fields add/sync karega. Duplicate names skip honge.</p></div></div><div class="settings-actions"><button id="installMasterCatalog" class="primary-btn" type="button">Install / Sync Complete Master Catalogue</button></div><div id="masterCatalogMessage" class="settings-message info">Installer ready. Existing prices/actions overwrite nahi honge.</div></div>
   <div class="manager-layout portal-service-manager"><div class="manager-form"><div class="form-title"><span>🧰</span><div><h3>Add / Edit Service</h3><p>Existing ya new service ko yahin se manage karein.</p></div></div><label>Service Name</label><input id="builderServiceName" placeholder="PAN Card"><label>Description</label><textarea id="builderServiceDescription" placeholder="Service details"></textarea><div class="form-grid two"><div><label>Category</label><input id="builderServiceCategory" list="serviceCategoryOptions" value="Government" placeholder="Identity / KYC / Certificate"><datalist id="serviceCategoryOptions"></datalist><p class="field-help">Category yahin manage hogi; separate Service Categories menu ki zarurat nahi.</p></div><div><label>Icon / Emoji</label><input id="builderServiceIcon" placeholder="🧰"></div></div><div class="form-grid two"><div><label>Status</label><select id="builderServiceStatus"><option>Published</option><option>Draft</option></select></div><div><label>Availability</label><select id="builderServiceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Open Target</label><select id="builderServiceTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div></div><div class="settings-actions"><button id="saveBuilderService" class="primary-btn" type="button">Add Service</button><button id="clearBuilderService" class="secondary-btn" type="button">Clear</button></div></div><div class="manager-content"><div class="box-heading"><div><span class="box-kicker">SERVICE CONTROL</span><h2>All Existing Services</h2></div></div><div class="toolbar"><input id="builderServiceSearch" type="search" placeholder="Search existing service"></div><div id="builderServicesList" class="content-grid"></div></div></div>
   <div class="manager-content portal-az-manager"><div class="box-heading"><div><span class="box-kicker">A TO Z FULL CONTROL</span><h2>🛠 All Services + Actions + Charges</h2><p class="field-help">Har existing/new service, uske action, charge aur availability ka direct Edit / Update / Delete control. Master catalogue automatically sync hota rahega; existing custom prices overwrite nahi honge.</p></div></div><div class="toolbar"><input id="azSearch" type="search" placeholder="Search any service / action / category"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Category</th><th>Action</th><th>Charge ₹</th><th>Availability</th><th>Full Control</th></tr></thead><tbody id="serviceAtoZTable"><tr><td colspan="6">Loading complete service control...</td></tr></tbody></table></div></div>
-  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>⚡</span><div><h3>Service Action</h3><p>Example: Voter ID → New Apply / Correction / Address Change.</p></div></div><label>Service</label><select id="actionService"></select><label>Action Name</label><input id="actionName" placeholder="New Apply"><div class="form-grid two"><div><label>Service Charge ₹</label><input id="actionCharge" type="number" min="0" value="0"></div><div><label>Official Fee ₹</label><input id="actionOfficialFee" type="number" min="0" value="0"></div></div><label>Description</label><textarea id="actionDescription"></textarea><label>Required Documents (one per line)</label><textarea id="actionDocuments" placeholder="Aadhaar\nPhoto\nSignature"></textarea><div class="form-grid two"><div><label>Availability</label><select id="actionAvailable"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Order</label><input id="actionOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveServiceAction" class="primary-btn">Save Action</button><button id="clearServiceAction" class="secondary-btn">Clear</button></div></div><div class="manager-content"><div class="toolbar"><select id="actionServiceFilter"><option value="all">All Services</option></select></div><div id="serviceActionsList" class="content-grid"></div></div></div>
-  <div class="manager-layout portal-form-builder">
-    <div class="manager-form">
-      <div class="form-title"><span>🧾</span><div><h3>Add / Edit Application Field</h3><p>Selected action ke form me koi bhi field add, edit, update ya delete karein.</p></div></div>
-      <label>Action</label><select id="fieldAction"></select>
-      <div class="form-grid two"><div><label>Field Label</label><input id="fieldLabel" placeholder="Age / Gender / Father Name"></div><div><label>Field Key</label><input id="fieldKey" placeholder="age / gender / fatherName"></div></div>
-      <div class="form-grid two"><div><label>Field Type</label><select id="fieldType">
-        <option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="email">Email</option><option value="tel">Mobile / Phone</option><option value="textarea">Textarea</option><option value="select">Dropdown</option><option value="radio">Radio</option><option value="checkbox">Checkbox</option><option value="file">File Upload</option>
-      </select></div><div><label>Required</label><select id="fieldRequired"><option value="true">Required</option><option value="false">Optional</option></select></div></div>
-      <label>Options (Dropdown / Radio, comma separated)</label><input id="fieldOptions" placeholder="Male, Female, Other">
-      <div class="form-grid two"><div><label>Placeholder</label><input id="fieldPlaceholder" placeholder="Enter value"></div><div><label>Help Text</label><input id="fieldHelp" placeholder="User ko chhota instruction"></div></div>
-      <div class="form-grid three"><div><label>Min</label><input id="fieldMin" type="number" placeholder="18"></div><div><label>Max</label><input id="fieldMax" type="number" placeholder="60"></div><div><label>Max Length</label><input id="fieldMaxLength" type="number" placeholder="100"></div></div>
-      <label>Validation Pattern (optional)</label><input id="fieldPattern" placeholder="[0-9]{10}">
-      <label>Auto-fill from User Profile</label><select id="fieldProfileKey"><option value="">Auto Detect / None</option><option value="fullName">Full Name</option><option value="email">Email</option><option value="mobile">Mobile</option><option value="dob">Date of Birth</option><option value="gender">Gender</option><option value="address">Full Address</option><option value="villageCity">Village / City</option><option value="taluka">Taluka</option><option value="district">District</option><option value="state">State</option><option value="pinCode">PIN Code</option></select>
-      <div class="form-grid two"><div><label>Order</label><input id="fieldOrder" type="number" value="1"></div><div><label>Visible</label><select id="fieldVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
-      <div class="settings-actions"><button id="saveFormField" class="primary-btn" type="button">Add Field</button><button id="clearFormField" class="secondary-btn" type="button">Clear</button></div>
-    </div>
-    <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">FORM A TO Z</span><h2>Existing Form Fields</h2><p class="field-help">Age, Gender, Aadhaar Number, Address, Qualification ya koi bhi field ko Edit / Update / Delete karein.</p></div></div><div id="formFieldsList" class="content-grid"></div></div>
-  </div>
+  <div class="manager-layout portal-action-manager"><div class="manager-form"><div class="form-title"><span>⚡</span><div><h3>Service Action</h3><p>Example: Voter ID → New Apply / Correction / Address Change.</p></div></div><label>Service</label><select id="actionService"></select><label>Action Name</label><input id="actionName" placeholder="New Apply"><div class="form-grid two"><div><label>Service Charge ₹</label><input id="actionCharge" type="number" min="0" value="0"></div><div><label>Official Fee ₹</label><input id="actionOfficialFee" type="number" min="0" value="0"></div></div><label>Description</label><textarea id="actionDescription"></textarea><label>Required Documents (one per line)</label><textarea id="actionDocuments" placeholder="Aadhaar\nPhoto\nSignature"></textarea><div class="form-grid two"><div><label>Availability</label><select id="actionAvailable"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Order</label><input id="actionOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveServiceAction" class="primary-btn">Save Action</button><button id="clearServiceAction" class="secondary-btn">Clear</button></div></div><div class="manager-content"><div class="toolbar"><select id="actionServiceFilter"><option value="all">All Services</option></select></div><div id="serviceActionsList" class="content-grid"></div></div></div>
+  <div class="manager-content portal-charge-manager"><div class="box-heading"><div><span class="box-kicker">PRICE CONTROL</span><h2>💰 All Service Charges — Edit / Update / Delete</h2><p class="field-help">Har existing service/action ka charge yahin se badlein. Update Charge save karega; Delete Charge sirf charge ko ₹0 karega, service/action ko delete nahi karega.</p></div></div><div class="toolbar"><select id="chargeServiceFilter"><option value="all">All Services</option></select><input id="chargeSearch" type="search" placeholder="Search service / action"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Charge ₹</th><th>Availability</th><th>Control</th></tr></thead><tbody id="serviceChargesTable"><tr><td colspan="5">Loading charges...</td></tr></tbody></table></div></div>
+  <div class="manager-layout portal-form-builder"><div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Dynamic Form Field</h3><p>Selected service/action ke Apply form ke fields.</p></div></div><label>Action</label><select id="fieldAction"></select><label>Field Label</label><input id="fieldLabel" placeholder="Full Name"><label>Field Type</label><select id="fieldType"><option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="email">Email</option><option value="select">Dropdown</option><option value="checkbox">Checkbox</option><option value="file">File Upload</option></select><label>Options (dropdown, comma separated)</label><input id="fieldOptions"><label>Auto-fill from User Profile</label><select id="fieldProfileKey"><option value="">Auto Detect / None</option><option value="fullName">Full Name</option><option value="email">Email</option><option value="mobile">Mobile</option><option value="dob">Date of Birth</option><option value="gender">Gender</option><option value="address">Full Address</option><option value="villageCity">Village / City</option><option value="taluka">Taluka</option><option value="district">District</option><option value="state">State</option><option value="pinCode">PIN Code</option></select><div class="form-grid two"><div><label>Required</label><select id="fieldRequired"><option value="true">Required</option><option value="false">Optional</option></select></div><div><label>Order</label><input id="fieldOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveFormField" class="primary-btn">Save Field</button><button id="clearFormField" class="secondary-btn">Clear</button></div></div><div class="manager-content"><h3>Form Fields</h3><div id="formFieldsList" class="content-grid"></div></div></div>
+</section>
 
-  <div class="manager-layout portal-document-builder">
-    <div class="manager-form">
-      <div class="form-title"><span>📎</span><div><h3>Required Documents</h3><p>Selected action me upload hone wale documents ko individually manage karein.</p></div></div>
-      <label>Action</label><select id="documentAction"></select>
-      <div class="form-grid two"><div><label>Document Name</label><input id="requiredDocumentName" placeholder="Aadhaar Card / Birth Proof"></div><div><label>Document Group</label><select id="requiredDocumentGroup"><option>Identity Proof</option><option>Address Proof</option><option>Birth / Age Proof</option><option>Education Proof</option><option>Income Proof</option><option>Photo / Signature</option><option>Other</option></select></div></div>
-      <div class="form-grid two"><div><label>Required</label><select id="requiredDocumentRequired"><option value="true">Required</option><option value="false">Optional</option></select></div><div><label>Order</label><input id="requiredDocumentOrder" type="number" value="1"></div></div>
-      <div class="settings-actions"><button id="saveRequiredDocument" class="primary-btn" type="button">Add Document</button><button id="clearRequiredDocument" class="secondary-btn" type="button">Clear</button></div>
+<section id="servicesmanagerPage" class="page">
+  <div class="page-intro"><div><h2>🧰 Services</h2><p>Sabhi existing aur new services ka Add / Edit / Update / Delete, category, target, status aur availability.</p></div></div>
+  <div id="servicesmanagerMount"></div>
+</section>
+
+<section id="actionsmanagerPage" class="page">
+  <div class="page-intro"><div><h2>⚡ Actions</h2><p>Har service ke sab existing/new actions ka Add / Edit / Update / Delete, charge, documents aur availability.</p></div></div>
+  <div id="actionsmanagerMount"></div>
+</section>
+
+<section id="formsmanagerPage" class="page">
+  <div class="page-intro"><div><h2>🧾 Forms</h2><p>Sabhi application form fields aur required documents ko full control ke saath manage karein.</p></div></div>
+  <div id="formsmanagerMount"></div>
+  <div class="manager-layout" style="margin-top:18px">
+    <div class="manager-form"><div class="form-title"><span>📎</span><div><h3>Required Documents</h3><p>Selected action ke document upload list me add/remove/update.</p></div></div>
+      <label>Action</label><select id="v30DocsAction"></select>
+      <label>Required Documents (one per line)</label><textarea id="v30DocsText" rows="10" placeholder="Aadhaar Front\nAadhaar Back\nPhoto\nSignature"></textarea>
+      <div class="settings-actions"><button id="v30SaveDocs" class="primary-btn" type="button">Save / Update Documents</button><button id="v30ClearDocs" class="secondary-btn" type="button">Clear</button></div>
+      <div id="v30DocsMessage" class="settings-message info">Select an action.</div>
     </div>
-    <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">DOCUMENT CONTROL</span><h2>Existing Required Documents</h2><p class="field-help">Missing document add karein; galat document ko edit/update/delete karein. Changes user Apply form me live aayenge.</p></div></div><div id="requiredDocumentsList" class="content-grid"></div></div>
+    <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">DOCUMENT CONTROL</span><h2>Action Document Requirements</h2></div></div><div id="v30DocsPreview" class="content-grid"></div></div>
   </div>
 </section>
 
-
-
 <section id="servicechargesPage" class="page">
-  <div class="page-intro"><div><h2>💰 Service Charges</h2><p>Sabhi existing aur new service actions ka charge, official fee aur availability ek jagah se manage karein.</p></div></div>
-  <div class="manager-content portal-charge-manager">
-    <div class="box-heading"><div><span class="box-kicker">LIVE PRICE CONTROL</span><h2>All Service Charges — Edit / Update / Reset</h2><p class="field-help">Yahan change karte hi user application/payment me latest charge use hoga. Reset Charge ₹0 karega; action delete nahi hota.</p></div></div>
-    <div class="toolbar"><select id="chargeServiceFilter"><option value="all">All Services</option></select><input id="chargeSearch" type="search" placeholder="Search service / action"></div>
-    <div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Charge ₹</th><th>Official Fee ₹</th><th>Availability</th><th>Control</th></tr></thead><tbody id="serviceChargesTable"><tr><td colspan="6">Loading charges...</td></tr></tbody></table></div>
-  </div>
+  <div class="page-intro"><div><h2>💰 Service Charges</h2><p>Sabhi existing aur future service actions ke charges ko ek jagah Edit / Update / ₹0 karein.</p></div></div>
+  <div id="servicechargesMount"></div>
 </section>
 
 <section id="userportalcmsPage" class="page">
@@ -603,22 +601,18 @@
   <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">FULL CONTROL</span><h2>All Profile Fields</h2></div><button id="upResetFields" class="secondary-btn" type="button">Restore Defaults</button></div><p class="field-help">Add / Edit / Update / Delete-Hide / Required / Order. Mobile login field protected rahega.</p><div id="upFieldsList" class="content-grid"></div></div>
  </div>
  <div class="manager-layout">
-  <div class="manager-form"><div class="form-title"><span>☰</span><div><h3>Add / Edit User Menu</h3><p>Existing + new sidebar menu ka label, icon, link, target, order aur visibility manage karein.</p></div></div>
-  <label>Menu Label</label><input id="upMenuLabel" placeholder="Support">
-  <div class="form-grid two"><div><label>Icon / Emoji</label><input id="upMenuIcon" value="🔗"></div><div><label>Link</label><input id="upMenuHref" placeholder="help.html"></div></div>
-  <div class="form-grid three"><div><label>Target</label><select id="upMenuTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div><div><label>Order</label><input id="upMenuOrder" type="number" value="80"></div><div><label>Visible</label><select id="upMenuVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
-  <div class="settings-actions"><button id="upAddMenu" class="primary-btn" type="button">Add Menu</button><button id="upClearMenuEdit" class="secondary-btn" type="button">Clear</button></div></div>
+  <div class="manager-form"><div class="form-title"><span>☰</span><div><h3>Add / Edit User Menu</h3><p>Existing + new sidebar menu ka label, icon, link, target, order aur visibility.</p></div></div><label>Menu Label</label><input id="upMenuLabel" placeholder="Support"><label>Icon / Emoji</label><input id="upMenuIcon" value="🔗"><label>Link</label><input id="upMenuHref" placeholder="help.html"><div class="form-grid three"><div><label>Target</label><select id="upMenuTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div><div><label>Order</label><input id="upMenuOrder" type="number" value="80"></div><div><label>Visible</label><select id="upMenuVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div><div class="settings-actions"><button id="upAddMenu" class="primary-btn" type="button">Add Menu</button><button id="upClearMenu" class="secondary-btn" type="button">Clear</button></div></div>
   <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">CLEAN SIDEBAR</span><h2>User Sidebar Menu</h2></div><button id="upResetMenu" class="secondary-btn" type="button">Restore Defaults</button></div><p class="field-help">Existing top-level menu name/order/show-hide edit karein. Services aur Documents ke submenu automatically grouped rahenge.</p><div id="upMenuList" class="admin-editor-list"></div></div>
  </div>
  <div class="manager-layout">
-  <div class="manager-form"><div class="form-title"><span>📄</span><div><h3>Add / Edit User Page</h3><p>Existing user pages ko hide/edit karein aur new custom page banayein.</p></div></div>
+  <div class="manager-form"><div class="form-title"><span>📄</span><div><h3>User Pages CMS</h3><p>Existing/new custom user page Add / Edit / Update / Delete-Hide.</p></div></div>
     <label>Page Title</label><input id="upPageTitle" placeholder="Help Centre">
-    <label>Slug / File Name</label><input id="upPageSlug" placeholder="help-centre">
-    <label>Page Content</label><textarea id="upPageContent" placeholder="Page details / instructions"></textarea>
-    <div class="form-grid two"><div><label>Visible</label><select id="upPageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div><div><label>Order</label><input id="upPageOrder" type="number" value="100"></div></div>
+    <label>Page Icon / Emoji</label><input id="upPageIcon" value="📄">
+    <label>Page Content (HTML allowed)</label><textarea id="upPageContent" rows="10" placeholder="Page content..."></textarea>
+    <div class="form-grid two"><div><label>Order</label><input id="upPageOrder" type="number" value="100"></div><div><label>Visible</label><select id="upPageVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
     <div class="settings-actions"><button id="upSavePage" class="primary-btn" type="button">Add Page</button><button id="upClearPage" class="secondary-btn" type="button">Clear</button></div>
   </div>
-  <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USER PAGES CMS</span><h2>Existing + Custom User Pages</h2></div></div><div id="upPagesList" class="content-grid"></div></div>
+  <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USER PAGES</span><h2>All Custom Pages</h2></div></div><div id="upPagesList" class="content-grid"></div></div>
  </div>
  <div id="upMessage" class="settings-message info">Website CMS ready.</div>
 </section>
@@ -657,9 +651,9 @@
 <script type="module" src="firebase-config.js"></script>
 <script type="module" src="dashboard.js"></script>
 <script type="module" src="updates.js"></script>
-<script type="module" src="services.js?v=20260821-final25"></script>
+<script type="module" src="services.js?v=20260821-final24r3"></script>
 <script type="module" src="categories.js"></script>
-<script type="module" src="notification.js?v=20260821-final25"></script>
+<script type="module" src="notification.js?v=20260821-final24r3"></script>
 <script type="module" src="analytics.js"></script>
 <script type="module" src="seo-manager.js"></script>
 <script type="module" src="admin-editor.js"></script>
@@ -667,7 +661,7 @@
 <script type="module" src="menu.js"></script>
 <script type="module" src="images.js"></script>
 <script type="module" src="documents.js"></script>
-<script type="module" src="youtube.js?v=20260821-final25"></script>
+<script type="module" src="youtube.js?v=20260821-final24r3"></script>
 <script type="module" src="settings.js"></script>
 <script type="module" src="page-manager.js"></script>
 <script type="module" src="site-builder.js"></script>
@@ -676,10 +670,12 @@
 <script type="module" src="recycle-bin.js"></script>
 <script type="module" src="theme-manager.js"></script>
 <script type="module" src="data-recovery.js"></script>
-<script type="module" src="applications-admin.js?v=20260821-final25"></script>
-<script type="module" src="users-admin.js?v=20260819-final25"></script>
-<script type="module" src="payments-admin.js?v=20260819-final25"></script>
-<script type="module" src="portal-builder.js?v=20260821-final25"></script>
-<script type="module" src="user-portal-cms.js?v=20260819-final25"></script>
+<script type="module" src="applications-admin.js?v=20260821-final24r3"></script>
+<script type="module" src="users-admin.js?v=20260819-final11"></script>
+<script type="module" src="payments-admin.js?v=20260819-final11"></script>
+<script type="module" src="portal-builder.js?v=20260821-final24r3"></script>
+<script type="module" src="user-portal-cms.js?v=20260821-v30"></script>
+<script type="module" src="admin-v30.js?v=20260821-v30"></script>
+<script src="admin-pwa.js?v=20260821-v30"></script>
 </body>
 </html>
