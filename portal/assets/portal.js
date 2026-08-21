@@ -144,7 +144,7 @@ function memberChrome(profileData,cms={}){
  root.querySelector('.member-pro-side-logout')?.addEventListener('click',logout);
  root.querySelectorAll('.member-pro-nav a').forEach(a=>a.addEventListener('click',closeMenu));
  document.body.addEventListener('click',e=>{if(document.body.classList.contains('member-menu-open')&&!root.querySelector('.member-pro-sidebar').contains(e.target)&&!toggle.contains(e.target))closeMenu()});
- myApplications().then(rows=>{const n=rows.filter(x=>['Need Documents','Processing','Completed'].includes(x.status)).length;for(const id of ['memberNotifCount','memberHeadNotif']){const el=document.getElementById(id);if(el&&n){el.textContent=n>99?'99+':String(n);el.hidden=false}}}).catch(()=>{});
+ myApplications().then(rows=>{const n=rows.filter(x=>['Need Documents','Rejected','Processing','Completed','Payment Failed'].includes(x.status)||x.paymentStatus==='Failed').length;for(const id of ['memberNotifCount','memberHeadNotif']){const el=document.getElementById(id);if(el&&n){el.textContent=n>99?'99+':String(n);el.hidden=false}}}).catch(()=>{});
 }
 
 
