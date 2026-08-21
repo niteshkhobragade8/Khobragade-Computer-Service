@@ -1,7 +1,7 @@
 import {auth,db} from './portal-firebase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260819-final17';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final18';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');

@@ -6,7 +6,6 @@ const FIXED=[
  ['applications','Applications','fa-solid fa-file-circle-check',20],
  ['users','Users / Customers','fa-solid fa-users',30],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],
- ['categories','Service Categories','fa-solid fa-folder-tree',50],
  ['portalbuilder','Services / Actions / Forms','fa-solid fa-list-check',60],
  ['userportalcms','Website CMS','fa-solid fa-window-maximize',70],
  ['youtube','YouTube','fa-brands fa-youtube',80],
