@@ -1,9 +1,9 @@
 const titleMap = {
   dashboard: "Dashboard", admineditor: "Admin Editor", updates: "Government Updates", services: "Services",
-  categories: "Categories", images: "Images Manager", documents: "Documents Manager", youtube: "YouTube Manager",
+  categories: "Service Categories", images: "Images Manager", documents: "Documents Manager", youtube: "YouTube Manager",
   notifications: "Notifications", analytics: "Analytics", seo: "SEO Manager", pages: "Website Pages",
   sitebuilder: "Full Website CMS", dynamicpages: "Page & Menu Builder", recyclebin: "Recycle Bin",
-  themes: "Theme Manager", userportalcms: "User Portal CMS", settings: "Website Settings"
+  themes: "Theme Manager", userportalcms: "User Portal CMS", settings: "Portal Settings", portalbuilder: "Services, Actions & Forms"
 };
 function openPage(pageName) {
   document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));

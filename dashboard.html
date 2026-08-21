@@ -24,27 +24,26 @@
 
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
-      <li data-page="admineditor"><i class="fa-solid fa-sliders"></i><span>Admin Editor</span></li>
+
+      <li class="sidebar-section" aria-hidden="true"><span>APPLICATION MANAGEMENT</span></li>
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
-      <li data-page="portalbuilder"><i class="fa-solid fa-list-check"></i><span>Service Actions & Forms</span></li>
+
+      <li class="sidebar-section" aria-hidden="true"><span>SERVICE MANAGEMENT</span></li>
+      <li data-page="categories"><i class="fa-solid fa-folder-tree"></i><span>Service Categories</span></li>
+      <li data-page="portalbuilder"><i class="fa-solid fa-layer-group"></i><span>Services, Actions & Forms</span></li>
       <li data-page="userportalcms"><i class="fa-solid fa-id-card"></i><span>User Portal CMS</span></li>
-      <li data-page="updates"><i class="fa-solid fa-bullhorn"></i><span>Government Updates</span></li>
-      <li data-page="services"><i class="fa-solid fa-toolbox"></i><span>Services</span></li>
-      <li data-page="categories"><i class="fa-solid fa-folder"></i><span>Categories</span></li>
-      <li data-page="images"><i class="fa-solid fa-image"></i><span>Images</span></li>
-      <li data-page="documents"><i class="fa-solid fa-file-lines"></i><span>Documents</span></li>
+
+      <li class="sidebar-section" aria-hidden="true"><span>PORTAL CONTENT</span></li>
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
       <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
-      <li data-page="seo"><i class="fa-solid fa-magnifying-glass"></i><span>SEO Manager</span></li>
-      <li data-page="pages"><i class="fa-solid fa-pen-to-square"></i><span>Website Pages</span></li>
-      <li data-page="sitebuilder"><i class="fa-solid fa-layer-group"></i><span>Full Website CMS</span></li>
-<li data-page="dynamicpages"><i class="fa-solid fa-file-circle-plus"></i><span>Page & Menu Builder</span></li>
+
+      <li class="sidebar-section" aria-hidden="true"><span>SYSTEM</span></li>
       <li data-page="recyclebin"><i class="fa-solid fa-recycle"></i><span>Recycle Bin</span></li>
       <li data-page="themes"><i class="fa-solid fa-palette"></i><span>Theme Manager</span></li>
-      <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></li>
+      <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Portal Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
 
@@ -240,7 +239,7 @@
     </section>
 
     <section id="categoriesPage" class="page">
-      <div class="page-intro"><div><h2>📂 Categories</h2><p>Organize services into clean website sections.</p></div></div>
+      <div class="page-intro"><div><h2>📂 Service Categories</h2><p>New User Portal ke services ko professional categories me organize karein.</p></div></div>
       <div class="compact-manager">
         <div class="manager-form category-form"><label>Category Name</label><div class="inline-form"><input type="text" id="categoryName" placeholder="Category Name"><button id="saveCategory" class="primary-btn" type="button">Save Category</button></div></div>
         <div class="toolbar"><input type="search" id="categorySearch" placeholder="🔍 Search categories..."></div>
@@ -553,7 +552,7 @@
 </section>
 
 <section id="portalbuilderPage" class="page">
-  <div class="page-intro"><div><h2>🧩 Service Actions & Form Builder</h2><p>Har service ke actions, charge, availability, required documents aur dynamic form fields control karein.</p></div></div>
+  <div class="page-intro"><div><h2>🧩 Services, Actions & Forms</h2><p>Service category ke andar service, actions, charge, availability, required documents aur dynamic application form professionally manage karein.</p></div></div>
   <div class="manager-content" style="margin-bottom:18px"><div class="box-heading"><div><span class="box-kicker">MASTER CATALOGUE</span><h2>📚 Complete Service Catalogue</h2><p class="field-help">Existing services ko preserve karke missing master services/actions/form fields add/sync karega. Duplicate names skip honge.</p></div></div><div class="settings-actions"><button id="installMasterCatalog" class="primary-btn" type="button">Install / Sync Complete Master Catalogue</button></div><div id="masterCatalogMessage" class="settings-message info">Installer ready. Existing prices/actions overwrite nahi honge.</div></div>
   <div class="manager-layout portal-service-manager"><div class="manager-form"><div class="form-title"><span>🧰</span><div><h3>Add / Edit Service</h3><p>Existing ya new service ko yahin se manage karein.</p></div></div><label>Service Name</label><input id="builderServiceName" placeholder="PAN Card"><label>Description</label><textarea id="builderServiceDescription" placeholder="Service details"></textarea><div class="form-grid two"><div><label>Category</label><input id="builderServiceCategory" value="Government" placeholder="Identity / KYC / Certificate"></div><div><label>Icon / Emoji</label><input id="builderServiceIcon" placeholder="🧰"></div></div><div class="form-grid two"><div><label>Status</label><select id="builderServiceStatus"><option>Published</option><option>Draft</option></select></div><div><label>Availability</label><select id="builderServiceAvailability"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Open Target</label><select id="builderServiceTarget"><option value="_self">Same Window</option><option value="_blank">New Tab</option></select></div></div><div class="settings-actions"><button id="saveBuilderService" class="primary-btn" type="button">Add Service</button><button id="clearBuilderService" class="secondary-btn" type="button">Clear</button></div></div><div class="manager-content"><div class="box-heading"><div><span class="box-kicker">SERVICE CONTROL</span><h2>All Existing Services</h2></div></div><div class="toolbar"><input id="builderServiceSearch" type="search" placeholder="Search existing service"></div><div id="builderServicesList" class="content-grid"></div></div></div>
   <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>⚡</span><div><h3>Service Action</h3><p>Example: Voter ID → New Apply / Correction / Address Change.</p></div></div><label>Service</label><select id="actionService"></select><label>Action Name</label><input id="actionName" placeholder="New Apply"><div class="form-grid two"><div><label>Service Charge ₹</label><input id="actionCharge" type="number" min="0" value="0"></div><div><label>Official Fee ₹</label><input id="actionOfficialFee" type="number" min="0" value="0"></div></div><label>Description</label><textarea id="actionDescription"></textarea><label>Required Documents (one per line)</label><textarea id="actionDocuments" placeholder="Aadhaar\nPhoto\nSignature"></textarea><div class="form-grid two"><div><label>Availability</label><select id="actionAvailable"><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div><div><label>Order</label><input id="actionOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveServiceAction" class="primary-btn">Save Action</button><button id="clearServiceAction" class="secondary-btn">Clear</button></div></div><div class="manager-content"><div class="toolbar"><select id="actionServiceFilter"><option value="all">All Services</option></select></div><div id="serviceActionsList" class="content-grid"></div></div></div>
