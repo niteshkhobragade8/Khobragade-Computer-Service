@@ -1,7 +1,7 @@
 import {auth,db} from './portal-firebase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final18';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final24r3';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -9,6 +9,8 @@ const statusClass=s=>String(s||'').toLowerCase().replace(/\s+/g,'-');
 const appId=()=>`KCSC-${new Date().getFullYear()}-${crypto.randomUUID().slice(0,8).toUpperCase()}`;
 let currentUser=null,currentProfile=null,currentPortalCms=null;
 let adminNotificationUnsub=null;
+let resolveAuthReady;
+const authReady=new Promise(resolve=>{resolveAuthReady=resolve});
 function showMsg(id,text,ok=false){const e=$(id);if(!e)return;e.textContent=text;e.className='msg show '+(ok?'ok':'err')}
 async function profile(uid){const s=await getDoc(doc(db,'users',uid));return s.exists()?{id:s.id,...s.data()}:null}
 const DEFAULT_PROFILE_FIELDS=[
@@ -48,7 +50,7 @@ function inferProfileKey(field){if(field?.profileKey)return field.profileKey;con
 function profileAutofill(field,p=currentProfile){const key=inferProfileKey(field);return key?profileValueByKey(p,key):''}
 
 function nav(){const el=$('navAuth');if(!el)return;if(currentUser)el.innerHTML=`<a href="services.html">Services</a><a href="track.html">Track</a><a href="account.html">My Account</a><button onclick="Portal.logout()">Logout</button>`;else el.innerHTML=''}
-onAuthStateChanged(auth,async u=>{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;nav();if(u){currentPortalCms=await portalCms();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))});
+onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;nav();if(u){currentPortalCms=await portalCms();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
 async function register(data){const mobile=String(data.mobile||'').replace(/\D/g,'');if(mobile.length!==10)throw new Error('10-digit mobile number required.');if(!data.fullName?.trim())throw new Error('Full Name required.');if((data.password||'').length<6)throw new Error('Password minimum 6 characters.');if(data.password!==data.confirmPassword)throw new Error('Password aur Confirm Password match nahi karte.');const c=await createUserWithEmailAndPassword(auth,alias(mobile),data.password);await setDoc(doc(db,'users',c.user.uid),{fullName:data.fullName.trim(),email:(data.email||'').trim(),mobile,status:'Active',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});return c.user}
 async function login(mobile,password){const m=String(mobile||'').replace(/\D/g,'');if(m.length!==10)throw new Error('10-digit mobile number required.');const c=await signInWithEmailAndPassword(auth,alias(m),password);const p=await profile(c.user.uid);if(p?.status==='Disabled'){await signOut(auth);throw new Error('Account disabled. Contact support.')}return c.user}
 async function logout(){await signOut(auth);location.href='index.html'}
@@ -180,4 +182,4 @@ function bindLivePanels(){
 }
 queueMicrotask(bindLivePanels);
 
-window.Portal={register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
