@@ -7,6 +7,7 @@ const FIXED=[
  ['users','Users / Customers','fa-solid fa-users',30],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],
  ['portalbuilder','Services / Actions / Forms','fa-solid fa-list-check',60],
+ ['servicecharges','Service Charges','fa-solid fa-tags',65],
  ['userportalcms','Website CMS','fa-solid fa-window-maximize',70],
  ['youtube','YouTube','fa-brands fa-youtube',80],
  ['notifications','Notifications','fa-solid fa-bell',90],

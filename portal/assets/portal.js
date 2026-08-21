@@ -1,7 +1,7 @@
 import {auth,db} from './portal-firebase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final24r3';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-v25final';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -86,6 +86,13 @@ async function actions(serviceId){
      const id=actionId(svc.id,a[0]);const row={id,serviceId,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${svc.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10,masterServiceId:svc.id,_masterAction:a};live.push(row);actionMasterMap.set(id,{service:svc,action:a})
    })
  }
+ // Every published/admin-created service must always be applicable. If an old/new
+ // service has no action record yet, expose a safe generic application action.
+ if(!live.length){
+   let sd=null;try{const ss=await getDoc(doc(db,'services',serviceId));if(ss.exists())sd={id:ss.id,...ss.data()}}catch(e){}
+   const id=`generic_${serviceId}`;
+   live=[{id,serviceId,name:'Service / Application Assistance',serviceCharge:Number(sd?.serviceCharge||sd?.charge||0),officialFee:0,description:`${sd?.name||'Service'} application / assistance request.`,requiredDocuments:['Aadhaar Card','Passport Size Photo','Supporting Document (if applicable)'],availabilityStatus:'Available',available:true,order:10,_generic:true}];
+ }
  return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0))
 }
 async function fields(actionDocId){
@@ -93,6 +100,13 @@ async function fields(actionDocId){
  if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
  const mapped=actionMasterMap.get(actionDocId);if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
  for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}
+ if(String(actionDocId||'').startsWith('generic_'))return [
+  {id:`fld_${actionDocId}_1`,actionId:actionDocId,label:'Full Name',type:'text',required:true,profileKey:'fullName',order:10},
+  {id:`fld_${actionDocId}_2`,actionId:actionDocId,label:'Mobile Number',type:'tel',required:true,profileKey:'mobile',order:20},
+  {id:`fld_${actionDocId}_3`,actionId:actionDocId,label:'Date of Birth',type:'date',required:false,profileKey:'dob',order:30},
+  {id:`fld_${actionDocId}_4`,actionId:actionDocId,label:'Full Address',type:'textarea',required:true,profileKey:'address',order:40},
+  {id:`fld_${actionDocId}_5`,actionId:actionDocId,label:'Application / Service Details',type:'textarea',required:true,order:50}
+ ];
  return []
 }
 async function uploadFile(file,path){

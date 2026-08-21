@@ -1,4 +1,4 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Khobragade Computer Service Centre - Application Portal</title><meta name="description" content="Online Digital Seva application, payment and status portal"><link rel="stylesheet" href="assets/portal.css?v=20260821-final24r3"></head><body class="login-home-only">
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Khobragade Computer Service Centre - Application Portal</title><meta name="description" content="Online Digital Seva application, payment and status portal"><link rel="stylesheet" href="assets/portal.css?v=20260821-v25final"></head><body class="login-home-only">
 <div class="topbar"><div class="container">Khobragade Computer Service Centre • Online Digital Seva & Application Portal</div></div>
 <header class="nav"><div class="container nav-inner"><a class="brand" href="index.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="navlinks public-nav"><a class="active" href="index.html">Home</a><a href="#about">About</a><a href="#how">How It Works</a><a href="#support">Contact</a><span id="navAuth"></span></div></div></header>
 <main class="hero login-hero"><div class="container hero-grid login-grid">
@@ -31,7 +31,7 @@
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260821-final24r3';
+import './assets/portal.js?v=20260821-v25final';
 
 const loginTab=document.getElementById('loginTab'),registerTab=document.getElementById('registerTab'),loginForm=document.getElementById('loginForm'),registerForm=document.getElementById('registerForm');function tab(which){const reg=which==='register';registerForm.hidden=!reg;loginForm.hidden=reg;registerTab.classList.toggle('active',reg);loginTab.classList.toggle('active',!reg)}loginTab.onclick=()=>tab('login');registerTab.onclick=()=>tab('register');if(new URLSearchParams(location.search).get('auth')==='register')tab('register');
 loginForm.onsubmit=async e=>{e.preventDefault();try{await Portal.login(loginMobile.value,loginPassword.value);window.scrollTo(0,0);location.replace('account.html')}catch(err){const m=document.getElementById('loginMsg');m.textContent=err.message;m.className='msg show err'}};registerForm.onsubmit=async e=>{e.preventDefault();try{await Portal.register({fullName:regName.value,email:regEmail.value,mobile:regMobile.value,password:regPassword.value,confirmPassword:regConfirm.value});window.scrollTo(0,0);location.replace('account.html')}catch(err){const m=document.getElementById('regMsg');m.textContent=err.message;m.className='msg show err'}};
