@@ -24,25 +24,18 @@
 
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
-
-      <li class="sidebar-section" aria-hidden="true"><span>APPLICATION MANAGEMENT</span></li>
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
-
-      <li class="sidebar-section" aria-hidden="true"><span>SERVICE MANAGEMENT</span></li>
       <li data-page="categories"><i class="fa-solid fa-folder-tree"></i><span>Service Categories</span></li>
-      <li data-page="portalbuilder"><i class="fa-solid fa-layer-group"></i><span>Services, Actions & Forms</span></li>
-      <li data-page="userportalcms"><i class="fa-solid fa-id-card"></i><span>User Portal CMS</span></li>
-
-      <li class="sidebar-section" aria-hidden="true"><span>PORTAL CONTENT</span></li>
+      <li data-page="portalbuilder"><i class="fa-solid fa-list-check"></i><span>Services / Actions / Forms</span></li>
+      <li data-page="userportalcms"><i class="fa-solid fa-window-maximize"></i><span>Website CMS</span></li>
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
       <li data-page="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></li>
-
-      <li class="sidebar-section" aria-hidden="true"><span>SYSTEM</span></li>
-      <li data-page="recyclebin"><i class="fa-solid fa-recycle"></i><span>Recycle Bin</span></li>
+      <li data-page="admineditor"><i class="fa-solid fa-sliders"></i><span>Admin Dashboard CMS</span></li>
       <li data-page="themes"><i class="fa-solid fa-palette"></i><span>Theme Manager</span></li>
+      <li data-page="recyclebin"><i class="fa-solid fa-recycle"></i><span>Recycle Bin</span></li>
       <li data-page="settings"><i class="fa-solid fa-gear"></i><span>Portal Settings</span></li>
       <li id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></li>
     </ul>
@@ -77,7 +70,7 @@
       </div>
 
       <div class="dashboard-cards">
-        <article class="dashboard-stat-card green"><span class="stat-icon">📢</span><div><p>Total Updates</p><h2 id="totalUpdates">0</h2></div></article>
+        <article class="dashboard-stat-card green"><span class="stat-icon">👤</span><div><p>Total Users / Customers</p><h2 id="totalUsers">0</h2></div></article>
         <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
         <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
         <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div></article>
@@ -92,8 +85,6 @@
 
       <div class="secondary-stats">
         <div><span>🔔 Notifications</span><strong id="totalNotifications">0</strong></div>
-        <div><span>🖼️ Images</span><strong id="totalImages">0</strong></div>
-        <div><span>📄 Documents</span><strong id="totalDocuments">0</strong></div>
         <div><span>▶️ Videos</span><strong id="totalVideos">0</strong></div>
         <div><span>📅 Today Visitors</span><strong id="dashboardTodayVisitors">0</strong></div>
       </div>
@@ -104,14 +95,14 @@
           <div id="latestNotifications" class="mini-feed"><div class="empty-state">No Notifications</div></div>
         </article>
         <article class="dashboard-info-box">
-          <div class="box-heading"><div><span class="box-kicker">RECENT</span><h2>Government Updates</h2></div><button class="text-button" type="button" onclick="openDashboardPage('updates')">Manage</button></div>
-          <div id="latestUpdates" class="mini-feed"><div class="empty-state">No Updates Available</div></div>
+          <div class="box-heading"><div><span class="box-kicker">WEBSITE</span><h2>Website CMS</h2></div><button class="text-button" type="button" onclick="openDashboardPage('userportalcms')">Manage</button></div>
+          <div class="mini-feed"><div class="mini-feed-item"><div class="mini-feed-dot"></div><div><strong>New Website / User Portal</strong><p>Profile fields, auto-fill, user menu aur website portal controls yahan manage karein.</p></div></div></div>
         </article>
       </div>
     </section>
 
     <section id="admineditorPage" class="page">
-      <div class="page-intro"><div><h2>🎛️ Admin Editor</h2><p>Admin Dashboard ke menu, purane pages, naye pages aur complete theme ko yahin se control karein.</p></div></div>
+      <div class="page-intro"><div><h2>🎛️ Admin Dashboard CMS</h2><p>Admin Dashboard ke menu, Admin pages, buttons aur complete Admin theme ko yahin se manage karein.</p></div></div>
       <div class="admin-editor-tabs">
         <button class="secondary-btn active" type="button" data-ae-tab="menu">☰ Menu Manager</button>
         <button class="secondary-btn" type="button" data-ae-tab="pages">📄 Admin Pages</button>
@@ -148,7 +139,7 @@
             <div class="settings-actions"><button id="aeSavePage" class="primary-btn" type="button">Save Admin Page</button><button id="aeClearPage" class="secondary-btn" type="button">Clear</button></div>
           </div>
           <div class="manager-content">
-            <h3>Existing + New Admin Pages</h3><p class="field-help">Purane pages ka name/heading, Hide/Show, order edit karein. Delete Recycle Bin me safe rahega; core code remove nahi hoga.</p>
+            <h3>Existing + New Admin Pages</h3><p class="field-help">Admin pages ka name/heading, Hide/Show aur order edit karein. Delete Recycle Bin me safe rahega.</p>
             <div id="aePagesList" class="content-grid"></div>
           </div>
         </div>
@@ -171,11 +162,11 @@
       <div id="aeButtonsPanel" class="admin-editor-panel">
         <div id="bmPanel" class="manager-layout">
           <div class="manager-form">
-            <div class="form-title"><span>🔘</span><div><h3>Add / Edit Button</h3><p>Admin Dashboard aur normal website ke kisi bhi old/new page par button lagayein.</p></div></div>
+            <div class="form-title"><span>🔘</span><div><h3>Add / Edit Button</h3><p>Admin Dashboard aur new website/portal ke page par button lagayein.</p></div></div>
             <label>Button Text</label><input id="bmText" placeholder="Website">
             <label>Icon Class</label><input id="bmIcon" value="fa-solid fa-link" placeholder="fa-solid fa-globe">
             <label>Button Link / URL</label><input id="bmUrl" placeholder="https://9637832490.online/">
-            <div class="form-grid two"><div><label>Show On</label><select id="bmArea"><option value="admin">Admin Dashboard</option><option value="public">Normal Website</option></select></div><div><label>Page</label><select id="bmPage"></select></div></div>
+            <div class="form-grid two"><div><label>Show On</label><select id="bmArea"><option value="admin">Admin Dashboard</option><option value="public">Website / User Portal</option></select></div><div><label>Page</label><select id="bmPage"></select></div></div>
             <div class="form-grid two"><div><label>Position</label><select id="bmPosition"></select></div><div><label>Open</label><select id="bmTarget"><option value="_blank">New Tab</option><option value="_self">Same Window</option></select></div></div>
             <div class="form-grid two"><div><label>Order</label><input id="bmOrder" type="number" value="50"></div><div><label>Visible</label><select id="bmVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div>
             <div class="form-grid two"><div><label>Button Color</label><input id="bmBg" type="color" value="#2979ff"></div><div><label>Text Color</label><input id="bmTextColor" type="color" value="#ffffff"></div></div>
@@ -183,7 +174,7 @@
             <div class="settings-actions"><button id="bmSave" class="primary-btn" type="button">Add Button</button><button id="bmClear" class="secondary-btn" type="button">Clear</button></div>
             <div id="bmMessage" class="settings-message info">Button Manager ready.</div>
           </div>
-          <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">TOTAL CONTROL</span><h2>All Buttons — Existing + New</h2></div></div><p class="field-help">Purane existing + naye custom buttons. Edit/Update/Delete-Hide/Restore, position, link, color aur visibility control.</p><div id="bmList" class="content-grid"></div></div>
+          <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">TOTAL CONTROL</span><h2>All Buttons — Existing + New</h2></div></div><p class="field-help">Existing + naye custom buttons. Edit/Update/Delete-Hide/Restore, position, link, color aur visibility control.</p><div id="bmList" class="content-grid"></div></div>
         </div>
       </div>
       <div id="aeMessage" class="settings-message info">Admin Editor ready.</div>
@@ -523,7 +514,7 @@
 
 
 <section id="applicationsPage" class="page">
-  <div class="page-intro"><div><h2>📝 Applications</h2><p>Customer applications, payment, documents, status, rejection/resubmit aur completed files manage karein.</p></div><button class="secondary-btn" id="refreshApplications" type="button">↻ Refresh</button></div>
+  <div class="page-intro"><div><h2>📝 Applications</h2><p>Sabhi customer applications yahan aayengi. Full form, payment, documents, status, rejection/resubmit aur completed files manage karein.</p></div><button class="secondary-btn" id="refreshApplications" type="button">↻ Refresh</button></div>
   <div class="manager-content">
     <div class="toolbar portal-toolbar"><input id="applicationSearch" type="search" placeholder="🔍 Application ID / Name / Mobile"><select id="applicationStatusFilter"><option value="all">All Status</option><option>Pending Payment</option><option>Pending</option><option>Processing</option><option>Need Documents</option><option>On Hold</option><option>Completed</option><option>Rejected</option><option>Payment Failed</option></select><select id="applicationPaymentFilter"><option value="all">All Payments</option><option value="Paid">Paid</option><option value="Pending">Pending</option><option value="Failed">Failed</option></select></div>
     <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>Customer</th><th>Service</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Documents</th><th>Action</th></tr></thead><tbody id="applicationsTable"><tr><td colspan="9">Loading...</td></tr></tbody></table></div>
@@ -541,7 +532,7 @@
 </section>
 
 <section id="usersPage" class="page">
-  <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Registered customer profiles aur unki application summary.</p></div></div>
+  <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Sabhi registered users/customers yahan aayenge, profile aur application summary ke saath.</p></div></div>
   <div class="manager-content"><div class="toolbar"><input id="userSearch" type="search" placeholder="🔍 Name / mobile / email"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Applications</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
 </section>
 
@@ -562,7 +553,7 @@
 
 
 <section id="userportalcmsPage" class="page">
- <div class="page-intro"><div><h2>👤 User Portal CMS</h2><p>User Profile fields aur compact User Sidebar ko code chhede bina manage karein.</p></div></div>
+ <div class="page-intro"><div><h2>🌐 Website CMS</h2><p>New website / user portal ke profile fields, auto-fill aur user menu ko code chhede bina manage karein.</p></div></div>
  <div class="manager-layout">
   <div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Add / Edit Profile Field</h3><p>Existing + new profile details. Application auto-fill ke liye key use hoti hai.</p></div></div>
    <label>Field Label</label><input id="upFieldLabel" placeholder="Father Name">
@@ -577,7 +568,7 @@
   <div class="manager-form"><div class="form-title"><span>☰</span><div><h3>Add Custom User Menu</h3><p>Logged-in sidebar me custom link add karein.</p></div></div><label>Menu Label</label><input id="upMenuLabel" placeholder="Support"><label>Icon / Emoji</label><input id="upMenuIcon" value="🔗"><label>Link</label><input id="upMenuHref" placeholder="help.html"><div class="form-grid two"><div><label>Order</label><input id="upMenuOrder" type="number" value="80"></div><div><label>Visible</label><select id="upMenuVisible"><option value="true">Show</option><option value="false">Hide</option></select></div></div><div class="settings-actions"><button id="upAddMenu" class="primary-btn" type="button">Add Menu</button></div></div>
   <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">CLEAN SIDEBAR</span><h2>User Sidebar Menu</h2></div><button id="upResetMenu" class="secondary-btn" type="button">Restore Defaults</button></div><p class="field-help">Existing top-level menu name/order/show-hide edit karein. Services aur Documents ke submenu automatically grouped rahenge.</p><div id="upMenuList" class="admin-editor-list"></div></div>
  </div>
- <div id="upMessage" class="settings-message info">User Portal CMS ready.</div>
+ <div id="upMessage" class="settings-message info">Website CMS ready.</div>
 </section>
 
 <section id="settingsPage" class="page">

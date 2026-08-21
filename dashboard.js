@@ -20,12 +20,10 @@ const topbarTitle = $("topbarTitle");
 const adminIdentity = $("adminIdentity");
 
 const collectionMap = {
-  totalUpdates: "updates",
+  totalUsers: "users",
   totalServices: "services",
   totalCategories: "categories",
   totalNotifications: "notifications",
-  totalImages: "images",
-  totalDocuments: "documents",
   totalVideos: "youtube"
 };
 
@@ -87,25 +85,14 @@ function watchCollectionCount(elementId, collectionName) {
 
 async function loadRecentContent() {
   try {
-    const [notificationsSnapshot, updatesSnapshot] = await Promise.all([
-      getDocs(collection(db, "notifications")),
-      getDocs(collection(db, "updates"))
-    ]);
-
+    const notificationsSnapshot = await getDocs(collection(db, "notifications"));
     const notifications = notificationsSnapshot.docs
       .map((item) => ({ id: item.id, ...item.data() }))
       .filter((item) => (item.status || "Published") === "Published")
       .sort((a, b) => timestampToMs(b.createdAt || b.updatedAt) - timestampToMs(a.createdAt || a.updatedAt))
       .slice(0, 5);
 
-    const updates = updatesSnapshot.docs
-      .map((item) => ({ id: item.id, ...item.data() }))
-      .filter((item) => (item.status || "Published") === "Published")
-      .sort((a, b) => timestampToMs(b.createdAt || b.updatedAt) - timestampToMs(a.createdAt || a.updatedAt))
-      .slice(0, 5);
-
     renderMiniList("latestNotifications", notifications, "No notifications yet");
-    renderMiniList("latestUpdates", updates, "No government updates yet");
 
     const breaking = notifications.find((item) => item.type === "breaking");
     if ($("breakingNews") && breaking) {
