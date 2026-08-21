@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All Services - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260821-v25menupages">
+<link rel="stylesheet" href="assets/portal.css?v=20260821-v25final">
 </head>
 <body>
 <div class="topbar"><div class="container">Online Digital Seva & Application Portal</div></div>
@@ -21,9 +21,9 @@
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260821-v25menupages';
+import './assets/portal.js?v=20260821-v25final';
 
-import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-v25menupages';
+import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-v25final';
 
 const els={
   q:document.getElementById('q'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
@@ -42,7 +42,7 @@ function render(){
   const term=els.q.value.trim().toLowerCase(),st=els.status.value;
   const filtered=rows.filter(x=>(!term||`${x.name||''} ${x.category||''} ${x.description||''}`.toLowerCase().includes(term))&&(st==='all'||(x.availabilityStatus||'Available')===st));
   els.badge.textContent=`${rows.length} Services Loaded`;
-  els.grid.innerHTML=filtered.length?filtered.map(x=>{const s='Available',disabled=false;return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(x.category||'Digital Service')}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
+  els.grid.innerHTML=filtered.length?filtered.map(x=>{const s=x.availabilityStatus||'Available',disabled=s!=='Available';return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(x.category||'Digital Service')}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
 }
 
 // Guaranteed first render from the bundled catalogue; no Firebase permission is needed for this.
@@ -77,8 +77,8 @@ els.grid.addEventListener('click',async e=>{
     const ms=svc._master||MASTER_SERVICES.find(m=>m.id===svc.masterServiceId||norm(m.name)===norm(svc.name));
     if(ms)acts=ms.actions.map((a,i)=>({id:actionId(ms.id,a[0]),serviceId:svc.id,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${ms.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10}));
   }
-  if(!acts.length){acts=[{id:`generic_${svc.id}`,serviceId:svc.id,name:'Service / Application Assistance',serviceCharge:Number(svc.serviceCharge||svc.charge||0),officialFee:0,description:`${svc.name} application / assistance request.`,requiredDocuments:['Aadhaar Card','Passport Size Photo','Supporting Document (if applicable)'],availabilityStatus:'Available',available:true,order:10}]}
-  els.actions.innerHTML=acts.map(a=>{const st='Available';return `<article class="card" style="margin-top:12px"><span class="status ${statusClass(st)}">${esc(st)}</span><h3>${esc(a.name)}</h3><p>${esc(a.description||'')}</p><div class="price">${money(a.serviceCharge||0)} <small>Service Charge</small></div>${Number(a.officialFee||0)>0?`<p>Official Fee: ${money(a.officialFee)}</p>`:''}<ol class="doc-list">${(a.requiredDocuments||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ol><div class="actions"><a class="btn btn-primary ${st!=='Available'?'disabled':''}" ${st==='Available'?`href="apply.html?service=${encodeURIComponent(svc.id)}&action=${encodeURIComponent(a.id)}" target="${svc.target==='_blank'?'_blank':'_self'}" ${svc.target==='_blank'?'rel="noopener"':''}`:'style="pointer-events:none;opacity:.5"'}>Apply Now</a></div></article>`}).join('');
+  if(!Array.isArray(acts)||!acts.length){const id=('auto_'+svc.id).replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,120);const charge=Number(svc.serviceCharge??svc.charge??svc.price??0);acts=[{id,serviceId:svc.id,name:'Online Application Assistance',serviceCharge:Number.isFinite(charge)?charge:0,officialFee:0,description:`${svc.name} online application / form assistance.`,requiredDocuments:['Aadhaar Card','Photo','Signature','Supporting Document (if applicable)'],availabilityStatus:'Available',available:true,order:10,autoGenerated:true}]}
+  els.actions.innerHTML=acts.map(a=>{const st=a.availabilityStatus||((a.available!==false)?'Available':'Unavailable');return `<article class="card" style="margin-top:12px"><span class="status ${statusClass(st)}">${esc(st)}</span><h3>${esc(a.name)}</h3><p>${esc(a.description||'')}</p><div class="price">${money(a.serviceCharge||0)} <small>Service Charge</small></div>${Number(a.officialFee||0)>0?`<p>Official Fee: ${money(a.officialFee)}</p>`:''}<ol class="doc-list">${(a.requiredDocuments||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ol><div class="actions"><a class="btn btn-primary ${st!=='Available'?'disabled':''}" ${st==='Available'?`href="apply.html?service=${encodeURIComponent(svc.id)}&action=${encodeURIComponent(a.id)}" target="${svc.target==='_blank'?'_blank':'_self'}" ${svc.target==='_blank'?'rel="noopener"':''}`:'style="pointer-events:none;opacity:.5"'}>Apply Now</a></div></article>`}).join('');
   els.modal.classList.add('show');
 });
 </script>
