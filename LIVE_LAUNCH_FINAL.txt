@@ -1,0 +1,7 @@
+KCSC V23 FINAL LIVE LAUNCH
+- Root domain now opens /portal/index.html.
+- Legacy root public HTML pages removed.
+- /portal/ kept intact.
+- /functions/ kept intact.
+- Admin dashboard/login files kept intact.
+- PayU/Render/Firebase configuration files preserved.

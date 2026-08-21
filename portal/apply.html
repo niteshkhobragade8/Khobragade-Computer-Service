@@ -1,7 +1,7 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apply - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260821-live23"></head><body><main class="section"><div class="container" style="max-width:900px"><div id="loading" class="card">Loading application...</div><form id="applyForm" class="card" hidden><div class="application-form-head"><div><span class="dashboard-kicker">NEW APPLICATION</span><h2 id="applyTitle"></h2><p id="applyDesc"></p></div><label class="profile-autofill-switch"><input id="useProfile" type="checkbox" checked><span><b>Use Profile Details</b><small>Name, mobile, DOB, address etc. auto-fill</small></span></label></div><div id="profilePrefillNotice" class="notice profile-prefill-notice"></div><div id="priceBox" class="notice"></div><h3>Application Details</h3><div id="dynamicFields" class="profile-fields-grid"></div><h3>Required Documents</h3><div id="profilePhotoOption"></div><div id="documentFields"></div><div id="conditionalDocumentFields"></div><label class="field"><span><input id="declaration" type="checkbox" required> Main confirm karta/karti hoon ki di gayi information sahi hai aur displayed Service/Assistance Charge samajh liya hai.</span></label><button class="btn btn-primary" style="width:100%">Submit & Continue to Payment</button><div id="applyMsg" class="msg"></div></form></div></main><script type="module">
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apply - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260821-live22"></head><body><main class="section"><div class="container" style="max-width:900px"><div id="loading" class="card">Loading application...</div><form id="applyForm" class="card" hidden><div class="application-form-head"><div><span class="dashboard-kicker">NEW APPLICATION</span><h2 id="applyTitle"></h2><p id="applyDesc"></p></div><label class="profile-autofill-switch"><input id="useProfile" type="checkbox" checked><span><b>Use Profile Details</b><small>Name, mobile, DOB, address etc. auto-fill</small></span></label></div><div id="profilePrefillNotice" class="notice profile-prefill-notice"></div><div id="priceBox" class="notice"></div><h3>Application Details</h3><div id="dynamicFields" class="profile-fields-grid"></div><h3>Required Documents</h3><div id="profilePhotoOption"></div><div id="documentFields"></div><label class="field"><span><input id="declaration" type="checkbox" required> Main confirm karta/karti hoon ki di gayi information sahi hai aur displayed Service/Assistance Charge samajh liya hai.</span></label><button class="btn btn-primary" style="width:100%">Submit & Continue to Payment</button><div id="applyMsg" class="msg"></div></form></div></main><script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260821-live23';
+import './assets/portal.js?v=20260821-live22';
 import{db}from'./assets/portal-firebase.js';
 import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 
@@ -56,57 +56,43 @@ renderFields();
 const NON_DOCUMENT=/^(mobile( number)?|phone( number)?|contact( number)?|name|full name|email|e-?mail|dob|date of birth|gender|address|village|city|taluka|tehsil|district|state|pin ?code|pincode|age|father'?s? name|mother'?s? name|husband'?s? name)$/i;
 const docs=(act.requiredDocuments||[]).filter(d=>!NON_DOCUMENT.test(String(d).trim()));
 const removed=(act.requiredDocuments||[]).length-docs.length;
-if(removed>0){const n=document.createElement('div');n.className='notice';n.innerHTML=`ℹ️ Mobile/Name/Email jaise detail fields ko document upload se hata diya gaya hai.`;documentFields.before(n)}
-
-const savedProfileDocs=Portal.savedProfileDocuments(profile,Portal.cms||{});
-function savedForLabel(label){const t=String(label||'').toLowerCase();const out=[];if(/photo|photograph/.test(t)&&profile.photoURL)out.push({label,name:'Saved Profile Photo',url:profile.photoURL,source:'profile'});if(/signature|sign/.test(t)&&profile.signatureURL)out.push({label,name:'Saved Signature',url:profile.signatureURL,source:'profile'});if(/aadhaar|aadhar/.test(t)){if(profile.aadhaarFrontURL)out.push({label:label+' - Front',name:'Saved Aadhaar Front',url:profile.aadhaarFrontURL,source:'profile'});if(profile.aadhaarBackURL)out.push({label:label+' - Back',name:'Saved Aadhaar Back',url:profile.aadhaarBackURL,source:'profile'})}return out}
-const useSaved={};
-docs.forEach((d,i)=>{if(savedForLabel(d).length&&!resubmitId)useSaved[i]=true});
-if(savedProfileDocs.length&&!resubmitId)profilePhotoOption.innerHTML=`<div class="notice"><b>✅ Saved Profile Documents available.</b> Matching Photo / Aadhaar Front-Back / Signature required hone par automatically selected hain. Chahein to uncheck karke naya file upload karein.</div>`;
+if(removed>0){
+  const n=document.createElement('div');n.className='notice';n.innerHTML=`ℹ️ Mobile/Name/Email jaise detail fields ko document upload se hata diya gaya hai.`;
+  documentFields.before(n);
+}
+const photoIndex=docs.findIndex(d=>/photo|photograph|passport photo/i.test(String(d)));
+const canUseProfilePhoto=photoIndex>=0&&profile.photoURL&&!resubmitId;
+let useProfilePhoto=Boolean(canUseProfilePhoto);
+if(canUseProfilePhoto){
+  profilePhotoOption.innerHTML=`<div class="profile-photo-apply"><img src="${Portal.esc(profile.photoURL)}" alt="Profile Photo"><label><input id="useProfilePhoto" type="checkbox" checked> <b>Use saved Profile Photo</b><small>Uncheck karke neeche nayi photo upload kar sakte hain.</small></label></div>`;
+  document.getElementById('useProfilePhoto').addEventListener('change',e=>{useProfilePhoto=e.target.checked;renderDocs()})
+}else if(photoIndex>=0&&!resubmitId){
+  profilePhotoOption.innerHTML='<div class="notice">Profile photo saved nahi hai. Photo document upload karein ya Profile me photo add karein.</div>'
+}
 
 function oldDoc(label){return (existingApp?.documents||[]).find(z=>String(z.label||'').toLowerCase()===String(label).toLowerCase())}
 function renderDocs(){
- documentFields.innerHTML=docs.map((d,i)=>{const saved=savedForLabel(d),use=Boolean(useSaved[i]&&saved.length),old=oldDoc(d),required=!resubmitId&&!use;return `<div class="field"><label>${Portal.esc(d)}</label>${saved.length&&!resubmitId?`<label class="saved-doc-chip"><span>✅ Use saved ${Portal.esc(saved.map(x=>x.name).join(' + '))}</span><input type="checkbox" data-use-saved="${i}" ${use?'checked':''}></label>`:''}${old?`<div class="notice" style="margin:6px 0">Existing: <a target="_blank" rel="noopener" href="${Portal.esc(old.url)}">${Portal.esc(old.name||d)}</a> · new file choose karoge to replace hoga.</div>`:''}<input type="file" data-doc="${i}" accept="image/*,.pdf" ${use?'disabled':''} ${required?'required':''}></div>`}).join('')||'<p class="hint">No mandatory documents configured.</p>';
- documentFields.querySelectorAll('[data-use-saved]').forEach(c=>c.addEventListener('change',()=>{useSaved[Number(c.dataset.useSaved)]=c.checked;renderDocs()}));
+  documentFields.innerHTML=docs.map((d,i)=>{
+    const profilePhotoUsed=i===photoIndex&&useProfilePhoto, old=oldDoc(d);
+    const required=!resubmitId&&!profilePhotoUsed;
+    return `<div class="field"><label>${Portal.esc(d)}${profilePhotoUsed?' — Profile Photo selected':''}</label>${old?`<div class="notice" style="margin:6px 0">Existing: <a target="_blank" rel="noopener" href="${Portal.esc(old.url)}">${Portal.esc(old.name||d)}</a> · new file choose karoge to replace hoga.</div>`:''}<input type="file" data-doc="${i}" accept="image/*,.pdf" ${profilePhotoUsed?'disabled':''} ${required?'required':''}></div>`
+  }).join('')||'<p class="hint">No mandatory documents configured.</p>'
 }
-
-function defaultDocGroups(){
- const isPan=/pan card/i.test(String(svc.name||''));if(!isPan)return[];
- if(/new pan/i.test(String(act.name||'')))return[
-  {label:'Proof of Date of Birth',required:true,options:['Aadhaar Card','Birth Certificate','Passport','Driving Licence','Matriculation Certificate','Domicile Certificate']},
-  {label:'Proof of Identity',required:true,options:['Aadhaar Card','Voter ID','Passport','Driving Licence']},
-  {label:'Proof of Address',required:true,options:['Aadhaar Card','Voter ID','Passport','Driving Licence','Bank Statement / Passbook','Electricity / Utility Bill']}
- ];
- if(/correction/i.test(String(act.name||'')))return[
-  {label:'Correction Supporting Proof',required:true,options:['Aadhaar Card','Birth Certificate','Marriage Certificate','Gazette Notification','Passport','Voter ID','Driving Licence','Other Supporting Document']},
-  {label:'Proof of Address (if address correction)',required:false,options:['Aadhaar Card','Voter ID','Passport','Driving Licence','Bank Statement / Passbook','Electricity / Utility Bill']}
- ];return[];
-}
-const docGroups=(Array.isArray(act.documentGroups)&&act.documentGroups.length?act.documentGroups:defaultDocGroups()).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
-function renderConditionalGroups(){
- conditionalDocumentFields.innerHTML=docGroups.length?`<h3>Selected Proof Documents</h3>`+docGroups.map((g,i)=>{const prev=existingApp?.formData?.[`Document: ${g.label}`]||'';return `<div class="conditional-doc-card"><div class="field"><label>${Portal.esc(g.label)}${g.required!==false?' *':''}</label><select data-group-select="${i}" ${g.required!==false?'required':''}><option value="">Select proof document</option>${(g.options||[]).map(o=>`<option value="${Portal.esc(o)}" ${String(prev)===String(o)?'selected':''}>${Portal.esc(o)}</option>`).join('')}</select></div><div data-group-upload="${i}"></div></div>`}).join(''):'';
- function refreshOne(i){const g=docGroups[i],sel=conditionalDocumentFields.querySelector(`[data-group-select="${i}"]`)?.value||'',host=conditionalDocumentFields.querySelector(`[data-group-upload="${i}"]`);if(!host)return;if(!sel){host.innerHTML='';return}const saved=savedForLabel(sel);host.innerHTML=`<div class="field"><label>Upload ${Portal.esc(sel)}</label>${saved.length&&!resubmitId?`<label class="saved-doc-chip"><span>✅ Saved ${Portal.esc(saved.map(x=>x.name).join(' + '))} available</span><input type="checkbox" data-group-saved="${i}" checked></label>`:''}<input type="file" data-group-file="${i}" accept="image/*,.pdf" ${saved.length&&!resubmitId?'disabled':''} ${g.required!==false&&!saved.length?'required':''}></div>`;const c=host.querySelector(`[data-group-saved="${i}"]`);if(c)c.onchange=()=>{const f=host.querySelector(`[data-group-file="${i}"]`);f.disabled=c.checked;f.required=(g.required!==false&&!c.checked)}}
- docGroups.forEach((_,i)=>{const sel=conditionalDocumentFields.querySelector(`[data-group-select="${i}"]`);if(sel){sel.onchange=()=>refreshOne(i);refreshOne(i)}})
-}
-renderDocs();renderConditionalGroups();loading.hidden=true;applyForm.hidden=false;
-
+renderDocs();loading.hidden=true;applyForm.hidden=false;
 
 applyForm.onsubmit=async e=>{
   e.preventDefault();const msg=applyMsg;
   try{
     const fd=new FormData(applyForm),data={};fs.forEach(f=>data[f.label]=fd.get(f.id)||'');
-    const inputs=[...documentFields.querySelectorAll('input[data-doc]')],newDocs=[];
+    const inputs=[...documentFields.querySelectorAll('input[type=file]')],newDocs=[];
     for(let idx=0;idx<docs.length;idx++){
-      const label=docs[idx],file=inputs.find(x=>Number(x.dataset.doc)===idx)?.files?.[0];
-      if(useSaved[idx]&&!resubmitId){savedForLabel(label).forEach(x=>newDocs.push(x));continue}
-      if(file){const appKey=existingApp?.applicationId||`draft-${Date.now()}`;const url=await Portal.uploadFile(file,`applications/${Portal.user.uid}/${appKey}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);newDocs.push({label,name:file.name,url,source:resubmitId?'resubmit':'application',uploadedAt:new Date().toISOString()})}
-    }
-    for(let i=0;i<docGroups.length;i++){
-      const g=docGroups[i],sel=conditionalDocumentFields.querySelector(`[data-group-select="${i}"]`)?.value||'';if(!sel)continue;data[`Document: ${g.label}`]=sel;
-      const host=conditionalDocumentFields.querySelector(`[data-group-upload="${i}"]`),use=host?.querySelector(`[data-group-saved="${i}"]`)?.checked,file=host?.querySelector(`[data-group-file="${i}"]`)?.files?.[0],label=`${g.label} — ${sel}`;
-      if(use&&!resubmitId){savedForLabel(sel).forEach(x=>newDocs.push({...x,label}))}
-      else if(file){const appKey=existingApp?.applicationId||`draft-${Date.now()}`;const url=await Portal.uploadFile(file,`applications/${Portal.user.uid}/${appKey}/proof-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);newDocs.push({label,name:file.name,url,source:resubmitId?'resubmit':'application',uploadedAt:new Date().toISOString()})}
-      else if(g.required!==false)throw new Error(`${g.label} upload required.`)
+      const label=docs[idx],file=inputs[idx]?.files?.[0];
+      if(idx===photoIndex&&useProfilePhoto&&profile.photoURL){newDocs.push({label,name:'Profile Photo',url:profile.photoURL,source:'profile'});continue}
+      if(file){
+        const appKey=existingApp?.applicationId||`draft-${Date.now()}`;
+        const url=await Portal.uploadFile(file,`applications/${Portal.user.uid}/${appKey}/resubmit-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
+        newDocs.push({label,name:file.name,url,source:resubmitId?'resubmit':'application',uploadedAt:new Date().toISOString()});
+      }
     }
     if(resubmitId){
       const merged=[...(existingApp.documents||[])];
@@ -124,7 +110,11 @@ applyForm.onsubmit=async e=>{
       msg.textContent=`Application ${existingApp.applicationId} resubmitted successfully.`;msg.className='msg show ok';
       setTimeout(()=>location.href='my-applications.html',700);return;
     }
-    const app=await Portal.createApplication({service:svc,action:act,formData:data,files:newDocs});
+    const uploads=docs.map((label,idx)=>{
+      if(idx===photoIndex&&useProfilePhoto&&profile.photoURL)return{label,name:'Profile Photo',url:profile.photoURL,source:'profile'};
+      const file=inputs[idx]?.files?.[0];return{label,file}
+    });
+    const app=await Portal.createApplication({service:svc,action:act,formData:data,files:uploads});
     msg.textContent=`Application ${app.applicationId} created.`;msg.className='msg show ok';
     if(app.amount>0)await Portal.startPayment(app);else location.href='my-applications.html'
   }catch(err){msg.textContent=err.message;msg.className='msg show err'}

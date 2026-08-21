@@ -9,7 +9,7 @@ Live-ready cleanup added:
 - Notifications now includes Need Documents, Rejected, Completed, Payment Failed, Admin message actions
 - Payments now shows payment status, amount, transaction ID and Pay Now when pending
 - Dashboard alert includes rejected/resubmit cases
-- Cache version bumped to 20260821-live23
+- Cache version bumped to 20260821-live22
 - Firestore rules from V21 preserved
 
 DO NOT put PayU Salt or Firebase service-account JSON in this GitHub website repository.

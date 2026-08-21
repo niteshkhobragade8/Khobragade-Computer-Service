@@ -1,7 +1,7 @@
 import {auth,db} from './portal-firebase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-live23';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260819-final17';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -23,12 +23,6 @@ const DEFAULT_PROFILE_FIELDS=[
  {key:'state',label:'State',type:'text',required:false,visible:true,order:100},
  {key:'pinCode',label:'PIN Code',type:'text',required:false,visible:true,order:110}
 ];
-const DEFAULT_PROFILE_DOCUMENTS=[
- {key:'photoURL',label:'Passport / Profile Photo',kind:'photo',visible:true,order:10},
- {key:'aadhaarFrontURL',label:'Aadhaar Card Front',kind:'document',visible:true,order:20},
- {key:'aadhaarBackURL',label:'Aadhaar Card Back',kind:'document',visible:true,order:30},
- {key:'signatureURL',label:'Signature',kind:'signature',visible:true,order:40}
-];
 const DEFAULT_MEMBER_MENU=[
  {key:'dashboard',label:'Dashboard',icon:'🏠',href:'account.html',visible:true,order:10},
  {key:'services',label:'Services',icon:'🧰',visible:true,order:20,children:[
@@ -48,30 +42,9 @@ const DEFAULT_MEMBER_MENU=[
 ];
 async function portalCms(){if(currentPortalCms)return currentPortalCms;try{const snap=await getDoc(doc(db,'settings','userPortalCms'));currentPortalCms=snap.exists()?snap.data():{};}catch(_){currentPortalCms={};}return currentPortalCms}
 function mergedProfileFields(cms={}){const rows=Array.isArray(cms.profileFields)&&cms.profileFields.length?cms.profileFields:DEFAULT_PROFILE_FIELDS;return [...rows].filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0))}
-function mergedProfileDocuments(cms={}){const rows=Array.isArray(cms.profileDocuments)&&cms.profileDocuments.length?cms.profileDocuments:DEFAULT_PROFILE_DOCUMENTS;return [...rows].filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0))}
-function savedProfileDocuments(p=currentProfile,cms=currentPortalCms||{}){return mergedProfileDocuments(cms).map(x=>({...x,url:p?.[x.key]||p?.profileDocuments?.[x.key]||''})).filter(x=>x.url)}
 function profileValueByKey(p,key){return p?.[key]??p?.extraProfile?.[key]??''}
 function inferProfileKey(field){if(field?.profileKey)return field.profileKey;const t=String(field?.label||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');if(/full name|applicant name|name of applicant/.test(t))return'fullName';if(/email/.test(t))return'email';if(/mobile|phone/.test(t))return'mobile';if(/date of birth|dob/.test(t))return'dob';if(/gender|sex/.test(t))return'gender';if(/pin code|pincode|postal/.test(t))return'pinCode';if(/village|city/.test(t))return'villageCity';if(/taluka|tehsil/.test(t))return'taluka';if(/district/.test(t))return'district';if(/state/.test(t))return'state';if(/address/.test(t))return'address';return''}
 function profileAutofill(field,p=currentProfile){const key=inferProfileKey(field);return key?profileValueByKey(p,key):''}
-
-const PORTAL_I18N={
- hi:{'Dashboard':'डैशबोर्ड','Services':'सेवाएं','All Services':'सभी सेवाएं','New Application':'नया आवेदन','My Applications':'मेरे आवेदन','Track Application':'आवेदन ट्रैक करें','Payments':'भुगतान','Documents':'दस्तावेज','My Documents':'मेरे दस्तावेज','Downloads':'डाउनलोड','Notifications':'सूचनाएं','Profile':'प्रोफाइल','Help / Support':'सहायता','Save / Update Profile':'प्रोफाइल सेव / अपडेट करें','Personal Details':'व्यक्तिगत विवरण','Application Details':'आवेदन विवरण','Required Documents':'आवश्यक दस्तावेज','Submit & Continue to Payment':'जमा करें और भुगतान पर जाएं','Pay Now':'अभी भुगतान करें','Paid':'भुगतान हुआ','Pending':'लंबित','Rejected':'अस्वीकृत','Completed':'पूर्ण','Processing':'प्रक्रिया में','Search':'खोजें','Logout':'लॉगआउट','Full Name':'पूरा नाम','Mobile Number':'मोबाइल नंबर','Email':'ईमेल','Date of Birth':'जन्म तिथि','Gender':'लिंग','Full Address':'पूरा पता','Village / City':'गांव / शहर','Taluka':'तालुका','District':'जिला','State':'राज्य','PIN Code':'पिन कोड','Edit / Update Profile':'प्रोफाइल संपादित / अपडेट करें','Saved Identity Documents':'सहेजे गए पहचान दस्तावेज','Upload / Replace':'अपलोड / बदलें','Remove':'हटाएं','Use Profile Details':'प्रोफाइल विवरण उपयोग करें','Available':'उपलब्ध','Unavailable':'अनुपलब्ध','Coming Soon':'जल्द आ रहा है','Card':'कार्ड','Assistance':'सहायता','Registration':'पंजीकरण','Correction':'सुधार','Update':'अपडेट','Download':'डाउनलोड','Certificate':'प्रमाणपत्र','Pension':'पेंशन','Scholarship':'छात्रवृत्ति','Application':'आवेदन','New':'नया','Status':'स्थिति','Address':'पता','Photo':'फोटो','Signature':'हस्ताक्षर','Birth':'जन्म','Death':'मृत्यु','Income':'आय','Caste':'जाति','Domicile':'अधिवास','Ration':'राशन','Driving Licence':'ड्राइविंग लाइसेंस','Vehicle':'वाहन','Passport':'पासपोर्ट','Police Verification':'पुलिस सत्यापन','Banking':'बैंकिंग','Insurance':'बीमा','Agriculture':'कृषि','Labour':'श्रम','Employment':'रोजगार'},
- mr:{'Dashboard':'डॅशबोर्ड','Services':'सेवा','All Services':'सर्व सेवा','New Application':'नवीन अर्ज','My Applications':'माझे अर्ज','Track Application':'अर्ज ट्रॅक करा','Payments':'पेमेंट','Documents':'कागदपत्रे','My Documents':'माझी कागदपत्रे','Downloads':'डाउनलोड','Notifications':'सूचना','Profile':'प्रोफाइल','Help / Support':'मदत','Save / Update Profile':'प्रोफाइल सेव्ह / अपडेट करा','Personal Details':'वैयक्तिक माहिती','Application Details':'अर्ज माहिती','Required Documents':'आवश्यक कागदपत्रे','Submit & Continue to Payment':'सबमिट करा आणि पेमेंटकडे जा','Pay Now':'आता पेमेंट करा','Paid':'पेमेंट झाले','Pending':'प्रलंबित','Rejected':'नाकारले','Completed':'पूर्ण','Processing':'प्रक्रियेत','Search':'शोधा','Logout':'लॉगआउट','Full Name':'पूर्ण नाव','Mobile Number':'मोबाईल नंबर','Email':'ईमेल','Date of Birth':'जन्मतारीख','Gender':'लिंग','Full Address':'पूर्ण पत्ता','Village / City':'गाव / शहर','Taluka':'तालुका','District':'जिल्हा','State':'राज्य','PIN Code':'पिन कोड','Edit / Update Profile':'प्रोफाइल संपादित / अपडेट करा','Saved Identity Documents':'जतन केलेली ओळख कागदपत्रे','Upload / Replace':'अपलोड / बदला','Remove':'काढा','Use Profile Details':'प्रोफाइल माहिती वापरा','Available':'उपलब्ध','Unavailable':'अनुपलब्ध','Coming Soon':'लवकरच','Card':'कार्ड','Assistance':'सहाय्य','Registration':'नोंदणी','Correction':'दुरुस्ती','Update':'अपडेट','Download':'डाउनलोड','Certificate':'प्रमाणपत्र','Pension':'पेन्शन','Scholarship':'शिष्यवृत्ती','Application':'अर्ज','New':'नवीन','Status':'स्थिती','Address':'पत्ता','Photo':'फोटो','Signature':'स्वाक्षरी','Birth':'जन्म','Death':'मृत्यू','Income':'उत्पन्न','Caste':'जात','Domicile':'अधिवास','Ration':'रेशन','Driving Licence':'ड्रायव्हिंग लायसन्स','Vehicle':'वाहन','Passport':'पासपोर्ट','Police Verification':'पोलीस पडताळणी','Banking':'बँकिंग','Insurance':'विमा','Agriculture':'कृषी','Labour':'कामगार','Employment':'रोजगार'}
-};
-const originalText=new WeakMap();
-function translateNode(root=document.body,lang=localStorage.getItem('kcscLang')||'en'){
- if(!root||lang==='en')return;
- const dict=PORTAL_I18N[lang]||{};
- const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
- const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
- nodes.forEach(n=>{if(n.parentElement?.closest('script,style'))return;const raw=(originalText.get(n)??n.nodeValue);if(!originalText.has(n))originalText.set(n,raw);const trim=raw.trim();if(!trim)return;let out=dict[trim]||trim;for(const [a,b] of Object.entries(dict)){if(out.includes(a))out=out.split(a).join(b)}const next=raw.replace(trim,out);if(n.nodeValue!==next)n.nodeValue=next});
- document.documentElement.lang=lang;
-}
-function restoreLanguage(root=document.body){if(!root)return;const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(n=>{if(originalText.has(n)&&n.nodeValue!==originalText.get(n))n.nodeValue=originalText.get(n)});document.documentElement.lang='en'}
-function applyPortalLanguage(lang){localStorage.setItem('kcscLang',lang);restoreLanguage();if(lang!=='en')translateNode(document.body,lang);document.querySelectorAll('[data-portal-lang]').forEach(x=>x.value=lang)}
-function applyPortalMode(mode){const dark=mode==='dark'||(mode==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.body.classList.toggle('portal-dark',dark);localStorage.setItem('kcscMode',mode);document.querySelectorAll('[data-portal-mode]').forEach(x=>x.textContent=dark?'☀️':'🌙')}
-async function portalPreferenceDock(){if(document.getElementById('portalPreferenceDock'))return;const dock=document.createElement('div');dock.id='portalPreferenceDock';dock.className='portal-pref-dock';dock.innerHTML=`<select data-portal-lang aria-label="Language"><option value="en">EN</option><option value="hi">हिंदी</option><option value="mr">मराठी</option></select><button type="button" data-portal-mode title="Light / Dark">🌙</button>`;document.body.appendChild(dock);let defaults={defaultLanguage:'en',defaultMode:'light'};try{const snap=await getDoc(doc(db,'settings','website'));if(snap.exists())defaults={...defaults,...snap.data()}}catch(_){}const lang=localStorage.getItem('kcscLang')||defaults.defaultLanguage||'en',mode=localStorage.getItem('kcscMode')||defaults.defaultMode||'light';dock.querySelector('select').value=lang;dock.querySelector('select').onchange=e=>applyPortalLanguage(e.target.value);dock.querySelector('button').onclick=()=>applyPortalMode(document.body.classList.contains('portal-dark')?'light':'dark');applyPortalMode(mode);setTimeout(()=>applyPortalLanguage(lang),50);const ob=new MutationObserver(()=>{const l=localStorage.getItem('kcscLang')||lang;if(l!=='en')translateNode(document.body,l)});ob.observe(document.body,{childList:true,subtree:true})}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portalPreferenceDock);else portalPreferenceDock();
 
 function nav(){const el=$('navAuth');if(!el)return;if(currentUser)el.innerHTML=`<a href="services.html">Services</a><a href="track.html">Track</a><a href="account.html">My Account</a><button onclick="Portal.logout()">Logout</button>`;else el.innerHTML=''}
 onAuthStateChanged(auth,async u=>{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;nav();if(u){currentPortalCms=await portalCms();memberChrome(currentProfile,currentPortalCms)}document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))});
@@ -114,10 +87,10 @@ async function actions(serviceId){
 }
 async function fields(actionDocId){
  let live=[];try{const snap=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields Firestore read failed; using bundled catalogue.',e)}
- let master=[];const mapped=actionMasterMap.get(actionDocId);if(mapped)master=fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
- if(!master.length){for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a){master=fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));break}}}
- if(!live.length)return master;
- const norm=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' '),seen=new Set(live.map(x=>norm(x.label)));for(const f of master){if(!seen.has(norm(f.label)))live.push(f)}return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+ if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+ const mapped=actionMasterMap.get(actionDocId);if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
+ for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}
+ return []
 }
 async function uploadFile(file,path){
  const cloudName='jkia38fa',preset='khobragade_csc';
@@ -175,4 +148,4 @@ function memberChrome(profileData,cms={}){
 }
 
 
-window.Portal={register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,mergedProfileDocuments,savedProfileDocuments,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,applyPortalLanguage,applyPortalMode,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+window.Portal={register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};

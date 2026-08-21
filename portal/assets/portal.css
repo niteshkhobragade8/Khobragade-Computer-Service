@@ -104,18 +104,3 @@
 
 /* V22 LIVE READY CLEANUP */
 .document-card .actions{margin-top:12px}.recent-app-meta span{font-size:10px;color:#64748b;overflow-wrap:anywhere}.member-pro-badge{min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#dc2626;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;position:absolute;right:-5px;top:-5px}.member-pro-icon-btn{position:relative}.status.paid{background:#dcfce7;color:#166534}.status.failed,.status.payment-failed,.status.rejected{background:#fee2e2;color:#991b1b}.status.pending,.status.pending-payment,.status.processing,.status.need-documents{background:#fef3c7;color:#92400e}.status.completed{background:#dcfce7;color:#166534}
-
-/* V23 language + dark mode + saved identity documents */
-.portal-pref-dock{position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:7px;padding:7px;background:rgba(255,255,255,.94);border:1px solid #dbe4f0;border-radius:15px;box-shadow:0 12px 30px rgba(15,23,42,.18);backdrop-filter:blur(10px)}
-.portal-pref-dock select,.portal-pref-dock button{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 10px;font-weight:800;cursor:pointer}
-body.portal-dark{--bg:#07111f;--card:#101b2d;--text:#f8fafc;--muted:#a8b3c7;background:#07111f;color:#f8fafc}
-body.portal-dark .card,body.portal-dark .auth-card,body.portal-dark .member-pro-header,body.portal-dark .profile-identity-card,body.portal-dark .profile-edit-card,body.portal-dark .table-wrap,body.portal-dark .modal-card{background:#101b2d!important;color:#f8fafc!important;border-color:#26364f!important}
-body.portal-dark .field input,body.portal-dark .field select,body.portal-dark .field textarea,body.portal-dark .toolbar input,body.portal-dark .toolbar select{background:#0b1628!important;color:#f8fafc!important;border-color:#34445d!important}
-body.portal-dark .hint,body.portal-dark .section-head p,body.portal-dark .member-pro-user-copy small,body.portal-dark .profile-identity-card p{color:#a8b3c7!important}
-body.portal-dark .btn-soft{background:#172554;color:#dbeafe}
-body.portal-dark .notice{background:#2a1c0c;color:#fed7aa;border-color:#7c4a14}
-body.portal-dark .portal-pref-dock{background:rgba(11,22,40,.95);border-color:#34445d}
-body.portal-dark .portal-pref-dock select,body.portal-dark .portal-pref-dock button{background:#101b2d;color:#f8fafc;border-color:#34445d}
-.profile-documents-card{margin-top:18px}.profile-doc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.profile-doc-item{border:1px solid #dbe4f0;border-radius:16px;padding:14px;background:#f8fafc}.profile-doc-item h4{margin:0 0 8px}.profile-doc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.profile-doc-preview{min-height:52px;display:flex;align-items:center;gap:10px}.profile-doc-preview img{width:76px;height:54px;object-fit:cover;border-radius:10px;border:1px solid #cbd5e1}.profile-doc-preview a{color:#2563eb;font-weight:800}.saved-doc-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc;margin:8px 0}.conditional-doc-card{border:1px dashed #94a3b8;border-radius:16px;padding:14px;margin:12px 0;background:#f8fafc}.conditional-doc-card .field{margin-bottom:10px}
-body.portal-dark .profile-doc-item,body.portal-dark .saved-doc-chip,body.portal-dark .conditional-doc-card{background:#0b1628;border-color:#34445d}
-@media(max-width:720px){.profile-doc-grid{grid-template-columns:1fr}.portal-pref-dock{right:8px;bottom:8px}}
