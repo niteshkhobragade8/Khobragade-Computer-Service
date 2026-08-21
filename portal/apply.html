@@ -1,7 +1,7 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apply - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260821-final24r3"></head><body><main class="section"><div class="container" style="max-width:900px"><div id="loading" class="card">Loading application...</div><form id="applyForm" class="card" hidden><div class="application-form-head"><div><span class="dashboard-kicker">NEW APPLICATION</span><h2 id="applyTitle"></h2><p id="applyDesc"></p></div><label class="profile-autofill-switch"><input id="useProfile" type="checkbox" checked><span><b>Use Profile Details</b><small>Name, mobile, DOB, address etc. auto-fill</small></span></label></div><div id="profilePrefillNotice" class="notice profile-prefill-notice"></div><div id="priceBox" class="notice"></div><h3>Application Details</h3><div id="dynamicFields" class="profile-fields-grid"></div><h3>Required Documents</h3><div id="profilePhotoOption"></div><div id="documentFields"></div><label class="field"><span><input id="declaration" type="checkbox" required> Main confirm karta/karti hoon ki di gayi information sahi hai aur displayed Service/Assistance Charge samajh liya hai.</span></label><button class="btn btn-primary" style="width:100%">Submit & Continue to Payment</button><div id="applyMsg" class="msg"></div></form></div></main><script type="module">
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apply - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260821-final25"></head><body><main class="section"><div class="container" style="max-width:900px"><div id="loading" class="card">Loading application...</div><form id="applyForm" class="card" hidden><div class="application-form-head"><div><span class="dashboard-kicker">NEW APPLICATION</span><h2 id="applyTitle"></h2><p id="applyDesc"></p></div><label class="profile-autofill-switch"><input id="useProfile" type="checkbox" checked><span><b>Use Profile Details</b><small>Name, mobile, DOB, address etc. auto-fill</small></span></label></div><div id="profilePrefillNotice" class="notice profile-prefill-notice"></div><div id="priceBox" class="notice"></div><h3>Application Details</h3><div id="dynamicFields" class="profile-fields-grid"></div><h3>Required Documents</h3><div id="profilePhotoOption"></div><div id="documentFields"></div><label class="field"><span><input id="declaration" type="checkbox" required> Main confirm karta/karti hoon ki di gayi information sahi hai aur displayed Service/Assistance Charge samajh liya hai.</span></label><button class="btn btn-primary" style="width:100%">Submit & Continue to Payment</button><div id="applyMsg" class="msg"></div></form></div></main><script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260821-final24r3';
+import './assets/portal.js?v=20260821-final25';
 import{db}from'./assets/portal-firebase.js';
 import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 
@@ -12,8 +12,6 @@ const loading=document.getElementById('loading'),applyForm=document.getElementBy
 const profile=Portal.profile||{},sp=new URLSearchParams(location.search),sid=sp.get('service'),aid=sp.get('action'),resubmitId=sp.get('resubmit');
 const svcs=await Portal.services(),svc=svcs.find(x=>x.id===sid),acts=await Portal.actions(sid),act=acts.find(x=>x.id===aid);
 if(!svc||!act){loading.textContent='Invalid service/action.';throw new Error('invalid')}
-const st=act.availabilityStatus||((act.available!==false)?'Available':'Unavailable');
-if((svc.availabilityStatus||'Available')!=='Available'||st!=='Available'){loading.textContent='This service/action is currently not available.';throw new Error('unavailable')}
 
 let existingApp=null;
 if(resubmitId){
@@ -38,10 +36,14 @@ function fieldValue(f){
   return useProfile.checked?Portal.profileAutofill(f,profile):'';
 }
 function inputHtml(f){
-  const req=f.required?'required':'',v=fieldValue(f);
-  if(f.type==='select')return `<div class="field"><label>${Portal.esc(f.label)}</label><select name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" ${req}><option value="">Select</option>${(f.options||[]).map(o=>`<option ${String(o)===String(v)?'selected':''}>${Portal.esc(o)}</option>`).join('')}</select></div>`;
-  if(f.type==='textarea')return `<div class="field profile-field-wide"><label>${Portal.esc(f.label)}</label><textarea name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" ${req}>${Portal.esc(v)}</textarea></div>`;
-  return `<div class="field"><label>${Portal.esc(f.label)}</label><input name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" type="${['date','number','email','tel'].includes(f.type)?f.type:'text'}" value="${Portal.esc(v)}" ${req}></div>`
+  const req=f.required?'required':'',v=fieldValue(f),ph=f.placeholder?`placeholder="${Portal.esc(f.placeholder)}"`:'',min=f.min!=null?`min="${Portal.esc(f.min)}"`:'',max=f.max!=null?`max="${Portal.esc(f.max)}"`:'',ml=f.maxLength!=null?`maxlength="${Portal.esc(f.maxLength)}"`:'',pat=f.pattern?`pattern="${Portal.esc(f.pattern)}"`:'';
+  const help=f.helpText?`<small class="hint">${Portal.esc(f.helpText)}</small>`:'';
+  if(f.type==='select')return `<div class="field"><label>${Portal.esc(f.label)}</label><select name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" ${req}><option value="">Select</option>${(f.options||[]).map(o=>`<option ${String(o)===String(v)?'selected':''}>${Portal.esc(o)}</option>`).join('')}</select>${help}</div>`;
+  if(f.type==='radio')return `<div class="field"><label>${Portal.esc(f.label)}</label><div>${(f.options||[]).map(o=>`<label style="margin-right:14px"><input type="radio" name="${f.id}" value="${Portal.esc(o)}" ${String(o)===String(v)?'checked':''} ${req}> ${Portal.esc(o)}</label>`).join('')}</div>${help}</div>`;
+  if(f.type==='checkbox')return `<div class="field"><label><input type="checkbox" name="${f.id}" value="Yes" ${String(v)==='Yes'||v===true?'checked':''} ${req}> ${Portal.esc(f.label)}</label>${help}</div>`;
+  if(f.type==='textarea')return `<div class="field profile-field-wide"><label>${Portal.esc(f.label)}</label><textarea name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" ${ph} ${ml} ${req}>${Portal.esc(v)}</textarea>${help}</div>`;
+  if(f.type==='file')return `<div class="field"><label>${Portal.esc(f.label)}</label><input name="${f.id}" type="file" accept="image/*,.pdf" ${req}>${help}</div>`;
+  return `<div class="field"><label>${Portal.esc(f.label)}</label><input name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" type="${['date','number','email','tel'].includes(f.type)?f.type:'text'}" value="${Portal.esc(v)}" ${ph} ${min} ${max} ${ml} ${pat} ${req}>${help}</div>`
 }
 function renderFields(){
   dynamicFields.innerHTML=fs.map(inputHtml).join('')||'<p class="hint">No extra form fields configured.</p>';
@@ -55,8 +57,10 @@ if(resubmitId){useProfile.checked=false;useProfile.closest('label').style.displa
 renderFields();
 
 const NON_DOCUMENT=/^(mobile( number)?|phone( number)?|contact( number)?|name|full name|email|e-?mail|dob|date of birth|gender|address|village|city|taluka|tehsil|district|state|pin ?code|pincode|age|father'?s? name|mother'?s? name|husband'?s? name)$/i;
-const docs=(act.requiredDocuments||[]).filter(d=>!NON_DOCUMENT.test(String(d).trim()));
-const removed=(act.requiredDocuments||[]).length-docs.length;
+const rawDocItems=Array.isArray(act.requiredDocumentItems)&&act.requiredDocumentItems.length?act.requiredDocumentItems:(act.requiredDocuments||[]).map((name,i)=>({name,required:true,order:(i+1)*10}));
+const cleanDocItems=rawDocItems.filter(d=>!NON_DOCUMENT.test(String(typeof d==='string'?d:d.name).trim())).map((d,i)=>typeof d==='string'?{name:d,required:true,order:(i+1)*10}:d).sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+const docs=cleanDocItems.map(d=>d.name);
+const removed=rawDocItems.length-cleanDocItems.length;
 if(removed>0){
   const n=document.createElement('div');n.className='notice';n.innerHTML=`ℹ️ Mobile/Name/Email jaise detail fields ko document upload se hata diya gaya hai.`;
   documentFields.before(n);
@@ -75,7 +79,7 @@ function oldDoc(label){return (existingApp?.documents||[]).find(z=>String(z.labe
 function renderDocs(){
   documentFields.innerHTML=docs.map((d,i)=>{
     const profilePhotoUsed=i===photoIndex&&useProfilePhoto, old=oldDoc(d);
-    const required=!resubmitId&&!profilePhotoUsed;
+    const required=!resubmitId&&!profilePhotoUsed&&(cleanDocItems[i]?.required!==false);
     return `<div class="field"><label>${Portal.esc(d)}${profilePhotoUsed?' — Profile Photo selected':''}</label>${old?`<div class="notice" style="margin:6px 0">Existing: <a target="_blank" rel="noopener" href="${Portal.esc(old.url)}">${Portal.esc(old.name||d)}</a> · new file choose karoge to replace hoga.</div>`:''}<input type="file" data-doc="${i}" accept="image/*,.pdf" ${profilePhotoUsed?'disabled':''} ${required?'required':''}></div>`
   }).join('')||'<p class="hint">No mandatory documents configured.</p>'
 }
@@ -84,8 +88,8 @@ renderDocs();loading.hidden=true;applyForm.hidden=false;
 applyForm.onsubmit=async e=>{
   e.preventDefault();const msg=applyMsg;
   try{
-    const fd=new FormData(applyForm),data={};fs.forEach(f=>data[f.label]=fd.get(f.id)||'');
-    const inputs=[...documentFields.querySelectorAll('input[type=file]')],newDocs=[];
+    const fd=new FormData(applyForm),data={},dynamicFileDocs=[];for(const f of fs){const val=fd.get(f.id);if(f.type==='file'&&val instanceof File&&val.size){const appKey=existingApp?.applicationId||`draft-${Date.now()}`;const url=await Portal.uploadFile(val,`applications/${Portal.user.uid}/${appKey}/field-${Date.now()}-${val.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);dynamicFileDocs.push({label:f.label,name:val.name,url,source:resubmitId?'resubmit':'application',uploadedAt:new Date().toISOString()});data[f.label]=val.name}else data[f.label]=(val??'')}
+    const inputs=[...documentFields.querySelectorAll('input[type=file]')],newDocs=[...dynamicFileDocs];
     for(let idx=0;idx<docs.length;idx++){
       const label=docs[idx],file=inputs[idx]?.files?.[0];
       if(idx===photoIndex&&useProfilePhoto&&profile.photoURL){newDocs.push({label,name:'Profile Photo',url:profile.photoURL,source:'profile'});continue}

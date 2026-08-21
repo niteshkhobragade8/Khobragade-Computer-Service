@@ -6,17 +6,16 @@ const FIXED=[
  ['applications','Applications','fa-solid fa-file-circle-check',20],
  ['users','Users / Customers','fa-solid fa-users',30],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],
- ['portalbuilder','Services A-Z','fa-solid fa-sitemap',50],
- ['servicecharges','Services Charge','fa-solid fa-indian-rupee-sign',60],
- ['serviceforms','Service Forms','fa-solid fa-file-pen',70],
- ['userportalcms','Website CMS','fa-solid fa-window-maximize',80],
- ['youtube','YouTube','fa-brands fa-youtube',90],
- ['notifications','Notifications','fa-solid fa-bell',100],
- ['analytics','Analytics','fa-solid fa-chart-line',110],
- ['admineditor','Admin Dashboard CMS','fa-solid fa-sliders',120],
- ['themes','Theme Manager','fa-solid fa-palette',130],
- ['recyclebin','Recycle Bin','fa-solid fa-recycle',140],
- ['settings','Portal Settings','fa-solid fa-gear',150]
+ ['portalbuilder','Services / Actions / Forms','fa-solid fa-list-check',60],
+ ['servicecharges','Service Charges','fa-solid fa-tags',65],
+ ['userportalcms','Website CMS','fa-solid fa-window-maximize',70],
+ ['youtube','YouTube','fa-brands fa-youtube',80],
+ ['notifications','Notifications','fa-solid fa-bell',90],
+ ['analytics','Analytics','fa-solid fa-chart-line',100],
+ ['admineditor','Admin Dashboard CMS','fa-solid fa-sliders',110],
+ ['themes','Theme Manager','fa-solid fa-palette',120],
+ ['recyclebin','Recycle Bin','fa-solid fa-recycle',130],
+ ['settings','Portal Settings','fa-solid fa-gear',140]
 ];
 const DEF_THEME={name:'Original Admin',green:'#00c853',yellow:'#ffd600',pink:'#ff4081',red:'#ff1744',blue:'#2979ff',text:'#111827',bg:'#f4f7fc',panel:'#ffffff',line:'#e5e7eb',side1:'#00c853',side2:'#ff1744',menuText:'#ffffff',radius:18,sidebarWidth:260};
 let state={menu:{},pageOverrides:{},theme:{...DEF_THEME},themes:[],customPages:[],customMenus:[]},editCustom=null,editTheme=null,editMenu=null;
