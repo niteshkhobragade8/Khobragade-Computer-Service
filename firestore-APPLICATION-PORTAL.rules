@@ -22,7 +22,16 @@ service cloud.firestore {
     match /applications/{id} {
       allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
       allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-      allow update: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid && resource.data.status == 'Need Documents' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['documents','status','userMessage','updatedAt']));
+      allow update: if isAdmin() || (
+        signedIn() && resource.data.userId == request.auth.uid &&
+        (
+          (resource.data.status == 'Need Documents' &&
+           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['documents','status','userMessage','updatedAt']))
+          ||
+          (resource.data.status == 'Rejected' &&
+           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['formData','documents','status','rejectionReason','userMessage','resubmittedAt','updatedAt']))
+        )
+      );
       allow delete: if false;
     }
 
@@ -34,7 +43,13 @@ service cloud.firestore {
     match /publicApplicationStatus/{id} {
       allow read: if true;
       allow create: if signedIn() && exists(/databases/$(database)/documents/applications/$(id)) && get(/databases/$(database)/documents/applications/$(id)).data.userId == request.auth.uid;
-      allow update, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        signedIn() &&
+        exists(/databases/$(database)/documents/applications/$(id)) &&
+        get(/databases/$(database)/documents/applications/$(id)).data.userId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','paymentStatus','userMessage','updatedAt','applicationId','mobileLast4','serviceName','actionName'])
+      );
+      allow delete: if isAdmin();
     }
 
     match /settings/{id} { allow read: if true; allow write: if isAdmin(); }
