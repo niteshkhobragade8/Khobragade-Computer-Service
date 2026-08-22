@@ -1,0 +1,9 @@
+V21 fixes:
+1. Rejected applications now show Edit & Resubmit Application for the user.
+2. Rejected resubmit loads existing form data and documents, allows correction/replacement, and returns status to Pending/Pending Payment.
+3. Firestore rules allow only controlled user resubmit fields for Rejected applications.
+4. Admin Applications table shows uploaded document count and View button.
+5. Admin Application Details shows document cards with Preview/Open and Download; resubmitted docs are labeled.
+6. Required Documents filters out non-file fields such as Mobile Number, Name, Email, DOB, Address, etc.
+7. Need Documents flow remains unchanged.
+8. PayU/payment files are not modified.

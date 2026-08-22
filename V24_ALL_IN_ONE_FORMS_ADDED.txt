@@ -1,0 +1,12 @@
+V24 FINAL UPDATE — All in One Online Forms
+
+Added as first master service:
+- Police Bharti / Government Recruitment Form
+- Government Scheme Application Form
+- Exam / Admission Online Form
+- Scholarship Online Form
+- Other Online Form / Application
+
+Each action has professional form fields and required-document mapping.
+Charges default to ₹100 and remain editable from Admin → Services / Actions / Forms.
+No payment/backend/DNS changes.

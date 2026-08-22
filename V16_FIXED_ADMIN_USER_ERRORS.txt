@@ -1,0 +1,16 @@
+V16 FIX SUMMARY
+
+1. User portal JavaScript syntax error fixed:
+   portal/assets/portal.js Cloudinary fallback regex/FormData line repaired.
+   This error was causing login page JS to stop and same-page behavior.
+
+2. Admin Dashboard permission error fixed:
+   dashboard.js no longer reads blocked Firestore admins/{uid} document.
+   Admin access now uses the same authorized admin email as firestore.rules.
+
+3. Existing V15/V14 service, application and payment flow preserved.
+
+Verification performed:
+- All .js files: node --check PASS
+- No dashboard admins/{uid} Firestore read remains
+- ZIP integrity verified after packaging

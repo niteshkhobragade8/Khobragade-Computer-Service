@@ -1,0 +1,6 @@
+KCSC V14 PORTAL LOAD FIX
+
+Fixed the browser module race that caused "Portal is not defined".
+Every portal page now imports portal.js as a dependency inside its own module before using Portal.
+This preserves V13 application/payment flow changes.
+Version cache keys bumped to final14.

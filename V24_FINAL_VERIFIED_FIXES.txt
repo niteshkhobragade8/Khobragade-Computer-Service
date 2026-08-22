@@ -1,0 +1,30 @@
+KCSC V24 FINAL VERIFIED COMPLETE
+Date: 2026-08-21
+
+FINAL FIXES INCLUDED
+1. User Help / Support stays inside /portal/#support; old public website is not used.
+2. Admin Services: Add/Edit/Update/Delete + Published/Draft + Available/Unavailable/Coming Soon + Same Window/New Tab target.
+3. Admin Service Actions & Form Builder: existing/new service CRUD, actions CRUD, charges, required documents, dynamic fields CRUD, profile autofill, target.
+4. Admin YouTube: Add/Edit/Delete/Publish/Draft + Same Window/New Tab target. Published videos live-sync to guest login/register and logged-in dashboard.
+5. Admin Notifications:
+   - Breaking News -> live top breaking strip
+   - Popup Notification -> responsive popup
+   - Normal Notification -> live notification cards
+   - Audience Target: Everyone / Guest Login-Register / Logged-in Users
+   - Optional action URL + Same Window/New Tab target
+   - Published/Draft + Priority + image support
+6. User notification bell counts application alerts plus targeted Admin notifications.
+7. Application Admin: complete dynamic form data visible, documents preview/download, Print Full Form, Download Full Form PDF.
+8. Existing payment/PayU, Firebase, profile/autofill, resubmit, documents, dark mode/language and live service/update sync retained.
+9. Master catalogue verified: 138 services / 168 actions.
+
+STATIC VERIFICATION
+- JavaScript syntax: PASS
+- Inline script syntax: PASS
+- Local HTML asset references: PASS (0 missing)
+- Duplicate HTML IDs: PASS (none detected)
+- ZIP integrity: verify after archive creation
+
+IMPORTANT
+- Keep existing Render PayU backend environment, Firebase service account, PayU Key/Salt and DNS unchanged.
+- Firestore rules already allow public reads for services/serviceActions/formFields/notifications/youtube and admin writes.

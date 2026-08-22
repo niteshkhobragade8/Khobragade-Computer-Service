@@ -1,0 +1,12 @@
+KCSC FILE 30 - FINAL COMPLETE
+
+- Admin sidebar split: Services / Actions / Forms / Service Charges
+- Services: existing/new Add Edit Update Delete
+- Actions: existing/new Add Edit Update Delete + charge/docs/availability
+- Forms: existing/new fields Add Edit Update Delete + required documents Add Remove Update
+- Service Charges: all existing/future action charges edit/update/zero
+- User Portal fallback: no service should stop at No actions available; generic Online Application fallback available
+- Website CMS retained + User Sidebar Menu full controls + User Pages CMS
+- Admin Dashboard CMS retained
+- Mobile installable Admin PWA included (dashboard.html)
+- Existing PayU/Firebase/portal structure preserved

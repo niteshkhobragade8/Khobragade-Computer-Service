@@ -1,0 +1,9 @@
+KCSC V24 FINAL COMPLETION
+
+1. User Help / Support no longer opens the old root website. It always opens portal Home #support, including previously saved CMS menu configurations at runtime.
+2. Admin Service Actions & Forms now includes full Service Manager: Add, Edit/Update, Search, Delete Service + its Actions + Form Fields.
+3. Existing Service Actions and Form Fields remain Add/Edit/Update/Delete capable. Action deletion also deletes its form fields.
+4. Admin-added Published services and updates sync live to portal Home (login/register) and logged-in User Dashboard via Firestore onSnapshot.
+5. Admin YouTube Manager Published videos sync live to portal Home (login/register) and logged-in User Dashboard.
+6. Payment, profile, application, documents, resubmit, dark mode/language and existing V23 working flows preserved.
+7. Root index still redirects safely to /portal/index.html. Render/PayU/DNS are untouched.

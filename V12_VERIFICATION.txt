@@ -1,0 +1,8 @@
+KCSC V12 FINAL VERIFIED SERVICE CATALOGUE FIX
+- Bundled MASTER_SERVICES count: 138
+- All Services renders bundled catalogue before any Firestore call.
+- Firebase/Firestore permission failure cannot blank the catalogue.
+- Admin Firestore service overrides are merged after initial render when available.
+- Admin-created extra published services are appended.
+- Service actions use Firestore when available, bundled actions otherwise.
+- portal.js uses local portal/assets/master-catalog.js to avoid parent-path/module issues.

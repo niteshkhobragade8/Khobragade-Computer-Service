@@ -1,0 +1,12 @@
+V19 PAYMENT REDIRECT FIX
+========================
+Added missing files:
+- portal/payment-success.html
+- portal/payment-failure.html
+
+This fixes GitHub Pages 404 after PayU redirects back to:
+https://9637832490.online/portal/payment-success.html
+https://9637832490.online/portal/payment-failure.html
+
+Important security note:
+These pages DO NOT mark an application Paid from query parameters. Payment status must only be finalized by a trusted backend after PayU verification.

@@ -54,7 +54,7 @@ function renderVideos() {
         ${thumb ? `<img src="${thumb}" alt="${escapeHTML(item.title)}" loading="lazy">` : '<div class="youtube-placeholder">▶</div>'}
         <div class="youtube-body">
           <h3>${escapeHTML(item.title)}</h3>
-          <p>${escapeHTML(item.description || "")}</p>
+          <p>${escapeHTML(item.description || "")}</p><small>Target: ${escapeHTML(item.target === "_self" ? "Same Window" : "New Tab")}</small>
           <a class="text-link" href="${escapeHTML(item.link)}" target="_blank" rel="noopener">▶ Watch Video</a>
           <div class="card-actions">
             <button class="action-btn edit" data-action="edit" data-id="${item.id}">✏️ Edit</button>
@@ -70,6 +70,7 @@ function resetForm() {
   $("youtubeLink").value = "";
   $("youtubeDescription").value = "";
   if ($("youtubeStatus")) $("youtubeStatus").value = "Published";
+  if ($("youtubeTarget")) $("youtubeTarget").value = "_blank";
   editId = null;
   saveButton.textContent = "Save Video";
 }
@@ -79,6 +80,7 @@ async function saveVideo() {
   const link = normalizeYouTubeUrl($("youtubeLink")?.value.trim() || "");
   const description = $("youtubeDescription")?.value.trim() || "";
   const status = $("youtubeStatus")?.value || "Published";
+  const target = $("youtubeTarget")?.value || "_blank";
   if (!title || !link) {
     alert("Valid YouTube title aur link bhariye.");
     return;
@@ -86,10 +88,10 @@ async function saveVideo() {
   saveButton.disabled = true;
   try {
     if (editId) {
-      await updateDoc(doc(db, "youtube", editId), { title, link, description, status, updatedAt: serverTimestamp() });
+      await updateDoc(doc(db, "youtube", editId), { title, link, description, status, target, updatedAt: serverTimestamp() });
       alert("Video Updated Successfully");
     } else {
-      await addDoc(collection(db, "youtube"), { title, link, description, status, createdAt: serverTimestamp() });
+      await addDoc(collection(db, "youtube"), { title, link, description, status, target, createdAt: serverTimestamp() });
       alert("Video Saved Successfully");
     }
     resetForm();
@@ -109,6 +111,7 @@ function editVideo(id) {
   $("youtubeLink").value = item.link || "";
   $("youtubeDescription").value = item.description || "";
   if ($("youtubeStatus")) $("youtubeStatus").value = item.status || "Published";
+  if ($("youtubeTarget")) $("youtubeTarget").value = item.target || "_blank";
   saveButton.textContent = "Update Video";
   document.querySelector(".youtube-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
