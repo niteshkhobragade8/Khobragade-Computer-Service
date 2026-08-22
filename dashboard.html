@@ -544,7 +544,7 @@
 </section>
 
 <section id="paymentsPage" class="page">
-  <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions read-only audit + secure PayU backend configuration.</p></div></div>
+  <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions audit, individual record delete control + secure PayU backend configuration.</p></div></div>
   <div class="dashboard-cards"><article class="dashboard-stat-card green"><span class="stat-icon">₹</span><div><p>Total Collection</p><h2 id="paymentTotalCollection">₹0</h2></div></article><article class="dashboard-stat-card blue"><span class="stat-icon">✅</span><div><p>Success</p><h2 id="paymentSuccessCount">0</h2></div></article><article class="dashboard-stat-card yellow"><span class="stat-icon">⏳</span><div><p>Pending</p><h2 id="paymentPendingCount">0</h2></div></article><article class="dashboard-stat-card red"><span class="stat-icon">❌</span><div><p>Failed</p><h2 id="paymentFailedCount">0</h2></div></article></div>
   <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>🔐</span><div><h3>PayU Integration</h3><p>Merchant Salt/Secret public JS ya Firestore me save nahi hoga.</p></div></div><label>Environment</label><select id="payuEnvironment"><option value="test">Test</option><option value="production">Production</option></select><label>Merchant Key (public identifier)</label><input id="payuMerchantKey" placeholder="PayU merchant key"><label>Secure Backend Payment URL</label><input id="payuBackendUrl" type="url" placeholder="https://your-backend.example.com/api/payu"><label>Success URL</label><input id="payuSuccessUrl" type="url"><label>Failure URL</label><input id="payuFailureUrl" type="url"><label>Portal Return URL</label><input id="payuPortalReturnUrl" type="url" placeholder="https://test-domain/portal/my-applications.html"><div class="settings-message info">Customer-facing merchant/display name PayU Dashboard se set hota hai. Personal account-holder name ko checkout branding me use na karein.</div><div class="settings-actions"><button id="savePayuSettings" class="primary-btn">Save PayU Settings</button></div><div id="payuMessage" class="settings-message info">Secret/Salt must remain backend-only.</div></div><div class="manager-content"><h3>Transaction Records</h3><p class="field-help">Admin can permanently delete an individual transaction record when required.</p><div class="table-wrap"><table class="admin-table"><thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th><th>Action</th></tr></thead><tbody id="paymentsTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div></div>
 </section>
@@ -571,6 +571,11 @@
 
 <section id="formsmanagerPage" class="page">
   <div class="page-intro"><div><h2>🧾 Forms</h2><p>Sabhi application form fields aur required documents ko full control ke saath manage karein.</p></div></div>
+  <div class="manager-content" style="margin-bottom:18px">
+    <div class="box-heading"><div><span class="box-kicker">EXISTING FORMS</span><h2>📋 All Existing Forms — Edit / Update / Delete</h2><p class="field-help">Har service/action ka current form, fields aur required documents ek jagah. Edit / Update se niche form editor khulega. Delete Form sirf form fields + document requirements delete karega; service/action safe rahega.</p></div></div>
+    <div class="toolbar"><input id="existingFormSearch" type="search" placeholder="Search service / action / form"></div>
+    <div id="existingFormsList" class="content-grid"><div class="empty-state">Loading existing forms...</div></div>
+  </div>
   <div id="formsmanagerMount"></div>
   <div class="manager-layout" style="margin-top:18px">
     <div class="manager-form"><div class="form-title"><span>📎</span><div><h3>Required Documents</h3><p>Selected action ke document upload list me add/remove/update.</p></div></div>
@@ -671,9 +676,9 @@
 <script type="module" src="theme-manager.js"></script>
 <script type="module" src="data-recovery.js"></script>
 <script type="module" src="applications-admin.js?v=20260821-final24r3"></script>
-<script type="module" src="users-admin.js?v=20260819-final11"></script>
+<script type="module" src="users-admin.js?v=20260822-free-delete-fix"></script>
 <script type="module" src="payments-admin.js?v=20260819-final11"></script>
-<script type="module" src="portal-builder.js?v=20260821-final24r3"></script>
+<script type="module" src="portal-builder.js?v=20260822-existing-forms-fix"></script>
 <script type="module" src="user-portal-cms.js?v=20260821-v30"></script>
 <script type="module" src="admin-v30.js?v=20260821-v30"></script>
 <script src="admin-pwa.js?v=20260821-v30"></script>
