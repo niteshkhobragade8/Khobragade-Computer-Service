@@ -16,7 +16,7 @@ service cloud.firestore {
       allow update: if isAdmin() || (signedIn() && request.auth.uid == uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
         'fullName','email','dob','gender','address','villageCity','taluka','district','state','pinCode','photoURL','extraProfile','updatedAt'
       ]));
-      allow delete: if false;
+      allow delete: if isAdmin();
     }
 
     match /applications/{id} {

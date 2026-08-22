@@ -1,0 +1,17 @@
+FINAL FIX - 22 Aug 2026
+
+1) Users / Customers Delete User
+- Cloud Function/fetch dependency removed from Admin Dashboard.
+- Delete User now removes Firestore user profile + related applications + payments + public application status.
+- Firebase Authentication account must be deleted manually from Firebase Console -> Authentication -> Users if it still exists.
+- No Blaze plan is required for this Admin Dashboard delete flow.
+- Updated firestore.rules must be deployed once for admin user-document deletion permission.
+- Deploy rules only: firebase deploy --only firestore:rules
+
+2) Admin -> Forms
+- Added All Existing Forms section.
+- Search existing forms by service/action.
+- Edit / Update Form opens the selected action's current fields and document requirements.
+- Existing individual fields keep Edit / Delete / Required / Order controls.
+- Required Documents keep Save / Update controls.
+- Delete Form removes only that form's fields + required document requirements; Service and Action remain safe.

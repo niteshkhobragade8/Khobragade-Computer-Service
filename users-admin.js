@@ -1,9 +1,8 @@
-import {db,auth} from './firebase-config.js';
-import {collection,onSnapshot,doc,updateDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {db} from './firebase-config.js';
+import {collection,onSnapshot,doc,updateDoc,deleteDoc,getDocs,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let users=[],apps=[];
 const date=v=>{try{return(v?.toDate?v.toDate():new Date(v)).toLocaleDateString('en-IN')}catch{return'—'}};
-const DELETE_USER_URL='https://us-central1-project-5969685501815639790.cloudfunctions.net/deletePortalUser';
 function render(){
  const q=($('userSearch')?.value||'').toLowerCase(),tb=$('usersTable');if(!tb)return;
  const rows=users.filter(u=>!q||[u.fullName,u.mobile,u.email].join(' ').toLowerCase().includes(q));
@@ -12,18 +11,28 @@ function render(){
 onSnapshot(collection(db,'users'),s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 onSnapshot(collection(db,'applications'),s=>{apps=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 $('userSearch')?.addEventListener('input',render);
-async function deleteUserCompletely(u,button){
- if(!confirm(`Permanently delete ${u.fullName||u.mobile||'this user'}?\n\nUser account, login access, applications, payments and related portal data will be deleted. This cannot be undone.`))return;
+async function commitDeletes(refs){
+ for(let i=0;i<refs.length;i+=400){const batch=writeBatch(db);refs.slice(i,i+400).forEach(ref=>batch.delete(ref));await batch.commit();}
+}
+async function deleteUserPortalData(u,button){
+ if(!confirm(`Delete ${u.fullName||u.mobile||'this user'} from Admin Dashboard?\n\nThis will delete the Firestore customer profile, related applications, payment records and public application status.\n\nFirebase Authentication login must be deleted separately from Firebase Console if it still exists.`))return;
  const original=button.textContent;button.disabled=true;button.textContent='Deleting...';
  try{
-  const token=await auth.currentUser?.getIdToken();if(!token)throw new Error('Admin login required.');
-  const res=await fetch(DELETE_USER_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({uid:u.id})});
-  const data=await res.json().catch(()=>({}));if(!res.ok||!data.ok)throw new Error(data.message||'User delete failed.');
-  alert('User permanently deleted. Firebase Authentication login and related portal data were removed.');
- }catch(e){console.error(e);alert(e.message||'User delete failed. Firebase Functions deploy/check required.');button.disabled=false;button.textContent=original;}
+  const [appSnap,paySnap,statusSnap]=await Promise.all([
+   getDocs(collection(db,'applications')),
+   getDocs(collection(db,'payments')),
+   getDocs(collection(db,'publicApplicationStatus'))
+  ]);
+  const relatedApps=appSnap.docs.filter(d=>{const x=d.data();return x.userId===u.id || (!!u.mobile&&x.mobile===u.mobile) || (!!u.email&&x.email===u.email)});
+  const appIds=new Set(relatedApps.map(d=>d.id));
+  const relatedPays=paySnap.docs.filter(d=>{const x=d.data();return x.userId===u.id || appIds.has(x.applicationId) || (!!u.mobile&&x.mobile===u.mobile) || (!!u.email&&x.email===u.email)});
+  const relatedStatuses=statusSnap.docs.filter(d=>appIds.has(d.id) || appIds.has(d.data()?.applicationId));
+  await commitDeletes([...relatedPays.map(d=>d.ref),...relatedStatuses.map(d=>d.ref),...relatedApps.map(d=>d.ref),doc(db,'users',u.id)]);
+  alert('User portal data deleted successfully. If the Firebase Authentication account still exists, delete it manually from Firebase Console → Authentication → Users.');
+ }catch(e){console.error('User delete error',e);alert('Delete failed: '+(e?.message||'Unknown Firestore error')+'\n\nMake sure updated Firestore Rules are deployed.');button.disabled=false;button.textContent=original;}
 }
 $('usersTable')?.addEventListener('click',async e=>{
- const del=e.target.closest('[data-delete-user]');if(del){const u=users.find(x=>x.id===del.dataset.deleteUser);if(u)await deleteUserCompletely(u,del);return;}
+ const del=e.target.closest('[data-delete-user]');if(del){const u=users.find(x=>x.id===del.dataset.deleteUser);if(u)await deleteUserPortalData(u,del);return;}
  const b=e.target.closest('[data-toggle]');if(!b)return;const u=users.find(x=>x.id===b.dataset.toggle);if(!u)return;
  await updateDoc(doc(db,'users',u.id),{status:(u.status||'Active')==='Active'?'Disabled':'Active',updatedAt:serverTimestamp()});
 });
