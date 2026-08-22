@@ -1,4 +1,5 @@
-import { db } from "./firebase-config.js";
+import { db, auth } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 import {
   collection,
   getDocs,
@@ -6,10 +7,32 @@ import {
   getDoc,
   query,
   orderBy,
-  limit
+  limit,
+  writeBatch,
+  setDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
+
+async function resetVisitorAnalytics({silent=false}={}) {
+  const msg=$("visitorResetMessage"),btn=$("resetVisitorsBtn");
+  if(btn)btn.disabled=true;
+  try {
+    const daily=await getDocs(collection(db,"visitorDaily"));
+    const docs=daily.docs;
+    for(let i=0;i<docs.length;i+=450){const batch=writeBatch(db);docs.slice(i,i+450).forEach(d=>batch.delete(d.ref));await batch.commit();}
+    await setDoc(doc(db,"analytics","site"),{totalVisitors:0,updatedAt:serverTimestamp()},{merge:true});
+    await setDoc(doc(db,"settings","maintenance"),{visitorResetVersion:"v25-final",visitorResetAt:serverTimestamp()},{merge:true});
+    if(msg){msg.textContent="✅ Total Visitors reset to 0. Old daily visitor history cleared.";msg.className="settings-message success";}
+    await loadAnalytics();
+  } catch(error){console.error("Visitor reset failed",error);if(msg&&!silent){msg.textContent="Visitor reset failed: "+error.message;msg.className="settings-message error";}throw error;}
+  finally{if(btn)btn.disabled=false;}
+}
+
+async function runRequestedVisitorResetOnce(){
+  try{const marker=await getDoc(doc(db,"settings","maintenance"));if(marker.exists()&&marker.data().visitorResetVersion==="v25-final")return;await resetVisitorAnalytics({silent:true});}catch(e){console.warn("One-time visitor reset pending until admin access is ready.",e);}
+}
 
 function setText(id, value) {
   const el = $(id);
@@ -142,6 +165,9 @@ window.showAnalytics = loadAnalytics;
 window.reloadAnalytics = loadAnalytics;
 window.getAnalytics = loadAnalytics;
 window.resetAnalytics = () => loadAnalytics();
+window.resetVisitorAnalytics = resetVisitorAnalytics;
+$("resetVisitorsBtn")?.addEventListener("click",async()=>{if(!confirm("Reset Total Visitors to 0 and clear old daily visitor history?"))return;await resetVisitorAnalytics().catch(()=>{});});
+onAuthStateChanged(auth,user=>{if(user)runRequestedVisitorResetOnce();});
 
 window.addEventListener("DOMContentLoaded", loadAnalytics);
 window.addEventListener("resize", () => loadAnalytics());
