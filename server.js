@@ -137,44 +137,84 @@ async function verifyWithPayU(txnid) {
 
 async function updatePaymentState(data, fallbackStatus) {
   const db = initFirebase();
-  const txnid = String(data.txnid || '');
-  const applicationId = String(data.udf1 || '');
-  const applicationDocId = String(data.udf2 || applicationId);
+  const txnid = String(data.txnid || '').trim();
+  if (!txnid) throw new Error('Missing transaction ID');
 
-  let verifiedStatus = fallbackStatus;
+  // Never trust application/amount coming back from the browser alone.
+  // The pending payment saved before redirect is the source of truth.
+  const payRef = db.collection('payments').doc(txnid);
+  const paySnap = await payRef.get();
+  if (!paySnap.exists) throw new Error('Unknown transaction');
+  const pending = paySnap.data() || {};
+
+  const applicationId = String(pending.applicationId || data.udf1 || '').trim();
+  const applicationDocId = String(pending.applicationDocId || data.udf2 || applicationId).trim();
+  const expectedAmount = Number(pending.amount || 0);
+
+  let verifiedStatus = String(data.status || fallbackStatus || '').toLowerCase();
+  let verifiedAmount = Number(data.amount || 0);
   let mihpayid = data.mihpayid || '';
-  let amountOk = true;
+  let bankRef = data.bank_ref_num || data.bank_ref_no || '';
+  let verifySource = 'signed-callback';
 
-  if (txnid) {
-    try {
-      const verified = await verifyWithPayU(txnid);
-      const d = verified.detail || {};
-      verifiedStatus = String(d.status || d.unmappedstatus || data.status || fallbackStatus || '').toLowerCase();
-      mihpayid = d.mihpayid || mihpayid;
-      if (d.amt != null || d.amount != null) {
-        amountOk = Math.abs(Number(d.amt ?? d.amount) - Number(data.amount || 0)) < 0.01;
-      }
-    } catch (e) {
-      console.error('PayU verify warning:', e.message);
+  // PayU verify API is preferred. If it is temporarily unavailable during a
+  // signed callback, the valid PayU response hash remains usable as fallback.
+  try {
+    const verified = await verifyWithPayU(txnid);
+    const d = verified.detail || {};
+    if (Object.keys(d).length) {
+      verifiedStatus = String(
+        d.status || d.transaction_status || d.unmappedstatus || d.unmapped_status || verifiedStatus
+      ).toLowerCase();
+      verifiedAmount = Number(d.amt ?? d.amount ?? d.transaction_amount ?? verifiedAmount);
+      mihpayid = d.mihpayid || d.mihpayId || mihpayid;
+      bankRef = d.bank_ref_num || d.bank_ref_no || bankRef;
+      verifySource = 'payu-verify-api';
     }
+  } catch (e) {
+    console.error('PayU verify warning:', e.message);
   }
 
-  const paid = ['success', 'captured'].includes(String(verifiedStatus).toLowerCase()) && amountOk;
-  const paymentStatus = paid ? 'Paid' : (String(verifiedStatus).toLowerCase() === 'failure' ? 'Failed' : 'Pending');
-  const appStatus = paid ? 'Pending' : (paymentStatus === 'Failed' ? 'Payment Failed' : 'Pending Payment');
+  const successWords = ['success', 'captured', 'successful'];
+  const success = successWords.includes(verifiedStatus);
+  const amountOk = Math.abs(verifiedAmount - expectedAmount) < 0.01;
+  const paid = success && amountOk;
+  const failedWords = ['failure', 'failed', 'bounced', 'dropped', 'cancel', 'cancelled'];
+  const paymentStatus = paid ? 'Paid' : (failedWords.includes(verifiedStatus) ? 'Failed' : (success && !amountOk ? 'Review' : 'Pending'));
+  const appStatus = paid ? 'Pending' : (paymentStatus === 'Failed' ? 'Payment Failed' : (paymentStatus === 'Review' ? 'Payment Review' : 'Pending Payment'));
+
+  const stamp = admin.firestore.FieldValue.serverTimestamp();
+  await payRef.set({
+    paymentId: txnid,
+    applicationId,
+    applicationDocId,
+    amount: expectedAmount,
+    status: paymentStatus,
+    payuStatus: String(data.status || ''),
+    verifiedStatus,
+    verifiedAmount,
+    verificationSource: verifySource,
+    transactionReference: txnid,
+    mihpayid,
+    bankRef,
+    updatedAt: stamp,
+    verifiedAt: stamp,
+    ...(paid ? { paidAt: stamp } : {})
+  }, { merge: true });
 
   if (applicationDocId) {
-    await db.collection('applications').doc(applicationDocId).set({
+    const appRef = db.collection('applications').doc(applicationDocId);
+    await appRef.set({
       paymentStatus,
       status: appStatus,
       paymentTransactionId: txnid,
       transactionReference: txnid,
       mihpayid,
-      paidAt: paid ? admin.firestore.FieldValue.serverTimestamp() : null,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      updatedAt: stamp,
+      ...(paid ? { paidAt: stamp } : {})
     }, { merge: true });
 
-    const appSnap = await db.collection('applications').doc(applicationDocId).get();
+    const appSnap = await appRef.get();
     const ad = appSnap.exists ? appSnap.data() : {};
     if (applicationId) {
       await db.collection('publicApplicationStatus').doc(applicationId).set({
@@ -184,27 +224,52 @@ async function updatePaymentState(data, fallbackStatus) {
         actionName: ad.actionName || '',
         paymentStatus,
         status: appStatus,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: stamp
       }, { merge: true });
     }
   }
 
-  if (txnid) {
-    await db.collection('payments').doc(txnid).set({
-      paymentId: txnid,
-      applicationId,
-      applicationDocId,
-      amount: Number(data.amount || 0),
-      status: paymentStatus,
-      payuStatus: data.status || '',
-      mihpayid,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      paidAt: paid ? admin.firestore.FieldValue.serverTimestamp() : null
-    }, { merge: true });
-  }
-
-  return { paid, paymentStatus, appStatus, txnid, applicationId };
+  return { paid, paymentStatus, appStatus, txnid, applicationId, applicationDocId };
 }
+
+// Used by the payment-success page to repair/sync a transaction when the
+// browser callback reached the success page before Firestore reflected Paid.
+// It re-verifies the transaction directly with PayU; no secret is exposed.
+app.post('/reconcile-payment', async (req, res) => {
+  try {
+    if (!PAYU_KEY || !PAYU_SALT) {
+      return res.status(500).json({ error: 'PayU backend environment not configured' });
+    }
+    const txnid = String(req.body?.txnid || '').trim();
+    if (!txnid) return res.status(400).json({ error: 'Transaction ID required' });
+
+    const db = initFirebase();
+    const paySnap = await db.collection('payments').doc(txnid).get();
+    if (!paySnap.exists) return res.status(404).json({ error: 'Transaction not found' });
+    const pending = paySnap.data() || {};
+
+    const verified = await verifyWithPayU(txnid);
+    const d = verified.detail || {};
+    if (!Object.keys(d).length) {
+      return res.status(409).json({ error: 'PayU verification pending', paymentStatus: pending.status || 'Pending' });
+    }
+
+    const normalized = {
+      txnid,
+      udf1: pending.applicationId || '',
+      udf2: pending.applicationDocId || '',
+      amount: d.amt ?? d.amount ?? d.transaction_amount ?? pending.amount,
+      status: d.status || d.transaction_status || d.unmappedstatus || d.unmapped_status || '',
+      mihpayid: d.mihpayid || d.mihpayId || '',
+      bank_ref_num: d.bank_ref_num || d.bank_ref_no || ''
+    };
+    const result = await updatePaymentState(normalized, normalized.status);
+    return res.json({ ok: true, ...result });
+  } catch (e) {
+    console.error('reconcile-payment error:', e);
+    return res.status(500).json({ error: 'Payment status sync failed: ' + e.message });
+  }
+});
 
 app.post('/payment-success', async (req, res) => {
   try {
