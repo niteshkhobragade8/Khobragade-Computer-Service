@@ -86,12 +86,25 @@ async function actions(serviceId){
      const id=actionId(svc.id,a[0]);const row={id,serviceId,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${svc.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10,masterServiceId:svc.id,_masterAction:a};live.push(row);actionMasterMap.set(id,{service:svc,action:a})
    })
  }
+ if(!live.some(x=>(x.availabilityStatus||((x.available!==false)?'Available':'Unavailable'))==='Available')){
+   const fallbackId=`generic_${String(serviceId).replace(/[^a-zA-Z0-9_-]/g,'_')}`;
+   const fallback={id:fallbackId,serviceId,name:'Online Application',serviceCharge:99,officialFee:0,description:'General online application / form assistance.',requiredDocuments:['Aadhaar Card','Passport Size Photo','Signature','Supporting Document (if applicable)'],availabilityStatus:'Available',available:true,order:10,_generic:true};
+   live.push(fallback);actionMasterMap.set(fallbackId,{generic:true,serviceId});
+ }
  return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0))
 }
 async function fields(actionDocId){
  let live=[];try{const snap=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields Firestore read failed; using bundled catalogue.',e)}
  if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
- const mapped=actionMasterMap.get(actionDocId);if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
+ const mapped=actionMasterMap.get(actionDocId);if(mapped?.generic)return [
+ {id:`fld_${actionDocId}_1`,actionId:actionDocId,label:'Full Name',type:'text',required:true,order:10,profileKey:'fullName'},
+ {id:`fld_${actionDocId}_2`,actionId:actionDocId,label:'Mobile Number',type:'text',required:true,order:20,profileKey:'mobile'},
+ {id:`fld_${actionDocId}_3`,actionId:actionDocId,label:'Email',type:'email',required:false,order:30,profileKey:'email'},
+ {id:`fld_${actionDocId}_4`,actionId:actionDocId,label:'Date of Birth',type:'date',required:false,order:40,profileKey:'dob'},
+ {id:`fld_${actionDocId}_5`,actionId:actionDocId,label:'Full Address',type:'textarea',required:false,order:50,profileKey:'address'},
+ {id:`fld_${actionDocId}_6`,actionId:actionDocId,label:'Application / Form Name',type:'text',required:true,order:60},
+ {id:`fld_${actionDocId}_7`,actionId:actionDocId,label:'Additional Details',type:'textarea',required:false,order:70}
+ ];if(mapped)return fieldsFor(mapped.action).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}));
  for(const svc of MASTER_SERVICES){const a=svc.actions.find(x=>actionId(svc.id,x[0])===actionDocId);if(a)return fieldsFor(a).map((f,i)=>({id:`fld_${actionDocId}_${i+1}`,...f,actionId:actionDocId}))}
  return []
 }
