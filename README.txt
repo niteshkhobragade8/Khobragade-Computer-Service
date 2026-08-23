@@ -1,11 +1,11 @@
-COMMISSION DASHBOARD SIDEBAR + INSTALL BUTTON FIX
+EXACT FIX ONLY
 
-Replace/add the files exactly with the same folder structure.
+Replace ONLY:
+portal/assets/portal.js
 
-Fixed ONLY:
-1. Commission Dashboard now uses the professional member left sidebar/menu.
-2. Commission-only Install App button is in the top header immediately before the notification bell.
-3. Dashboard remains commission-dashboard.html.
-4. My Commission remains commission.html.
-
-No commission calculation, PayU, normal user, service charge, forms or admin logic changed.
+Fix:
+- Registers commission-dashboard.html in the existing memberPages map.
+- This allows the already-existing professional memberChrome() to run on Commission Dashboard.
+- Existing left sidebar will render.
+- Existing Commission-only Install App button will render immediately before the notification bell.
+- No dashboard content, My Commission, PayU, Admin, Services, Forms, Charges or other logic changed.

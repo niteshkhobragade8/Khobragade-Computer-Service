@@ -264,6 +264,7 @@ async function trackPublic(applicationId,mobile){const s=await getDoc(doc(db,'pu
 
 const memberPages={
  'account.html':{title:'Dashboard',key:'dashboard'},
+ 'commission-dashboard.html':{title:'Commission Dashboard',key:'dashboard'},
  'services.html':{title:'All Services',key:'services'},
  'apply.html':{title:'New Application',key:'new'},
  'my-applications.html':{title:'My Applications',key:'applications'},
