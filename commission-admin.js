@@ -57,9 +57,12 @@ function renderSummary(){
 function renderUserSelects(){
   const active=activeCommissionUsers();
   const opts='<option value="">Select Commission User</option>'+active.map(u=>`<option value="${esc(u.id)}">${esc(u.fullName||u.mobile)} (${esc(u.mobile||'')})</option>`).join('');
-  const svc=$('commissionServiceUser'); if(svc){const v=svc.value;svc.innerHTML=opts;if(active.some(u=>u.id===v))svc.value=v}
-  const normal=users.filter(u=>!u.isCommissionUser);
-  const ex=$('commissionExistingUser'); if(ex){const v=ex.value;ex.innerHTML='<option value="">New Commission User</option>'+normal.map(u=>`<option value="${esc(u.id)}">${esc(u.fullName||u.mobile)} (${esc(u.mobile||'')})</option>`).join('');if(normal.some(u=>u.id===v))ex.value=v}
+  const svc=$('commissionServiceUser');
+  if(svc){
+    const v=svc.value;
+    svc.innerHTML=opts;
+    if(active.some(u=>u.id===v))svc.value=v;
+  }
 }
 function renderUsers(){
   const q=($('commissionUserSearch')?.value||'').toLowerCase();
@@ -69,7 +72,7 @@ function renderUsers(){
     <h3>${esc(u.fullName||'Commission User')}</h3>
     <p>${esc(u.mobile||'')} ${u.email?'· '+esc(u.email):''}</p>
     <small>Code: ${esc(u.commissionCode||'—')} · Default: ${u.defaultCommissionType==='percent'?esc(u.defaultCommissionValue||0)+'%':money(u.defaultCommissionValue||0)}</small>
-    <div class="card-actions"><button class="action-btn edit" data-cu-edit="${u.id}">Edit</button><button class="action-btn edit" data-cu-toggle="${u.id}">${(u.commissionStatus||'Active')==='Active'?'Inactive':'Activate'}</button><button class="action-btn delete" data-cu-remove="${u.id}">Remove Commission</button><button class="action-btn delete" data-cu-delete="${u.id}">Delete Commission Data</button></div>
+    <div class="card-actions"><button class="action-btn edit" data-cu-edit="${u.id}">Edit</button><button class="action-btn edit" data-cu-toggle="${u.id}">${(u.commissionStatus||'Active')==='Active'?'Inactive':'Activate'}</button><button class="action-btn delete" data-cu-delete="${u.id}">Delete Commission User</button></div>
   </article>`).join('')||'<div class="empty-state">No commission users.</div>';
 }
 function renderApps(){
@@ -93,18 +96,17 @@ function renderServices(){
   const q=($('commissionServiceSearch')?.value||'').toLowerCase();
   if(!uid){$('commissionServicesTable').innerHTML='<tr><td colspan="7">Commission user select karein.</td></tr>';setMsg('commissionServiceMessage','Commission user select karein.');return}
   const rows=actions.filter(a=>!q||`${serviceName(a.serviceId)} ${a.name||''}`.toLowerCase().includes(q)).sort((a,b)=>serviceName(a.serviceId).localeCompare(serviceName(b.serviceId)));
-  $('commissionServicesTable').innerHTML=rows.map(a=>{const c=commissionFor(uid,a),r=rates.find(x=>x.userId===uid&&x.actionId===a.id);return `<tr data-rate-row="${esc(a.id)}" data-has-rate="${r?'true':'false'}" data-orig-type="${esc(c.type)}" data-orig-value="${Number(c.value||0)}" data-orig-active="${r?.active===false?'false':'true'}"><td><b>${esc(serviceName(a.serviceId))}</b></td><td>${esc(a.name||'Action')}</td><td>${money(a.serviceCharge||0)}</td><td><select class="commission-rate-type" data-rate-type="${esc(a.id)}"><option value="fixed" ${c.type==='fixed'?'selected':''}>₹ Fixed</option><option value="percent" ${c.type==='percent'?'selected':''}>% Percentage</option></select></td><td><input class="commission-rate-input" data-rate-value="${esc(a.id)}" type="number" min="0" step="0.01" value="${Number(c.value||0)}"></td><td class="commission-final" data-rate-final="${esc(a.id)}">${money(c.final)}</td><td><select class="commission-active-select" data-rate-active="${esc(a.id)}"><option value="true" ${r?.active!==false?'selected':''}>Active</option><option value="false" ${r?.active===false?'selected':''}>Off</option></select></td><td><button class="action-btn delete" data-rate-reset="${esc(a.id)}">Reset</button></td></tr>`}).join('')||'<tr><td colspan="8">No services/actions.</td></tr>';
+  $('commissionServicesTable').innerHTML=rows.map(a=>{const c=commissionFor(uid,a),r=rates.find(x=>x.userId===uid&&x.actionId===a.id);return `<tr data-rate-row="${esc(a.id)}" data-has-rate="${r?'true':'false'}" data-orig-type="${esc(c.type)}" data-orig-value="${Number(c.value||0)}" data-orig-active="${r?.active===false?'false':'true'}"><td><b>${esc(serviceName(a.serviceId))}</b></td><td>${esc(a.name||'Action')}</td><td><b>${money(a.serviceCharge||0)}</b><br><small>Read-only</small></td><td><select class="commission-rate-type" data-rate-type="${esc(a.id)}"><option value="fixed" ${c.type==='fixed'?'selected':''}>₹ Fixed</option><option value="percent" ${c.type==='percent'?'selected':''}>% Percentage</option></select></td><td><input class="commission-rate-input" data-rate-value="${esc(a.id)}" type="number" min="0" step="0.01" value="${Number(c.value||0)}"></td><td class="commission-final" data-rate-final="${esc(a.id)}">${money(c.final)}</td><td><select class="commission-active-select" data-rate-active="${esc(a.id)}"><option value="true" ${r?.active!==false?'selected':''}>Active</option><option value="false" ${r?.active===false?'selected':''}>Inactive</option></select></td><td><button class="action-btn edit" data-rate-save="${esc(a.id)}">${r?'Update':'Set Commission'}</button> <button class="action-btn delete" data-rate-delete="${esc(a.id)}" ${r?'':'disabled'}>Delete</button></td></tr>`}).join('')||'<tr><td colspan="8">No services/actions.</td></tr>';
   setMsg('commissionServiceMessage',`${rows.length} services/actions loaded. User ke liye individual commission set karein.`,'success');
 }
 function renderAll(){renderSummary();renderUserSelects();renderUsers();renderApps();renderPayments();renderScreenshots();renderLedger();renderServices()}
 
 async function saveCommissionUser(){
-  const existing=$('commissionExistingUser').value;
   const edit=editingUid||$('commissionEditUid').value;
   const fullName=$('commissionFullName').value.trim(),mobile=$('commissionMobile').value.replace(/\D/g,''),email=$('commissionEmail').value.trim();
   const password=$('commissionPassword').value;
   if(!fullName||mobile.length!==10)return setMsg('commissionUserMessage','Full Name aur valid 10-digit Mobile required.','danger');
-  let uid=edit||existing;
+  let uid=edit;
   try{
     if(!uid){
       if(password.length<6)return setMsg('commissionUserMessage','New user ke liye minimum 6-character password required.','danger');
@@ -127,18 +129,30 @@ async function saveCommissionUser(){
       commissionUpdatedAt:serverTimestamp(),updatedAt:serverTimestamp()
     },{merge:true});
     setMsg('commissionUserMessage','✅ Commission user saved / updated.','success');clearUserForm();
-  }catch(e){setMsg('commissionUserMessage','❌ '+(e.code==='auth/email-already-in-use'?'Mobile already registered. Existing User dropdown se convert karein.':e.message),'danger')}
+  }catch(e){setMsg('commissionUserMessage','❌ '+(e.code==='auth/email-already-in-use'?'Ye mobile/login already registered hai. Commission User ke liye alag mobile use karein.':e.message),'danger')}
 }
-function clearUserForm(){editingUid='';$('commissionEditUid').value='';$('commissionExistingUser').value='';['commissionFullName','commissionMobile','commissionEmail','commissionPassword','commissionCode','commissionStartDate','commissionEndDate'].forEach(id=>$(id).value='');$('commissionDefaultType').value='fixed';$('commissionDefaultValue').value='0';$('commissionUserStatus').value='Active';$('commissionSaveUser').textContent='Save Commission User'}
+function clearUserForm(){editingUid='';$('commissionEditUid').value='';['commissionFullName','commissionMobile','commissionEmail','commissionPassword','commissionCode','commissionStartDate','commissionEndDate'].forEach(id=>$(id).value='');$('commissionDefaultType').value='fixed';$('commissionDefaultValue').value='0';$('commissionUserStatus').value='Active';$('commissionSaveUser').textContent='Save Commission User'}
 $('commissionSaveUser')?.addEventListener('click',saveCommissionUser);
 $('commissionClearUser')?.addEventListener('click',clearUserForm);
-$('commissionExistingUser')?.addEventListener('change',e=>{const u=users.find(x=>x.id===e.target.value);if(!u)return;editingUid=u.id;$('commissionFullName').value=u.fullName||'';$('commissionMobile').value=u.mobile||'';$('commissionEmail').value=u.email||''});
 $('commissionUserSearch')?.addEventListener('input',renderUsers);
 $('commissionAppSearch')?.addEventListener('input',renderApps);
 $('commissionServiceSearch')?.addEventListener('input',renderServices);
 $('commissionServiceUser')?.addEventListener('change',renderServices);
 $('commissionServicesTable')?.addEventListener('input',e=>{const id=e.target.dataset.rateValue;if(!id)return;const row=e.target.closest('tr'),a=actions.find(x=>x.id===id);const type=row.querySelector('[data-rate-type]').value,val=Number(e.target.value||0);row.querySelector('[data-rate-final]').textContent=money(calcFinal(a.serviceCharge,type,val).final)});
 $('commissionServicesTable')?.addEventListener('change',e=>{if(e.target.dataset.rateType){const id=e.target.dataset.rateType,row=e.target.closest('tr'),a=actions.find(x=>x.id===id),val=Number(row.querySelector('[data-rate-value]').value||0);row.querySelector('[data-rate-final]').textContent=money(calcFinal(a.serviceCharge,e.target.value,val).final)}});
+
+async function saveSingleCommissionRate(uid, aid){
+  const row=document.querySelector(`#commissionServicesTable tr[data-rate-row="${CSS.escape(aid)}"]`);
+  const a=actions.find(x=>x.id===aid);
+  if(!uid||!row||!a)return;
+  const type=row.querySelector('[data-rate-type]')?.value||'fixed';
+  const value=Math.max(0,Number(row.querySelector('[data-rate-value]')?.value||0));
+  const active=(row.querySelector('[data-rate-active]')?.value||'true')==='true';
+  await setDoc(doc(db,'commissionRates',rateId(uid,aid)),{
+    userId:uid, actionId:aid, serviceId:a.serviceId, type, value, active, updatedAt:serverTimestamp()
+  },{merge:true});
+  setMsg('commissionServiceMessage',`✅ ${serviceName(a.serviceId)} / ${a.name||'Action'} commission saved.`,'success');
+}
 
 $('commissionSaveRates')?.addEventListener('click',async()=>{
   const uid=$('commissionServiceUser').value;if(!uid)return;
@@ -151,15 +165,22 @@ $('commissionSaveRates')?.addEventListener('click',async()=>{
     batch.set(doc(db,'commissionRates',rateId(uid,aid)),{userId:uid,actionId:aid,serviceId:a.serviceId,type,value,active,updatedAt:serverTimestamp()},{merge:true});count++;
   });
   if(!count){setMsg('commissionServiceMessage','Koi commission change nahi hua.','info');return}
-  try{await batch.commit();setMsg('commissionServiceMessage',`✅ ${count} changed service/action commissions saved.`,'success')}catch(e){setMsg('commissionServiceMessage','❌ '+e.message,'danger')}
+  try{await batch.commit();setMsg('commissionServiceMessage',`✅ ${count} service/action commissions saved. Current Service Charges unchanged.`,'success')}catch(e){setMsg('commissionServiceMessage','❌ '+e.message,'danger')}
 });
 
 $('commissionUsersList')?.addEventListener('click',async e=>{
-  const b=e.target.closest('button');if(!b)return;const id=b.dataset.cuEdit||b.dataset.cuToggle||b.dataset.cuRemove||b.dataset.cuDelete;const u=users.find(x=>x.id===id);if(!u)return;
+  const b=e.target.closest('button');if(!b)return;const id=b.dataset.cuEdit||b.dataset.cuToggle||b.dataset.cuDelete;const u=users.find(x=>x.id===id);if(!u)return;
   if(b.dataset.cuEdit){editingUid=id;$('commissionEditUid').value=id;$('commissionFullName').value=u.fullName||'';$('commissionMobile').value=u.mobile||'';$('commissionEmail').value=u.email||'';$('commissionCode').value=u.commissionCode||'';$('commissionDefaultType').value=u.defaultCommissionType||'fixed';$('commissionDefaultValue').value=u.defaultCommissionValue||0;$('commissionUserStatus').value=u.commissionStatus||'Active';$('commissionStartDate').value=u.commissionStartDate||'';$('commissionEndDate').value=u.commissionEndDate||'';$('commissionSaveUser').textContent='Update Commission User';return}
   if(b.dataset.cuToggle){await updateDoc(doc(db,'users',id),{commissionStatus:(u.commissionStatus||'Active')==='Active'?'Inactive':'Active',commissionUpdatedAt:serverTimestamp()});return}
-  if(b.dataset.cuRemove){if(!confirm('Commission role remove karein? Normal user account safe rahega.'))return;await updateDoc(doc(db,'users',id),{isCommissionUser:false,commissionStatus:'Inactive',commissionUpdatedAt:serverTimestamp()});return}
-  if(b.dataset.cuDelete){if(!confirm('Is user ka commission configuration + rates + ledger delete karein? Normal user account delete nahi hoga.'))return;const batch=writeBatch(db);rates.filter(r=>r.userId===id).forEach(r=>batch.delete(doc(db,'commissionRates',r.id)));ledger.filter(l=>l.userId===id).forEach(l=>batch.delete(doc(db,'commissionLedger',l.id)));batch.update(doc(db,'users',id),{isCommissionUser:false,commissionStatus:'Inactive',defaultCommissionValue:0,commissionUpdatedAt:serverTimestamp()});await batch.commit()}
+  if(b.dataset.cuDelete){
+    if(!confirm('Is Commission User ka Firestore profile + commission rates + ledger delete karein? Firebase Authentication login ko Console se manually delete karna hoga.'))return;
+    const batch=writeBatch(db);
+    rates.filter(r=>r.userId===id).forEach(r=>batch.delete(doc(db,'commissionRates',r.id)));
+    ledger.filter(l=>l.userId===id).forEach(l=>batch.delete(doc(db,'commissionLedger',l.id)));
+    batch.delete(doc(db,'users',id));
+    await batch.commit();
+    setMsg('commissionUserMessage','✅ Commission User data deleted. Login permanently band karne ke liye Firebase Authentication me same user manually delete karein.','success');
+  }
 });
 $('commissionApplicationsTable')?.addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
@@ -193,10 +214,26 @@ $('commissionScreenshotsList')?.addEventListener('click',async e=>{
   await updateDoc(doc(db,'paymentScreenshots',id),{reviewStatus:status,updatedAt:serverTimestamp()});
 });
 $('commissionServicesTable')?.addEventListener('click',async e=>{
-  const b=e.target.closest('[data-rate-reset]');if(!b)return;
-  const uid=$('commissionServiceUser').value,aid=b.dataset.rateReset;if(!uid||!aid)return;
-  if(!confirm('Is service/action ka custom commission delete karke user default commission use karein?'))return;
-  await deleteDoc(doc(db,'commissionRates',rateId(uid,aid)));
+  const b=e.target.closest('button');if(!b)return;
+  const uid=$('commissionServiceUser').value;
+  const aid=b.dataset.rateSave||b.dataset.rateDelete;
+  if(!uid||!aid)return;
+  try{
+    if(b.dataset.rateSave){
+      b.disabled=true;
+      await saveSingleCommissionRate(uid,aid);
+      return;
+    }
+    if(b.dataset.rateDelete){
+      if(!confirm('Is selected Commission User ke liye is service/action ka commission delete karein? Current Service Charge safe rahega.'))return;
+      await deleteDoc(doc(db,'commissionRates',rateId(uid,aid)));
+      setMsg('commissionServiceMessage','✅ Commission deleted. Current Service Charge me koi change nahi hua.','success');
+    }
+  }catch(err){
+    setMsg('commissionServiceMessage','❌ '+err.message,'danger');
+  }finally{
+    b.disabled=false;
+  }
 });
 $('commissionLedgerTable')?.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.ledgerSave||b.dataset.ledgerDelete;if(!id)return;if(b.dataset.ledgerDelete){if(confirm('Ledger entry delete karein?'))await deleteDoc(doc(db,'commissionLedger',id));return}const s=document.querySelector(`[data-ledger-status="${CSS.escape(id)}"]`)?.value||'Pending';await updateDoc(doc(db,'commissionLedger',id),{status:s,updatedAt:serverTimestamp()})});
 

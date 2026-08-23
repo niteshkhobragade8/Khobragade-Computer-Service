@@ -1,14 +1,23 @@
-ALL CHARGE + AVAILABILITY FINAL FIX
+COMMISSION USER ADMIN-ONLY FINAL FIX
 
-Replace only these 2 files in website repository root:
+Replace ONLY these 2 files in WEBSITE repository root:
 1. dashboard.html
-2. all-charge.js
+2. commission-admin.js
 
-Added in All Charge:
-- Separate charge per service/action
-- Availability dropdown per row:
-  Available
-  Unavailable
-  Coming Soon
-- Save All Changes updates only changed values
-- Existing working modules are untouched
+Final behavior:
+- Commission User ONLY Admin creates from Commission Panel > Users.
+- Existing normal users are never shown/selected/converted.
+- Existing User dropdown removed.
+- Admin can Create / Edit / Update / Active-Inactive / Delete Commission User data.
+- New Commission User Firebase Authentication login is created by Admin.
+- Public Register stays normal-user only.
+- Commission Panel shows only isCommissionUser=true accounts.
+- Latest Commission Services behavior preserved:
+  Current Service Charge read-only
+  Set Commission / Update / Delete
+  Fixed ₹ / Percentage %
+  Active / Inactive
+  Final charge preview
+- Delete Commission User removes Firestore profile + commission rates + ledger.
+- On Spark/free setup, Firebase Authentication login must still be deleted manually in Firebase Console if permanent login removal is required.
+- No other working modules changed.
