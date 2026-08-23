@@ -82,8 +82,57 @@ function profileValueByKey(p,key){return p?.[key]??p?.extraProfile?.[key]??''}
 function inferProfileKey(field){if(field?.profileKey)return field.profileKey;const t=String(field?.label||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');if(/full name|applicant name|name of applicant/.test(t))return'fullName';if(/email/.test(t))return'email';if(/mobile|phone/.test(t))return'mobile';if(/date of birth|dob/.test(t))return'dob';if(/gender|sex/.test(t))return'gender';if(/pin code|pincode|postal/.test(t))return'pinCode';if(/village|city/.test(t))return'villageCity';if(/taluka|tehsil/.test(t))return'taluka';if(/district/.test(t))return'district';if(/state/.test(t))return'state';if(/address/.test(t))return'address';return''}
 function profileAutofill(field,p=currentProfile){const key=inferProfileKey(field);return key?profileValueByKey(p,key):''}
 
+
+let deferredCommissionInstallPrompt=null;
+
+function isStandaloneApp(){
+ return window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator.standalone === true;
+}
+function syncCommissionInstallButton(){
+ const btn=document.getElementById('commissionInstallAppBtn');
+ if(!btn)return;
+ const installed=isStandaloneApp();
+ btn.hidden=installed || !commissionProfileActive(currentProfile);
+ btn.disabled=!installed && !deferredCommissionInstallPrompt;
+ btn.title=installed?'App already installed':(deferredCommissionInstallPrompt?'Install Commission Partner App':'Install option browser ready hone par active hoga');
+}
+function ensureCommissionPwaAssets(){
+ if(!commissionProfileActive(currentProfile))return;
+ if(!document.querySelector('link[data-commission-manifest]')){
+  const link=document.createElement('link');
+  link.rel='manifest';link.href='commission-manifest.webmanifest';link.dataset.commissionManifest='1';
+  document.head.appendChild(link);
+ }
+ if(!document.querySelector('meta[name="theme-color"][data-commission-theme]')){
+  const meta=document.createElement('meta');meta.name='theme-color';meta.content='#172554';meta.dataset.commissionTheme='1';document.head.appendChild(meta);
+ }
+ if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./commission-sw.js',{scope:'./'}).catch(e=>console.warn('Commission app service worker:',e.message));
+ }
+}
+async function installCommissionApp(){
+ if(isStandaloneApp()){syncCommissionInstallButton();return}
+ if(!deferredCommissionInstallPrompt){
+  alert('Install option abhi browser me ready nahi hai. Chrome menu me “Add to Home screen / Install app” bhi use kar sakte hain.');
+  return;
+ }
+ deferredCommissionInstallPrompt.prompt();
+ const choice=await deferredCommissionInstallPrompt.userChoice;
+ if(choice?.outcome==='accepted')deferredCommissionInstallPrompt=null;
+ syncCommissionInstallButton();
+}
+window.addEventListener('beforeinstallprompt',e=>{
+ e.preventDefault();
+ deferredCommissionInstallPrompt=e;
+ syncCommissionInstallButton();
+});
+window.addEventListener('appinstalled',()=>{
+ deferredCommissionInstallPrompt=null;
+ syncCommissionInstallButton();
+});
+
 function nav(){const el=$('navAuth');if(!el)return;if(currentUser){const home=commissionProfileActive(currentProfile)?'commission.html':'account.html';el.innerHTML=`<a href="services.html">Services</a><a href="track.html">Track</a><a href="${home}">My Account</a><button onclick="Portal.logout()">Logout</button>`}else el.innerHTML=''}
-onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;commissionRateCache={uid:'',rows:[],loaded:false};nav();if(u){currentPortalCms=await portalCms();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
+onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;commissionRateCache={uid:'',rows:[],loaded:false};nav();if(u){currentPortalCms=await portalCms();if(commissionProfileActive(currentProfile))ensureCommissionPwaAssets();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
 async function register(data){const mobile=String(data.mobile||'').replace(/\D/g,'');if(mobile.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');if(!data.fullName?.trim())throw new Error('Full Name required.');if((data.password||'').length<6)throw new Error('Password must be at least 6 characters.');if(data.password!==data.confirmPassword)throw new Error('Password and Confirm Password do not match.');try{const c=await createUserWithEmailAndPassword(auth,alias(mobile),data.password);await setDoc(doc(db,'users',c.user.uid),{fullName:data.fullName.trim(),email:(data.email||'').trim(),mobile,status:'Active',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});return c.user}catch(err){throw friendlyAuthError(err,'register')}}
 async function login(mobile,password){const m=String(mobile||'').replace(/\D/g,'');if(m.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');try{const c=await signInWithEmailAndPassword(auth,alias(m),password);const p=await profile(c.user.uid);if(!p){await signOut(auth);throw new Error('Account not found. Please register first.')}if(p?.status==='Disabled'){await signOut(auth);throw new Error('Account disabled. Contact support.')}const isCommission=commissionProfileActive(p);return {user:c.user,profile:p,isCommissionUser:isCommission,destination:isCommission?'commission.html':'account.html'}}catch(err){if(err?.message==='Account not found. Please register first.'||err?.message==='Account disabled. Contact support.')throw err;throw friendlyAuthError(err,'login')}}
 async function logout(){await signOut(auth);location.href='index.html'}
@@ -247,8 +296,11 @@ function memberChrome(profileData,cms={}){
  const avatar=photo?`<img class="member-pro-avatar member-pro-avatar-img" src="${esc(photo)}" alt="Profile">`:`<span class="member-pro-avatar">${esc(memberInitials(name))}</span>`;
  const root=document.createElement('div');root.id='memberProChrome';
  const portalHome=isCommission?'commission.html':'account.html';
- root.innerHTML=`<aside class="member-pro-sidebar"><a class="member-pro-brand" href="${portalHome}"><span class="member-pro-logo">K</span><span class="member-pro-brand-copy"><b>Khobragade Computer Service Centre</b><small>${isCommission?'COMMISSION PARTNER PORTAL':'SECURE USER PORTAL'}</small></span></a><div class="member-pro-nav-label">MY ACCOUNT</div><nav class="member-pro-nav">${navHtml}</nav><div class="member-pro-sidebar-bottom"><button class="member-pro-side-logout" type="button">↪ Logout</button><div class="member-pro-security"><span>🛡️</span><div><b>Secure Account</b><br>Protected application portal</div></div></div></aside><header class="member-pro-header"><div class="member-pro-header-inner"><button class="member-pro-mobile-toggle" type="button" aria-label="Open menu">☰</button><div class="member-pro-page-meta"><small>USER PORTAL</small><strong>${esc(meta.title)}</strong></div><div class="member-pro-head-actions"><a class="member-pro-icon-btn" href="notifications.html" title="Notifications">🔔<span id="memberHeadNotif" class="member-pro-badge" hidden>0</span></a><a class="member-pro-user" href="profile.html">${avatar}<span class="member-pro-user-copy"><b>${esc(name)}</b><small>Member Account</small></span></a></div></div></header>`;
+ root.innerHTML=`<aside class="member-pro-sidebar"><a class="member-pro-brand" href="${portalHome}"><span class="member-pro-logo">K</span><span class="member-pro-brand-copy"><b>Khobragade Computer Service Centre</b><small>${isCommission?'COMMISSION PARTNER PORTAL':'SECURE USER PORTAL'}</small></span></a><div class="member-pro-nav-label">MY ACCOUNT</div><nav class="member-pro-nav">${navHtml}</nav><div class="member-pro-sidebar-bottom"><button class="member-pro-side-logout" type="button">↪ Logout</button><div class="member-pro-security"><span>🛡️</span><div><b>Secure Account</b><br>Protected application portal</div></div></div></aside><header class="member-pro-header"><div class="member-pro-header-inner"><button class="member-pro-mobile-toggle" type="button" aria-label="Open menu">☰</button><div class="member-pro-page-meta"><small>USER PORTAL</small><strong>${esc(meta.title)}</strong></div><div class="member-pro-head-actions">${isCommission?'<button id="commissionInstallAppBtn" class="commission-install-app-btn" type="button" hidden>📱 <span>Install App</span></button>':''}<a class="member-pro-icon-btn" href="notifications.html" title="Notifications">🔔<span id="memberHeadNotif" class="member-pro-badge" hidden>0</span></a><a class="member-pro-user" href="profile.html">${avatar}<span class="member-pro-user-copy"><b>${esc(name)}</b><small>${isCommission?'Commission Partner':'Member Account'}</small></span></a></div></div></header>`;
  document.body.prepend(root);
+ const installBtn=root.querySelector('#commissionInstallAppBtn');
+ installBtn?.addEventListener('click',installCommissionApp);
+ syncCommissionInstallButton();
  const toggle=root.querySelector('.member-pro-mobile-toggle'),closeMenu=()=>document.body.classList.remove('member-menu-open');
  toggle?.addEventListener('click',()=>document.body.classList.toggle('member-menu-open'));
  root.querySelector('.member-pro-side-logout')?.addEventListener('click',logout);
@@ -289,4 +341,20 @@ function bindLivePanels(){
 }
 queueMicrotask(bindLivePanels);
 
-window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+
+async function myCommissionLedger(){
+ if(!auth.currentUser)return[];
+ try{
+  const snap=await getDocs(query(collection(db,'commissionLedger'),where('userId','==',auth.currentUser.uid)));
+  return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt));
+ }catch(e){console.warn('Commission ledger unavailable:',e.message);return[]}
+}
+async function myPaymentScreenshots(){
+ if(!auth.currentUser)return[];
+ try{
+  const snap=await getDocs(query(collection(db,'paymentScreenshots'),where('userId','==',auth.currentUser.uid)));
+  return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt));
+ }catch(e){console.warn('Payment screenshots unavailable:',e.message);return[]}
+}
+
+window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
