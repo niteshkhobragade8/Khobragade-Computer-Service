@@ -1,7 +1,10 @@
-COMMISSION USER SEPARATION + LOGIN FINAL FIX
+COMMISSION FINAL - BULK DIFFERENT SERVICE COMMISSION
 
-Replace only:
+Replace these files in WEBSITE repository:
+
 ROOT:
+- dashboard.html
+- commission-admin.js
 - users-admin.js
 - dashboard.js
 
@@ -9,10 +12,18 @@ PORTAL:
 - portal/index.html
 - portal/assets/portal.js
 
-Result:
-- Normal Users / Customers list excludes Commission Users.
-- Total Users count excludes Commission Users.
+What this adds/fixes:
+- Commission User only Admin creates.
+- Existing normal users are not Commission Users.
+- Normal Users/Customers list excludes Commission Users.
 - Commission User login opens commission.html.
-- Normal User login still opens account.html.
-- Public registration still creates normal users only.
+- Commission Panel > Services shows all existing services/actions.
+- Current Service Charge is read-only.
+- Each service/action can have a DIFFERENT commission amount/type.
+- Example: Service A ₹10, Service B ₹25, Service C 5%, Service D ₹40.
+- Set all different values on one screen, then press ONE button:
+  Save All Commission Changes
+- Only changed rows are written.
+- Individual Set/Update/Delete remains available.
+- Base service charges are never changed by Commission Panel.
 - No other working modules changed.

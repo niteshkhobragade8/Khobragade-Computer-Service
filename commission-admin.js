@@ -136,10 +136,23 @@ $('commissionSaveUser')?.addEventListener('click',saveCommissionUser);
 $('commissionClearUser')?.addEventListener('click',clearUserForm);
 $('commissionUserSearch')?.addEventListener('input',renderUsers);
 $('commissionAppSearch')?.addEventListener('input',renderApps);
+function updateCommissionBulkPending(){
+  const uid=$('commissionServiceUser')?.value||'';
+  if(!uid){setMsg('commissionServiceMessage','Commission User select karein.','info');return}
+  let changed=0;
+  document.querySelectorAll('#commissionServicesTable tr[data-rate-row]').forEach(row=>{
+    const type=row.querySelector('[data-rate-type]')?.value||'fixed';
+    const value=Number(row.querySelector('[data-rate-value]')?.value||0);
+    const active=(row.querySelector('[data-rate-active]')?.value||'true')==='true';
+    if(type!==row.dataset.origType || Math.abs(value-Number(row.dataset.origValue||0))>0.0001 || String(active)!==row.dataset.origActive) changed++;
+  });
+  setMsg('commissionServiceMessage',changed?`${changed} service commission changes Save karna baki hai.`:`Sab service commissions up to date hain.` ,changed?'warning':'success');
+}
+
 $('commissionServiceSearch')?.addEventListener('input',renderServices);
 $('commissionServiceUser')?.addEventListener('change',renderServices);
-$('commissionServicesTable')?.addEventListener('input',e=>{const id=e.target.dataset.rateValue;if(!id)return;const row=e.target.closest('tr'),a=actions.find(x=>x.id===id);const type=row.querySelector('[data-rate-type]').value,val=Number(e.target.value||0);row.querySelector('[data-rate-final]').textContent=money(calcFinal(a.serviceCharge,type,val).final)});
-$('commissionServicesTable')?.addEventListener('change',e=>{if(e.target.dataset.rateType){const id=e.target.dataset.rateType,row=e.target.closest('tr'),a=actions.find(x=>x.id===id),val=Number(row.querySelector('[data-rate-value]').value||0);row.querySelector('[data-rate-final]').textContent=money(calcFinal(a.serviceCharge,e.target.value,val).final)}});
+$('commissionServicesTable')?.addEventListener('input',e=>{const id=e.target.dataset.rateValue;if(!id)return;const row=e.target.closest('tr'),a=actions.find(x=>x.id===id);const type=row.querySelector('[data-rate-type]').value,val=Number(e.target.value||0);row.querySelector('[data-rate-final]').textContent=money(calcFinal(a.serviceCharge,type,val).final);updateCommissionBulkPending()});
+$('commissionServicesTable')?.addEventListener('change',e=>{if(e.target.dataset.rateType){const id=e.target.dataset.rateType,row=e.target.closest('tr'),a=actions.find(x=>x.id===id),val=Number(row.querySelector('[data-rate-value]').value||0);row.querySelector('[data-rate-final]').textContent=money(calcFinal(a.serviceCharge,e.target.value,val).final)}if(e.target.dataset.rateType||e.target.dataset.rateActive)updateCommissionBulkPending()});
 
 async function saveSingleCommissionRate(uid, aid){
   const row=document.querySelector(`#commissionServicesTable tr[data-rate-row="${CSS.escape(aid)}"]`);
@@ -165,7 +178,7 @@ $('commissionSaveRates')?.addEventListener('click',async()=>{
     batch.set(doc(db,'commissionRates',rateId(uid,aid)),{userId:uid,actionId:aid,serviceId:a.serviceId,type,value,active,updatedAt:serverTimestamp()},{merge:true});count++;
   });
   if(!count){setMsg('commissionServiceMessage','Koi commission change nahi hua.','info');return}
-  try{await batch.commit();setMsg('commissionServiceMessage',`✅ ${count} service/action commissions saved. Current Service Charges unchanged.`,'success')}catch(e){setMsg('commissionServiceMessage','❌ '+e.message,'danger')}
+  try{await batch.commit();setMsg('commissionServiceMessage',`✅ ${count} alag-alag service commissions ek saath save ho gaye. Current Service Charges unchanged.`,'success')}catch(e){setMsg('commissionServiceMessage','❌ '+e.message,'danger')}
 });
 
 $('commissionUsersList')?.addEventListener('click',async e=>{
