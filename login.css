@@ -288,3 +288,8 @@ font-size:13px;
 }
 
 }
+
+.login-password-actions{display:flex;justify-content:flex-end;margin:-4px 0 12px}
+.forgot-password-btn{border:0;background:transparent;color:#2563eb;font-weight:800;font-size:13px;cursor:pointer;padding:4px 0}
+.forgot-password-btn:hover{text-decoration:underline}
+.forgot-password-btn:disabled{opacity:.55;cursor:not-allowed}

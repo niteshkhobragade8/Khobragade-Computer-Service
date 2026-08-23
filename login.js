@@ -2,6 +2,7 @@ import { auth, db } from "./firebase-config.js";
 
 import {
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
     onAuthStateChanged,
     signOut
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
@@ -12,6 +13,7 @@ const password = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
 const loginMessage = document.getElementById("loginMessage");
 const togglePassword = document.getElementById("togglePassword");
+const forgotAdminPassword = document.getElementById("forgotAdminPassword");
 
 function showMessage(message, color = "red") {
     loginMessage.innerText = message;
@@ -28,6 +30,29 @@ togglePassword.addEventListener("click", () => {
         togglePassword.innerText = "👁";
     }
 
+});
+
+
+forgotAdminPassword?.addEventListener("click", async () => {
+    const userEmail = email.value.trim();
+    if (!userEmail) {
+        showMessage("Admin Email enter karein, phir Forgot Password dabayein.");
+        email.focus();
+        return;
+    }
+    forgotAdminPassword.disabled = true;
+    try {
+        await sendPasswordResetEmail(auth, userEmail);
+        showMessage("Password reset email sent. Inbox / Spam check karein.", "green");
+    } catch (error) {
+        let msg = "Password reset email send nahi hua.";
+        if (error.code === "auth/invalid-email") msg = "Invalid Admin Email.";
+        else if (error.code === "auth/too-many-requests") msg = "Too many requests. Thodi der baad try karein.";
+        else if (error.code === "auth/network-request-failed") msg = "Internet connection check karein.";
+        showMessage(msg);
+    } finally {
+        forgotAdminPassword.disabled = false;
+    }
 });
 
 loginForm.addEventListener("submit", async (e) => {

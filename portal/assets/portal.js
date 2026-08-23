@@ -132,9 +132,30 @@ window.addEventListener('appinstalled',()=>{
 });
 
 function nav(){const el=$('navAuth');if(!el)return;if(currentUser){const home=commissionProfileActive(currentProfile)?'commission-dashboard.html':'account.html';el.innerHTML=`<a href="services.html">Services</a><a href="track.html">Track</a><a href="${home}">My Account</a><button onclick="Portal.logout()">Logout</button>`}else el.innerHTML=''}
-onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;commissionRateCache={uid:'',rows:[],loaded:false};nav();if(u){currentPortalCms=await portalCms();if(commissionProfileActive(currentProfile))ensureCommissionPwaAssets();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
+
+const PASSWORD_RESET_BACKEND='https://kcsc-payu-backend.onrender.com';
+async function requestPasswordReset(mobile){
+ const m=String(mobile||'').replace(/\D/g,'');
+ if(m.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');
+ const r=await fetch(PASSWORD_RESET_BACKEND+'/password-reset-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mobile:m})});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok)throw new Error(j.error||'Password reset request submit nahi hua.');
+ return j;
+}
+async function changeOwnPassword(newPassword){
+ if(!auth.currentUser)throw new Error('Please login again.');
+ if(String(newPassword||'').length<6)throw new Error('New password must be at least 6 characters.');
+ const token=await auth.currentUser.getIdToken(true);
+ const r=await fetch(PASSWORD_RESET_BACKEND+'/change-own-password',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({newPassword})});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok)throw new Error(j.error||'Password change failed.');
+ currentProfile={...(currentProfile||{}),mustChangePassword:false};
+ return j;
+}
+
+onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;commissionRateCache={uid:'',rows:[],loaded:false};const currentFile=(location.pathname.split('/').pop()||'index.html').toLowerCase();if(u&&currentProfile?.mustChangePassword===true&&currentFile!=='change-password.html'){location.replace('change-password.html');return;}nav();if(u){currentPortalCms=await portalCms();if(commissionProfileActive(currentProfile))ensureCommissionPwaAssets();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}}))}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
 async function register(data){const mobile=String(data.mobile||'').replace(/\D/g,'');if(mobile.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');if(!data.fullName?.trim())throw new Error('Full Name required.');if((data.password||'').length<6)throw new Error('Password must be at least 6 characters.');if(data.password!==data.confirmPassword)throw new Error('Password and Confirm Password do not match.');try{const c=await createUserWithEmailAndPassword(auth,alias(mobile),data.password);await setDoc(doc(db,'users',c.user.uid),{fullName:data.fullName.trim(),email:(data.email||'').trim(),mobile,status:'Active',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});return c.user}catch(err){throw friendlyAuthError(err,'register')}}
-async function login(mobile,password){const m=String(mobile||'').replace(/\D/g,'');if(m.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');try{const c=await signInWithEmailAndPassword(auth,alias(m),password);const p=await profile(c.user.uid);if(!p){await signOut(auth);throw new Error('Account not found. Please register first.')}if(p?.status==='Disabled'){await signOut(auth);throw new Error('Account disabled. Contact support.')}const isCommission=commissionProfileActive(p);return {user:c.user,profile:p,isCommissionUser:isCommission,destination:isCommission?'commission-dashboard.html':'account.html'}}catch(err){if(err?.message==='Account not found. Please register first.'||err?.message==='Account disabled. Contact support.')throw err;throw friendlyAuthError(err,'login')}}
+async function login(mobile,password){const m=String(mobile||'').replace(/\D/g,'');if(m.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');try{const c=await signInWithEmailAndPassword(auth,alias(m),password);const p=await profile(c.user.uid);if(!p){await signOut(auth);throw new Error('Account not found. Please register first.')}if(p?.status==='Disabled'){await signOut(auth);throw new Error('Account disabled. Contact support.')}const isCommission=commissionProfileActive(p);const destination=p?.mustChangePassword===true?'change-password.html':(isCommission?'commission-dashboard.html':'account.html');return {user:c.user,profile:p,isCommissionUser:isCommission,destination}}catch(err){if(err?.message==='Account not found. Please register first.'||err?.message==='Account disabled. Contact support.')throw err;throw friendlyAuthError(err,'login')}}
 async function logout(){await signOut(auth);location.href='index.html'}
 const normServiceName=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ');
 const serviceMasterMap=new Map();
@@ -276,6 +297,7 @@ const memberPages={
  'notifications.html':{title:'Notifications',key:'notifications'},
  'profile.html':{title:'My Profile',key:'profile'},
  'commission.html':{title:'My Commission',key:'commission'},
+ 'change-password.html':{title:'Change Password',key:'profile'},
  'reupload.html':{title:'Upload Documents',key:'applications'}
 };
 function memberInitials(name='User'){return String(name).trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'U'}
@@ -358,4 +380,4 @@ async function myPaymentScreenshots(){
  }catch(e){console.warn('Payment screenshots unavailable:',e.message);return[]}
 }
 
-window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,requestPasswordReset,changeOwnPassword,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};

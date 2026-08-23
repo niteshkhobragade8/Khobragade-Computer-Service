@@ -35,6 +35,7 @@
       <li data-page="commissionpanel"><i class="fa-solid fa-percent"></i><span>Commission Panel</span></li>
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
+      <li data-page="passwordreset"><i class="fa-solid fa-key"></i><span>Password Reset Requests</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
       <li data-page="paymentscreenshots"><i class="fa-solid fa-receipt"></i><span>Payment Screenshots</span></li>
       <li data-page="servicesmanager"><i class="fa-solid fa-layer-group"></i><span>Services</span></li>
@@ -152,7 +153,7 @@
                 <input id="commissionEditUid" type="hidden">
                 <label>Full Name</label><input id="commissionFullName">
                 <div class="form-grid two"><div><label>Mobile</label><input id="commissionMobile" maxlength="10"></div><div><label>Email</label><input id="commissionEmail" type="email"></div></div>
-                <div class="form-grid two"><div><label>Login Password (new user)</label><input id="commissionPassword" type="password" minlength="6"></div><div><label>Commission Code</label><input id="commissionCode" placeholder="AGENT001"></div></div>
+                <div class="form-grid two"><div><label>Login Password (new user)</label><div class="admin-password-wrap"><input id="commissionPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="commissionPassword">👁</button></div></div><div><label>Commission Code</label><input id="commissionCode" placeholder="AGENT001"></div></div>
                 <div class="form-grid three"><div><label>Default Type</label><select id="commissionDefaultType"><option value="fixed">₹ Fixed</option><option value="percent">% Percentage</option></select></div><div><label>Default Commission</label><input id="commissionDefaultValue" type="number" min="0" step="0.01" value="0"></div><div><label>Status</label><select id="commissionUserStatus"><option>Active</option><option>Inactive</option></select></div></div>
                 <div class="form-grid two"><div><label>Start Date</label><input id="commissionStartDate" type="date"></div><div><label>End Date (optional)</label><input id="commissionEndDate" type="date"></div></div>
                 <div class="settings-actions"><button id="commissionSaveUser" class="primary-btn" type="button">Save Commission User</button><button id="commissionClearUser" class="secondary-btn" type="button">Clear</button></div>
@@ -617,6 +618,12 @@
   </div>
 </section>
 
+<section id="passwordresetPage" class="page">
+<div class="page-intro"><div><h2>🔑 Password Reset Requests</h2><p>Normal User aur Commission User ke Forgot Password requests. Verify karke temporary password set karein.</p></div><button id="refreshPasswordRequests" class="secondary-btn" type="button">Refresh</button></div>
+<div class="manager-content"><div class="table-wrap"><table class="admin-table"><thead><tr><th>User</th><th>Mobile</th><th>Account Type</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead><tbody id="passwordResetRequestsTable"><tr><td colspan="6">Loading...</td></tr></tbody></table></div><div id="passwordResetAdminMessage" class="settings-message info">Password reset requests ready.</div></div>
+<dialog id="passwordResetDialog" class="password-reset-dialog"><form method="dialog" class="password-reset-dialog-card"><div class="box-heading"><div><span class="box-kicker">ADMIN VERIFIED RESET</span><h2>Set Temporary Password</h2></div><button value="cancel" class="secondary-btn">✕</button></div><p id="passwordResetSelectedUser" class="field-help"></p><label>Temporary Password</label><div class="admin-password-wrap"><input id="temporaryPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="temporaryPassword">👁</button></div><p class="field-help">User temporary password se login karega aur next login par Change Password compulsory hoga.</p><div class="settings-actions"><button id="confirmTemporaryPassword" type="button" class="primary-btn">Reset Password</button><button value="cancel" class="secondary-btn">Cancel</button></div></form></dialog>
+</section>
+
 <section id="usersPage" class="page">
   <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Sabhi registered users/customers yahan aayenge, profile aur application summary ke saath.</p></div></div>
   <div class="manager-content"><div class="toolbar"><input id="userSearch" type="search" placeholder="🔍 Name / mobile / email"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Applications</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
@@ -790,6 +797,7 @@
 <script type="module" src="data-recovery.js?v=20260823-cachefix2"></script>
 <script type="module" src="applications-admin.js?v=20260823-cachefix2"></script>
 <script type="module" src="users-admin.js?v=20260823-cachefix2"></script>
+<script type="module" src="password-reset-admin.js?v=20260823-passwordreset1"></script>
 <script type="module" src="payments-admin.js?v=20260823-cachefix2"></script>
 <script type="module" src="payment-screenshots-admin.js?v=20260823-cachefix2"></script>
 <script type="module" src="portal-builder.js?v=20260823-cachefix2"></script>
