@@ -74,7 +74,13 @@ function renderMiniList(containerId, items, emptyText) {
 function watchCollectionCount(elementId, collectionName) {
   const unsubscribe = onSnapshot(
     collection(db, collectionName),
-    (snapshot) => setText(elementId, snapshot.size),
+    (snapshot) => {
+      if (collectionName === "users" && elementId === "totalUsers") {
+        setText(elementId, snapshot.docs.filter((item) => item.data()?.isCommissionUser !== true).length);
+        return;
+      }
+      setText(elementId, snapshot.size);
+    },
     (error) => {
       console.error(`${collectionName} count error:`, error);
       setText(elementId, "—");

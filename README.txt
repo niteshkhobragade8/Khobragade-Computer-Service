@@ -1,23 +1,18 @@
-COMMISSION USER ADMIN-ONLY FINAL FIX
+COMMISSION USER SEPARATION + LOGIN FINAL FIX
 
-Replace ONLY these 2 files in WEBSITE repository root:
-1. dashboard.html
-2. commission-admin.js
+Replace only:
+ROOT:
+- users-admin.js
+- dashboard.js
 
-Final behavior:
-- Commission User ONLY Admin creates from Commission Panel > Users.
-- Existing normal users are never shown/selected/converted.
-- Existing User dropdown removed.
-- Admin can Create / Edit / Update / Active-Inactive / Delete Commission User data.
-- New Commission User Firebase Authentication login is created by Admin.
-- Public Register stays normal-user only.
-- Commission Panel shows only isCommissionUser=true accounts.
-- Latest Commission Services behavior preserved:
-  Current Service Charge read-only
-  Set Commission / Update / Delete
-  Fixed ₹ / Percentage %
-  Active / Inactive
-  Final charge preview
-- Delete Commission User removes Firestore profile + commission rates + ledger.
-- On Spark/free setup, Firebase Authentication login must still be deleted manually in Firebase Console if permanent login removal is required.
+PORTAL:
+- portal/index.html
+- portal/assets/portal.js
+
+Result:
+- Normal Users / Customers list excludes Commission Users.
+- Total Users count excludes Commission Users.
+- Commission User login opens commission.html.
+- Normal User login still opens account.html.
+- Public registration still creates normal users only.
 - No other working modules changed.
