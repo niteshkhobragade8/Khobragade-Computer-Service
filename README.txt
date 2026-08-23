@@ -1,16 +1,14 @@
-ALL CHARGE - ONLY NEW FEATURE
+ALL CHARGE + AVAILABILITY FINAL FIX
 
-Replace/add these files in WEBSITE repo root:
-1. dashboard.html (replace)
-2. admin-editor.js (replace)
-3. menu.js (replace)
-4. all-charge.js (NEW file)
+Replace only these 2 files in website repository root:
+1. dashboard.html
+2. all-charge.js
 
-What is added:
-- Admin sidebar: Service Charges ke niche "All Charge"
-- All services/actions + current charge in one table
-- Har row ka charge alag-alag edit
-- Search service/action
-- Save All Changes only updates changed charges
-- Existing Service Charges page is preserved
-- Existing PayU / Forms / Users / Visitor / Payment Screenshot logic is not changed by this patch
+Added in All Charge:
+- Separate charge per service/action
+- Availability dropdown per row:
+  Available
+  Unavailable
+  Coming Soon
+- Save All Changes updates only changed values
+- Existing working modules are untouched
