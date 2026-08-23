@@ -308,7 +308,7 @@ function memberChrome(profileData,cms={}){
  root.querySelectorAll('.member-pro-nav a').forEach(a=>a.addEventListener('click',closeMenu));
  document.body.addEventListener('click',e=>{if(document.body.classList.contains('member-menu-open')&&!root.querySelector('.member-pro-sidebar').contains(e.target)&&!toggle.contains(e.target))closeMenu()});
  myApplications().then(rows=>{const n=rows.filter(x=>['Need Documents','Rejected','Processing','Completed','Payment Failed'].includes(x.status)||x.paymentStatus==='Failed').length;for(const id of ['memberNotifCount','memberHeadNotif']){const el=document.getElementById(id);if(el){el.dataset.appCount=String(n);const adminN=Number(el.dataset.adminCount||0),totalN=n+adminN;el.textContent=totalN>99?'99+':String(totalN);el.hidden=totalN===0}}}).catch(()=>{});
-}
+document.documentElement.classList.remove('member-shell-wait');document.documentElement.classList.add('member-shell-ready');}
 
 
 function liveTime(v){if(!v)return 0;if(typeof v.toDate==='function')return v.toDate().getTime();if(v.seconds)return v.seconds*1000;return new Date(v).getTime()||0}

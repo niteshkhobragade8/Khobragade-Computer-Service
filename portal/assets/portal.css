@@ -216,3 +216,7 @@ body.member-dashboard:not(.member-pro-layout)>header.nav,
 body.member-dashboard:not(.member-pro-layout) .account-menu.member-menu{
   visibility:hidden!important;
 }
+
+/* ONE-SHOT SHELL READY */
+html.member-shell-wait body{visibility:hidden!important}
+html.member-shell-ready body{visibility:visible!important}

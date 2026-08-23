@@ -533,3 +533,7 @@ body.admin-editor-themed .dashboard-info-box,body.admin-editor-themed .analytics
 /* Cache/UI flicker guard: hide static sidebar menu until saved Admin CMS menu is applied. */
 body:not(.admin-menu-ready) #sidebarMenu{visibility:hidden}
 body.admin-menu-ready #sidebarMenu{visibility:visible}
+
+/* ADMIN ONE-SHOT READY */
+html.admin-shell-wait body{visibility:hidden!important}
+html.admin-shell-ready body{visibility:visible!important}

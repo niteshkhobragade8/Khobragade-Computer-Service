@@ -1,4 +1,4 @@
-<!doctype html><html lang="hi"><head><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Commission - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260823-cachefix2"><style>
+<!doctype html><html class="member-shell-wait" lang="hi"><head><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Commission - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260823-shellready2"><style>
 .commission-user-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.commission-user-summary article{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px}.commission-user-summary small{display:block;color:#64748b}.commission-user-summary b{font-size:24px}.commission-benefit{color:#0f766e}.commission-breakdown{display:flex;gap:8px;flex-wrap:wrap}.commission-breakdown span{background:#f8fafc;border:1px solid #e5e7eb;border-radius:999px;padding:5px 9px;font-size:12px}@media(max-width:700px){.commission-user-summary{grid-template-columns:repeat(2,1fr)}}
 </style></head><body class="member-dashboard">
 <div class="topbar"><div class="container">Khobragade Computer Service Centre · Commission User Portal</div></div>
@@ -10,7 +10,7 @@
 <div class="recent-panel"><div class="section-head dashboard-section-head"><div><span class="dashboard-kicker">HISTORY</span><h2>Commission Applications</h2><p>Aapke discounted service applications.</p></div></div><div id="commissionHistory"></div></div>
 </section></div></main>
 <script type="module">
-import './assets/portal.js?v=20260823-cachefix2';
+import './assets/portal.js?v=20260823-shellready2';
 document.addEventListener('portal-auth',async e=>{
  if(!e.detail.user){location.href='index.html?auth=login';return}
  const p=e.detail.profile||{};if(!Portal.commissionProfileActive(p)){location.href='account.html';return}
