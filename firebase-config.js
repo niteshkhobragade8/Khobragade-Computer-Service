@@ -4,7 +4,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-aut
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDV28ojXFrj7IZ99Hvd72ak3FNghDS0Og0",
   authDomain: "project-5969685501815639790.firebaseapp.com",
   projectId: "project-5969685501815639790",

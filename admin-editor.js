@@ -3,6 +3,7 @@ import { doc, onSnapshot, setDoc, collection, addDoc, serverTimestamp } from 'ht
 const $=id=>document.getElementById(id); const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const FIXED=[
  ['dashboard','Dashboard','fa-solid fa-house',10],
+ ['commissionpanel','Commission Panel','fa-solid fa-percent',15],
  ['applications','Applications','fa-solid fa-file-circle-check',20],
  ['users','Users / Customers','fa-solid fa-users',30],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],

@@ -31,7 +31,7 @@ applyTitle.textContent=`${svc.name} — ${act.name}`;
 applyDesc.textContent=resubmitId
   ? `Rejected application ko correct karke resubmit karein.${existingApp?.rejectionReason?` Reason: ${existingApp.rejectionReason}`:''}`
   : (act.description||'');
-priceBox.innerHTML=`<b>Service / Assistance Charge:</b> ${Portal.money(act.serviceCharge||0)}${Number(act.officialFee||0)>0?`<br><b>Official Fee:</b> ${Portal.money(act.officialFee)} (separate)`:''}${resubmitId?`<br><b>Payment:</b> ${Portal.esc(existingApp.paymentStatus||'Pending')} — dobara payment tabhi lagega jab status Paid na ho.`:''}`;
+priceBox.innerHTML=`<b>${act.commissionApplied?'Final Service Charge':'Service / Assistance Charge'}:</b> ${Portal.money(act.serviceCharge||0)}${act.commissionApplied?`<br><b>Original Charge:</b> ${Portal.money(act.originalServiceCharge||0)}<br><b>Commission Benefit:</b> ${Portal.money(act.commissionAmount||0)}`:''}${Number(act.officialFee||0)>0?`<br><b>Official Fee:</b> ${Portal.money(act.officialFee)} (separate)`:''}${resubmitId?`<br><b>Payment:</b> ${Portal.esc(existingApp.paymentStatus||'Pending')} — dobara payment tabhi lagega jab status Paid na ho.`:''}`;
 
 function fieldValue(f){
   if(existingApp?.formData && Object.prototype.hasOwnProperty.call(existingApp.formData,f.label)) return existingApp.formData[f.label] ?? '';

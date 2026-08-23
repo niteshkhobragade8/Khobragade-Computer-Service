@@ -8,7 +8,7 @@ if(!Portal.user){location.href='index.html?auth=login';throw new Error('login')}
 const id=new URLSearchParams(location.search).get('id');
 try{
  const app=await Portal.getApplication(id);payLoading.hidden=true;
- payDetails.innerHTML=`<div class="notice"><b>Application ID:</b> ${Portal.esc(app.applicationId||app.id)}<br><b>Service:</b> ${Portal.esc(app.serviceName||'')}<br><b>Action:</b> ${Portal.esc(app.actionName||'')}<br><b>Service / Assistance Charge:</b> ${Portal.money(app.amount||0)}<br><b>Payment Status:</b> ${Portal.esc(app.paymentStatus||'Pending')}</div>`;
+ payDetails.innerHTML=`<div class="notice"><b>Application ID:</b> ${Portal.esc(app.applicationId||app.id)}<br><b>Service:</b> ${Portal.esc(app.serviceName||'')}<br><b>Action:</b> ${Portal.esc(app.actionName||'')}<br>${Number(app.commissionAmount||0)>0?`<b>Original Charge:</b> ${Portal.money(app.originalAmount||app.amount||0)}<br><b>Commission Benefit:</b> ${Portal.money(app.commissionAmount||0)}<br>`:''}<b>${Number(app.commissionAmount||0)>0?'Final Payable':'Service / Assistance Charge'}:</b> ${Portal.money(app.amount||0)}<br><b>Payment Status:</b> ${Portal.esc(app.paymentStatus||'Pending')}</div>`;
  if(app.paymentStatus==='Paid'){payMsg.textContent='Payment already completed.';payMsg.className='msg show ok'}
  else if(Number(app.amount||0)<=0){payMsg.textContent='No payment required for this application.';payMsg.className='msg show ok'}
  else payNowBtn.hidden=false;

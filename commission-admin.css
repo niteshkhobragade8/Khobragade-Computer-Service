@@ -1,0 +1,15 @@
+
+.commission-shell{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px}
+.commission-side{background:var(--panel,#fff);border:1px solid var(--line,#e5e7eb);border-radius:16px;padding:10px;height:max-content;position:sticky;top:92px}
+.commission-side button{width:100%;text-align:left;border:0;background:transparent;padding:11px 12px;border-radius:10px;font-weight:800;cursor:pointer;color:var(--black,#111827)}
+.commission-side button.active{background:#172554;color:#fff}
+.commission-main{min-width:0}
+.commission-tab{display:none}
+.commission-tab.active{display:block}
+.commission-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.commission-summary article{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px}
+.commission-summary small{display:block;color:#64748b;font-weight:700;margin-bottom:6px}.commission-summary b{font-size:22px}
+.commission-rate-input{width:105px}.commission-rate-type{width:120px}.commission-active-select{width:100px}
+.commission-final{font-weight:900;color:#0f766e}.commission-user-card .card-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:900px){.commission-shell{grid-template-columns:1fr}.commission-side{position:static;display:flex;overflow:auto}.commission-side button{min-width:max-content}.commission-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.commission-summary{grid-template-columns:1fr}}

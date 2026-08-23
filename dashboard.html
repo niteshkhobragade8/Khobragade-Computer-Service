@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Khobragade CSC Admin Dashboard</title>
   <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="commission-admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" href="favicon.ico">
 <link rel="manifest" href="admin-manifest.webmanifest">
@@ -28,6 +29,7 @@
 
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
+      <li data-page="commissionpanel"><i class="fa-solid fa-percent"></i><span>Commission Panel</span></li>
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
@@ -111,6 +113,75 @@
           <div class="box-heading"><div><span class="box-kicker">WEBSITE</span><h2>Website CMS</h2></div><button class="text-button" type="button" onclick="openDashboardPage('userportalcms')">Manage</button></div>
           <div class="mini-feed"><div class="mini-feed-item"><div class="mini-feed-dot"></div><div><strong>New Website / User Portal</strong><p>Profile fields, auto-fill, user menu aur website portal controls yahan manage karein.</p></div></div></div>
         </article>
+      </div>
+    </section>
+
+
+
+    <section id="commissionpanelPage" class="page">
+      <div class="page-intro"><div><h2>💸 Commission Panel</h2><p>Selected commission users ke applications, payments, screenshots aur service-wise discounted charges manage karein.</p></div></div>
+      <div class="commission-shell">
+        <aside class="commission-side">
+          <button class="active" data-commission-tab="applications">Applications</button>
+          <button data-commission-tab="users">Users</button>
+          <button data-commission-tab="payments">Payments / PayU</button>
+          <button data-commission-tab="screenshots">Payment Screenshots</button>
+          <button data-commission-tab="services">Services</button>
+          <button data-commission-tab="ledger">Commission Ledger</button>
+        </aside>
+        <div class="commission-main">
+          <div class="commission-summary">
+            <article><small>Commission Users</small><b id="commissionUsersCount">0</b></article>
+            <article><small>Commission Applications</small><b id="commissionAppsCount">0</b></article>
+            <article><small>Total Commission Benefit</small><b id="commissionBenefitTotal">₹0</b></article>
+            <article><small>Paid Commission Orders</small><b id="commissionPaidCount">0</b></article>
+          </div>
+
+          <section class="commission-tab active" id="commissionApplicationsTab">
+            <div class="box-heading"><div><span class="box-kicker">APPLICATIONS</span><h2>Commission User Applications</h2></div><input id="commissionAppSearch" placeholder="Search application / user"></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead><tbody id="commissionApplicationsTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionUsersTab">
+            <div class="manager-layout">
+              <div class="manager-form">
+                <div class="form-title"><span>👤</span><div><h3>Add / Edit Commission User</h3><p>New account create karein ya existing user ko commission user banayein.</p></div></div>
+                <input id="commissionEditUid" type="hidden">
+                <label>Existing User (optional)</label><select id="commissionExistingUser"><option value="">New Commission User</option></select>
+                <label>Full Name</label><input id="commissionFullName">
+                <div class="form-grid two"><div><label>Mobile</label><input id="commissionMobile" maxlength="10"></div><div><label>Email</label><input id="commissionEmail" type="email"></div></div>
+                <div class="form-grid two"><div><label>Temporary Password (new only)</label><input id="commissionPassword" type="password" minlength="6"></div><div><label>Commission Code</label><input id="commissionCode" placeholder="AGENT001"></div></div>
+                <div class="form-grid three"><div><label>Default Type</label><select id="commissionDefaultType"><option value="fixed">₹ Fixed</option><option value="percent">% Percentage</option></select></div><div><label>Default Commission</label><input id="commissionDefaultValue" type="number" min="0" step="0.01" value="0"></div><div><label>Status</label><select id="commissionUserStatus"><option>Active</option><option>Inactive</option></select></div></div>
+                <div class="form-grid two"><div><label>Start Date</label><input id="commissionStartDate" type="date"></div><div><label>End Date (optional)</label><input id="commissionEndDate" type="date"></div></div>
+                <div class="settings-actions"><button id="commissionSaveUser" class="primary-btn" type="button">Save Commission User</button><button id="commissionClearUser" class="secondary-btn" type="button">Clear</button></div>
+                <div id="commissionUserMessage" class="settings-message info">Ready.</div>
+              </div>
+              <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USERS</span><h2>All Commission Users</h2></div><input id="commissionUserSearch" placeholder="Search user"></div><div id="commissionUsersList" class="content-grid"></div></div>
+            </div>
+          </section>
+
+          <section class="commission-tab" id="commissionPaymentsTab">
+            <div class="box-heading"><div><span class="box-kicker">PAYMENTS</span><h2>Commission Payments / PayU</h2></div></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Transaction</th><th>User</th><th>Application</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="commissionPaymentsTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionScreenshotsTab">
+            <div class="box-heading"><div><span class="box-kicker">PAYMENT PROOFS</span><h2>Commission User Payment Screenshots</h2></div></div>
+            <div id="commissionScreenshotsList" class="content-grid"></div>
+          </section>
+
+          <section class="commission-tab" id="commissionServicesTab">
+            <div class="box-heading"><div><span class="box-kicker">SERVICE COMMISSION</span><h2>Service-wise Commission</h2><p class="field-help">Current Charge → Commission → Final User Charge. Har service/action ka commission alag set karein.</p></div></div>
+            <div class="toolbar"><select id="commissionServiceUser"><option value="">Select Commission User</option></select><input id="commissionServiceSearch" placeholder="Search service / action"><button id="commissionSaveRates" class="primary-btn" type="button">Save All Changes</button></div>
+            <div id="commissionServiceMessage" class="settings-message info">Commission user select karein.</div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Current Charge</th><th>Type</th><th>Commission</th><th>Final Charge</th><th>Active</th><th>Action</th></tr></thead><tbody id="commissionServicesTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionLedgerTab">
+            <div class="box-heading"><div><span class="box-kicker">HISTORY</span><h2>Commission Ledger</h2></div></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Action</th></tr></thead><tbody id="commissionLedgerTable"></tbody></table></div>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -694,6 +765,7 @@
 
 <script type="module" src="firebase-config.js"></script>
 <script type="module" src="dashboard.js"></script>
+<script type="module" src="commission-admin.js?v=20260823-commission1"></script>
 <script type="module" src="updates.js"></script>
 <script type="module" src="services.js?v=20260821-final24r3"></script>
 <script type="module" src="categories.js"></script>
