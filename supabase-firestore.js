@@ -52,7 +52,10 @@ function serialize(v){
 
 async function firebaseToken(){
   try {
-    const user = globalThis.__KCSC_FIREBASE_AUTH__?.currentUser;
+    const auth = globalThis.__KCSC_FIREBASE_AUTH__;
+    if (!auth) return '';
+    if (typeof auth.authStateReady === 'function') await auth.authStateReady();
+    const user = auth.currentUser;
     return user ? await user.getIdToken() : '';
   } catch (_) { return ''; }
 }
@@ -167,6 +170,7 @@ async function getDoc(ref){
 
 function serverTimestamp(){ return new CompatTimestamp(new Date()); }
 function increment(amount=1){ return {__kcscIncrement:Number(amount)}; }
+function arrayUnion(...items){ return {__kcscArrayUnion:items}; }
 
 async function resolveIncrements(collectionName,id,data){
   const hasInc = JSON.stringify(data).includes('__kcscIncrement');
@@ -179,6 +183,16 @@ async function resolveIncrements(collectionName,id,data){
       let cur=old;
       for(const k of keyPath) cur=cur?.[k];
       return Number(cur||0)+Number(v.__kcscIncrement||0);
+    }
+    if(v&&typeof v==='object'&&Array.isArray(v.__kcscArrayUnion)){
+      let cur=old;
+      for(const k of keyPath) cur=cur?.[k];
+      const base=Array.isArray(cur)?[...cur]:[];
+      for(const item of v.__kcscArrayUnion){
+        const serialized=serialize(item);
+        if(!base.some(x=>JSON.stringify(serialize(x))===JSON.stringify(serialized))) base.push(serialized);
+      }
+      return base;
     }
     if(v&&typeof v==='object'){
       const o={}; for(const [k,x] of Object.entries(v)) o[k]=walk(x,[...keyPath,k]); return o;
@@ -262,5 +276,5 @@ function writeBatch(){
 export {
   CompatTimestamp, collection, doc, getFirestore, getDoc, getDocs, setDoc, addDoc,
   updateDoc, deleteDoc, onSnapshot, query, where, orderBy, limit,
-  serverTimestamp, increment, writeBatch
+  serverTimestamp, increment, arrayUnion, writeBatch
 };

@@ -42,7 +42,7 @@
 import { DATA_API_URL } from '../supabase-config.js';
 import {auth,db} from './assets/portal-firebase.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
-import {addDoc,collection,serverTimestamp,getDoc,doc} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {addDoc,collection,serverTimestamp,getDoc,doc} from '../supabase-firestore.js';
 const q=new URLSearchParams(location.search);
 const applicationId=q.get('applicationId')||''; const txnid=q.get('txnid')||''; const amount=q.get('amount')||'';
 document.getElementById('applicationId').textContent=applicationId||'—'; document.getElementById('txnid').textContent=txnid||'—'; document.getElementById('paymentProofAmount').value=amount;
