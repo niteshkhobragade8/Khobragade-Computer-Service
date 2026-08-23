@@ -2,15 +2,15 @@
 .commission-user-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.commission-user-summary article{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px}.commission-user-summary small{display:block;color:#64748b}.commission-user-summary b{font-size:24px}.commission-benefit{color:#0f766e}.commission-breakdown{display:flex;gap:8px;flex-wrap:wrap}.commission-breakdown span{background:#f8fafc;border:1px solid #e5e7eb;border-radius:999px;padding:5px 9px;font-size:12px}@media(max-width:700px){.commission-user-summary{grid-template-columns:repeat(2,1fr)}}
 </style></head><body class="member-dashboard">
 <div class="topbar"><div class="container">Khobragade Computer Service Centre · Commission User Portal</div></div>
-<header class="nav"><div class="container nav-inner"><a class="brand" href="account.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="member-head-tools"><span id="navAuth"></span></div></div></header>
+<header class="nav"><div class="container nav-inner"><a class="brand" href="commission.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="member-head-tools"><span id="navAuth"></span></div></div></header>
 <main class="section member-main"><div class="container account-grid"><aside class="account-menu member-menu"></aside><section class="dashboard-content">
-<div class="dashboard-welcome"><div><span class="dashboard-kicker">COMMISSION ACCOUNT</span><h1>My Commission</h1><p>Original service charge, commission benefit aur final payable amount yahan dekhein.</p></div><a class="btn btn-primary" href="services.html">Apply Service</a></div>
+<div class="dashboard-welcome"><div><span class="dashboard-kicker">COMMISSION ACCOUNT</span><h1>Welcome Commission Partner</h1><p>My Commission · Original service charge, commission benefit aur final payable amount yahan dekhein.</p></div><a class="btn btn-primary" href="services.html">Apply Service</a></div>
 <div id="commissionProfileNotice" class="notice"></div>
 <div class="commission-user-summary"><article><small>Total Applications</small><b id="cTotal">0</b></article><article><small>Total Commission Benefit</small><b id="cBenefit" class="commission-benefit">₹0</b></article><article><small>Total Paid</small><b id="cPaid">0</b></article><article><small>Commission Code</small><b id="cCode">—</b></article></div>
 <div class="recent-panel"><div class="section-head dashboard-section-head"><div><span class="dashboard-kicker">HISTORY</span><h2>Commission Applications</h2><p>Aapke discounted service applications.</p></div></div><div id="commissionHistory"></div></div>
 </section></div></main>
 <script type="module">
-import './assets/portal.js?v=20260823-commission1';
+import './assets/portal.js?v=20260823-commission-dashboard1';
 document.addEventListener('portal-auth',async e=>{
  if(!e.detail.user){location.href='index.html?auth=login';return}
  const p=e.detail.profile||{};if(!Portal.commissionProfileActive(p)){location.href='account.html';return}

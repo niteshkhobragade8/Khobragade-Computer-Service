@@ -1,29 +1,16 @@
-COMMISSION FINAL - BULK DIFFERENT SERVICE COMMISSION
+COMMISSION DASHBOARD ROUTING FINAL FIX
 
-Replace these files in WEBSITE repository:
+Replace ONLY these 3 files:
 
-ROOT:
-- dashboard.html
-- commission-admin.js
-- users-admin.js
-- dashboard.js
+portal/account.html
+portal/commission.html
+portal/assets/portal.js
 
-PORTAL:
-- portal/index.html
-- portal/assets/portal.js
-
-What this adds/fixes:
-- Commission User only Admin creates.
-- Existing normal users are not Commission Users.
-- Normal Users/Customers list excludes Commission Users.
-- Commission User login opens commission.html.
-- Commission Panel > Services shows all existing services/actions.
-- Current Service Charge is read-only.
-- Each service/action can have a DIFFERENT commission amount/type.
-- Example: Service A ₹10, Service B ₹25, Service C 5%, Service D ₹40.
-- Set all different values on one screen, then press ONE button:
-  Save All Commission Changes
-- Only changed rows are written.
-- Individual Set/Update/Delete remains available.
-- Base service charges are never changed by Commission Panel.
-- No other working modules changed.
+Final behavior:
+- Commission User login -> commission.html
+- Top heading -> Welcome Commission Partner
+- Commission User Dashboard click -> commission.html
+- Commission User brand/My Account -> commission.html
+- If Commission User manually opens account.html -> automatically redirected to commission.html
+- Normal User login/dashboard -> account.html exactly as before
+- No PayU, Services, Charges, Forms, Admin, Applications or other working modules changed.
