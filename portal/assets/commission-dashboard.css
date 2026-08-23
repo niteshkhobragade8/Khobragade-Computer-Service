@@ -34,3 +34,16 @@
 @media(max-width:1050px){.commission-shortcuts{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:800px){.commission-stats-grid{grid-template-columns:repeat(2,1fr)}.commission-two-col{grid-template-columns:1fr}.commission-hero{align-items:flex-start}.commission-primary-action{display:none}}
 @media(max-width:600px){.commission-hero{padding:20px}.commission-hero h1{font-size:25px}.commission-stats-grid{grid-template-columns:1fr 1fr}.commission-shortcuts{grid-template-columns:1fr 1fr}.commission-install-app-btn span{display:none}.commission-install-app-btn{padding:8px 9px}.commission-row-main{display:block}.commission-row-main>b{display:block;margin-top:8px}}
+
+
+/* Commission dashboard shell: shared member sidebar + top header */
+.commission-dashboard-page .member-pro-shell{min-height:100vh}
+.commission-dashboard-page .member-pro-sidebar{display:flex!important}
+.commission-dashboard-page .member-pro-main{min-width:0}
+.commission-dashboard-page .member-pro-head-actions{display:flex;align-items:center;gap:8px}
+.commission-dashboard-page #commissionInstallAppBtn{order:1}
+.commission-dashboard-page .member-pro-icon-btn{order:2}
+.commission-dashboard-page .member-pro-user{order:3}
+@media(max-width:900px){
+ .commission-dashboard-page .member-pro-sidebar{display:flex!important}
+}
