@@ -107,7 +107,7 @@ function ensureCommissionPwaAssets(){
   const meta=document.createElement('meta');meta.name='theme-color';meta.content='#172554';meta.dataset.commissionTheme='1';document.head.appendChild(meta);
  }
  if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./commission-sw.js',{scope:'./'}).catch(e=>console.warn('Commission app service worker:',e.message));
+  navigator.serviceWorker.register('./commission-sw.js',{scope:'./',updateViaCache:'none'}).then(reg=>reg.update().catch(()=>{})).catch(e=>console.warn('Commission app service worker:',e.message));
  }
 }
 async function installCommissionApp(){

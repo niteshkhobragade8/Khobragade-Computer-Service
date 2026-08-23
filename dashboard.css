@@ -528,3 +528,8 @@ body.admin-editor-themed .dashboard-info-box,body.admin-editor-themed .analytics
   .dashboard-stat-card.visitor-card{padding-right:68px}
   .visitor-reset-mini{right:8px;padding:5px 7px;font-size:10px}
 }
+
+
+/* Cache/UI flicker guard: hide static sidebar menu until saved Admin CMS menu is applied. */
+body:not(.admin-menu-ready) #sidebarMenu{visibility:hidden}
+body.admin-menu-ready #sidebarMenu{visibility:visible}

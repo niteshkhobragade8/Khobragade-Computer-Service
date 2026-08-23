@@ -208,3 +208,11 @@
   .login-home-only .hero-computer .base{width:165px;height:14px}
   .login-home-only .hero-computer:before{filter:blur(16px)}
 }
+
+
+/* Prevent old static portal header/sidebar flashing before professional member chrome loads. */
+body.member-dashboard:not(.member-pro-layout)>.topbar,
+body.member-dashboard:not(.member-pro-layout)>header.nav,
+body.member-dashboard:not(.member-pro-layout) .account-menu.member-menu{
+  visibility:hidden!important;
+}
