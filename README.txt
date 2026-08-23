@@ -1,18 +1,16 @@
-VISITOR COUNTER + RESET FIX ONLY
+ALL CHARGE - ONLY NEW FEATURE
 
-Replace these 6 files in the WEBSITE repository root:
-1. index.js
-2. public-common.js
-3. public-page.js
-4. dashboard.html
-5. analytics.js
-6. dashboard.css
+Replace/add these files in WEBSITE repo root:
+1. dashboard.html (replace)
+2. admin-editor.js (replace)
+3. menu.js (replace)
+4. all-charge.js (NEW file)
 
-Fixes:
-- Visitor session flag is saved ONLY after Firestore write succeeds.
-- Firestore visitor writes use one atomic batch, avoiding partial/double increments.
-- Visitor daily date uses India time (IST).
-- Small Reset button added to the right side of Total Visitors card.
-- Reset sets totalVisitors to 0 and clears old visitorDaily history.
-- Existing Analytics-page Reset button still works.
-- No PayU, Forms, Users, Services, or other working modules changed.
+What is added:
+- Admin sidebar: Service Charges ke niche "All Charge"
+- All services/actions + current charge in one table
+- Har row ka charge alag-alag edit
+- Search service/action
+- Save All Changes only updates changed charges
+- Existing Service Charges page is preserved
+- Existing PayU / Forms / Users / Visitor / Payment Screenshot logic is not changed by this patch

@@ -11,6 +11,7 @@ const FIXED=[
  ['actionsmanager','Actions','fa-solid fa-bolt',60],
  ['formsmanager','Forms','fa-solid fa-file-pen',70],
  ['servicecharges','Service Charges','fa-solid fa-indian-rupee-sign',80],
+ ['allcharge','All Charge','fa-solid fa-list-check',85],
  ['userportalcms','Website CMS','fa-solid fa-window-maximize',90],
  ['youtube','YouTube','fa-brands fa-youtube',100],
  ['notifications','Notifications','fa-solid fa-bell',110],

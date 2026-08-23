@@ -3,7 +3,7 @@ const titleMap = {
   categories: "Service Categories", images: "Images Manager", documents: "Documents Manager", youtube: "YouTube Manager",
   notifications: "Notifications", analytics: "Analytics", seo: "SEO Manager", pages: "Website Pages",
   sitebuilder: "Full Website CMS", dynamicpages: "Page & Menu Builder", recyclebin: "Recycle Bin",
-  themes: "Theme Manager", userportalcms: "Website CMS", settings: "Portal Settings", servicesmanager: "Services", actionsmanager: "Actions", formsmanager: "Forms", servicecharges: "Service Charges"
+  themes: "Theme Manager", userportalcms: "Website CMS", settings: "Portal Settings", servicesmanager: "Services", actionsmanager: "Actions", formsmanager: "Forms", servicecharges: "Service Charges", allcharge: "All Charge"
 };
 function openPage(pageName) {
   document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));

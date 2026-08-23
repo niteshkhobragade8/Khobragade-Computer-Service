@@ -36,6 +36,7 @@
       <li data-page="actionsmanager"><i class="fa-solid fa-bolt"></i><span>Actions</span></li>
       <li data-page="formsmanager"><i class="fa-solid fa-file-pen"></i><span>Forms</span></li>
       <li data-page="servicecharges"><i class="fa-solid fa-indian-rupee-sign"></i><span>Service Charges</span></li>
+      <li data-page="allcharge"><i class="fa-solid fa-list-check"></i><span>All Charge</span></li>
       <li data-page="userportalcms"><i class="fa-solid fa-window-maximize"></i><span>Website CMS</span></li>
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
@@ -613,6 +614,24 @@
   <div id="servicechargesMount"></div>
 </section>
 
+<section id="allchargePage" class="page">
+  <div class="page-intro"><div><h2>💵 All Charge</h2><p>Sabhi services/actions ke current charges ek hi screen par alag-alag set karein.</p></div></div>
+  <div class="manager-content">
+    <div class="box-heading"><div><span class="box-kicker">ALL SERVICE CHARGES</span><h2>Service-wise Charge Editor</h2><p class="field-help">Har row ka charge alag set karein. Save All Changes sirf badle hue charges ko update karega.</p></div></div>
+    <div class="toolbar">
+      <input id="allChargeSearch" type="search" placeholder="Search service / action">
+      <button id="allChargeSaveAll" class="primary-btn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save All Changes</button>
+    </div>
+    <div id="allChargeMessage" class="settings-message info">Charges loading...</div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>#</th><th>Service Name</th><th>Action</th><th>Current Charge ₹</th><th>New Charge ₹</th></tr></thead>
+        <tbody id="allChargeTable"><tr><td colspan="5">Loading charges...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <section id="userportalcmsPage" class="page">
  <div class="page-intro"><div><h2>🌐 Website CMS</h2><p>New website / user portal ke profile fields, auto-fill aur user menu ko code chhede bina manage karein.</p></div></div>
  <div class="manager-layout">
@@ -702,6 +721,7 @@
 <script type="module" src="portal-builder.js?v=20260822-existing-forms-fix"></script>
 <script type="module" src="user-portal-cms.js?v=20260821-v30"></script>
 <script type="module" src="admin-v30.js?v=20260821-v30"></script>
+<script type="module" src="all-charge.js?v=20260823-allcharge1"></script>
 <script src="admin-pwa.js?v=20260821-v30"></script>
 </body>
 </html>
