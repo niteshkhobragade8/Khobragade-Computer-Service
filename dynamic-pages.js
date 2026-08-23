@@ -1,5 +1,5 @@
 import { db } from './firebase-config.js';
-import { collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import { collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from './supabase-firestore.js';
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const slugify=v=>String(v||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');

@@ -8,7 +8,7 @@ import {
   serverTimestamp,
   onSnapshot,
   writeBatch
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from './supabase-firestore.js';
 
 const CLOUD_NAME = "jkia38fa";
 const UPLOAD_PRESET = "khobragade_csc";

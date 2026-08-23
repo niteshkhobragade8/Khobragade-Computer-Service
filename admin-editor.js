@@ -1,5 +1,5 @@
 import { db } from './firebase-config.js';
-import { doc, onSnapshot, setDoc, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import { doc, onSnapshot, setDoc, collection, addDoc, serverTimestamp } from './supabase-firestore.js';
 const $=id=>document.getElementById(id); const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const FIXED=[
  ['dashboard','Dashboard','fa-solid fa-house',10],

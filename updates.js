@@ -9,7 +9,7 @@ import {
   updateDoc,
   serverTimestamp,
   onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from './supabase-firestore.js';
 
 const $ = (id) => document.getElementById(id);
 const saveBtn = $("saveUpdate");

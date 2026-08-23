@@ -6,7 +6,7 @@ import {
   increment,
   serverTimestamp,
   writeBatch
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from './supabase-firestore.js';
 
 function normalizePhone(value) {
   return String(value || "").replace(/\D/g, "");

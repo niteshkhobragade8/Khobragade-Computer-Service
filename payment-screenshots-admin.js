@@ -1,5 +1,5 @@
 import { db } from './firebase-config.js';
-import { collection, doc, getDocs, onSnapshot, orderBy, query, where, limit, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import { collection, doc, getDocs, onSnapshot, orderBy, query, where, limit, updateDoc, serverTimestamp } from './supabase-firestore.js';
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));

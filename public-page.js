@@ -1,6 +1,6 @@
 
 import {db} from './firebase-config.js';
-import {collection,onSnapshot,doc,setDoc,increment,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {collection,onSnapshot,doc,setDoc,increment,serverTimestamp,writeBatch} from './supabase-firestore.js';
 import {DEFAULT_SERVICES,DEFAULT_SCHEMES,DEFAULT_DIVYANG,DOCUMENT_CHECKLISTS} from './catalog-data.js';
 const $=id=>document.getElementById(id), esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
 const norm=v=>String(v||'').replace(/\s+/g,' ').trim().toLowerCase(), digits=v=>String(v||'').replace(/\D/g,'');

@@ -5,7 +5,7 @@ import { getAuth, createUserWithEmailAndPassword, signOut } from 'https://www.gs
 import {
   collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot,
   query, where, serverTimestamp, writeBatch
-} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+} from './supabase-firestore.js';
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));

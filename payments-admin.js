@@ -1,5 +1,5 @@
 import {db} from './firebase-config.js';
-import {collection,onSnapshot,doc,getDoc,setDoc,serverTimestamp,deleteDoc} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {collection,onSnapshot,doc,getDoc,setDoc,serverTimestamp,deleteDoc} from './supabase-firestore.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const date=v=>{try{return (v?.toDate?v.toDate():new Date(v)).toLocaleString('en-IN')}catch{return'—'}};
 let rows=[];
