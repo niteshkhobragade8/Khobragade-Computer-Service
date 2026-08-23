@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { doc, getDoc, setDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { doc, getDoc, setDoc, increment, serverTimestamp } from './supabase-firestore.js';
 
 function pageKey(){const f=(location.pathname.split('/').pop()||'index.html').toLowerCase();return ({'index.html':'home','services.html':'services','maharashtra.html':'yojana','divyang.html':'divyang','documents.html':'documents','contact.html':'contact'})[f]||document.body.dataset.page||document.body.dataset.catalog||'home'}
 function ensureMeta(name,property=false){let q=property?`meta[property="${name}"]`:`meta[name="${name}"]`;let e=document.head.querySelector(q);if(!e){e=document.createElement('meta');e.setAttribute(property?'property':'name',name);document.head.appendChild(e)}return e}

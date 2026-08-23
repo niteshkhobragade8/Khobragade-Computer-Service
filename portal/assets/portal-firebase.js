@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
 import { getAuth, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import { getFirestore } from '../../supabase-firestore.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDV28ojXFrj7IZ99Hvd72ak3FNghDS0Og0',
@@ -14,5 +14,6 @@ const firebaseConfig = {
 
 const portalApp = getApps().find(a => a.name === 'kcscUserPortal') || initializeApp(firebaseConfig, 'kcscUserPortal');
 export const auth = getAuth(portalApp);
+globalThis.__KCSC_FIREBASE_AUTH__ = auth;
 export const db = getFirestore(portalApp);
 try { await setPersistence(auth, browserLocalPersistence); } catch (e) { console.warn('Portal auth persistence:', e); }

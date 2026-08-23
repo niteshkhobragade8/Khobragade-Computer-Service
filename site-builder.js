@@ -1,7 +1,7 @@
 import { moveToTrash } from './trash.js';
 
 import {db} from './firebase-config.js';
-import {doc,getDoc,setDoc,collection,addDoc,updateDoc,deleteDoc,onSnapshot,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {doc,getDoc,setDoc,collection,addDoc,updateDoc,deleteDoc,onSnapshot,serverTimestamp} from './supabase-firestore.js';
 import {DEFAULT_SERVICES,DEFAULT_SCHEMES,DEFAULT_DIVYANG,DOCUMENT_CHECKLISTS} from './catalog-data.js';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 let sections=[],editId=null,services=[],checklists=[];

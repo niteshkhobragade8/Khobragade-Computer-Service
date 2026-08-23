@@ -1,5 +1,5 @@
 import {moveToTrash} from './trash.js';
-import {db} from './firebase-config.js';import {collection,addDoc,doc,updateDoc,onSnapshot,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {db} from './firebase-config.js';import {collection,addDoc,doc,updateDoc,onSnapshot,serverTimestamp} from './supabase-firestore.js';
 const $=id=>document.getElementById(id),e=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');let rows=[],id=null;
 function clear(){id=null;$('checklistTitle').value='';$('checklistCategory').value='';$('checklistItems').value='';$('checklistStatus').value='Published';$('saveChecklist').textContent='Save Checklist'}
 function render(){const b=$('checklistsList');if(!b)return;b.innerHTML=rows.length?rows.map(x=>`<article class="content-card"><span class="status-badge ${(x.status||'Published').toLowerCase()}">${e(x.status||'Published')}</span><h3>${e(x.title)}</h3><small>${e(x.category||'')}</small><p>${(x.items||[]).map(i=>'• '+e(i)).join('<br>')}</p><div class="card-actions"><button class="action-btn edit" data-a="e" data-id="${x.id}">✏ Edit</button><button class="action-btn delete" data-a="d" data-id="${x.id}">🗑 Delete</button></div></article>`).join(''):'<div class="empty-state">No editable checklists.</div>'}

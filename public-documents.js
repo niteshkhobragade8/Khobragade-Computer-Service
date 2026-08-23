@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { collection, onSnapshot } from './supabase-firestore.js';
 
 const container = document.getElementById("liveDocuments");
 function escapeHTML(value) {

@@ -1,5 +1,5 @@
 import {db} from './firebase-config.js';
-import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,setDoc,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,setDoc,serverTimestamp,writeBatch} from './supabase-firestore.js';
 import {MASTER_SERVICES,MASTER_CATALOG_VERSION,actionId,fieldsFor} from './master-catalog.js?v=20260821-final24r3';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));

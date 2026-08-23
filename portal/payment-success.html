@@ -39,6 +39,7 @@
 </section>
 </main>
 <script type="module">
+import { DATA_API_URL } from '../supabase-config.js';
 import {auth,db} from './assets/portal-firebase.js';
 import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
 import {addDoc,collection,serverTimestamp,getDoc,doc} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
@@ -50,7 +51,7 @@ function showProof(message){note.textContent=message||'Payment received, lekin s
 (async()=>{
  if(!txnid){showProof('Transaction ID missing. Payment proof upload karein.');return;}
  if(q.get('payment')==='proof'){showProof('Payment received, lekin Firebase status update fail hua. Screenshot upload karein.');return;}
- try{const r=await fetch('https://kcsc-payu-backend.onrender.com/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});const j=await r.json().catch(()=>({}));if(r.ok&&j.paymentStatus==='Paid'){note.textContent='Payment verified ✅ Portal status Paid update ho gaya.';}else if(r.ok){showProof('Payment verification complete, lekin status '+(j.paymentStatus||'Pending')+' hai. Screenshot upload kar sakte hain.');}else{showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}}catch(e){showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}
+ try{const r=await fetch(DATA_API_URL+'/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});const j=await r.json().catch(()=>({}));if(r.ok&&j.paymentStatus==='Paid'){note.textContent='Payment verified ✅ Portal status Paid update ho gaya.';}else if(r.ok){showProof('Payment verification complete, lekin status '+(j.paymentStatus||'Pending')+' hai. Screenshot upload kar sakte hain.');}else{showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}}catch(e){showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}
 })();
 let signedUser=null; onAuthStateChanged(auth,u=>signedUser=u);
 document.getElementById('uploadPaymentProof').addEventListener('click',async()=>{
