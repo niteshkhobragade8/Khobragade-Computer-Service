@@ -13,9 +13,8 @@ button{padding:12px 18px;border:0;border-radius:10px;background:#2563eb;color:wh
 <pre id="log">Ready.</pre>
 </div>
 <script type="module">
-import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
 import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
-import { auth, firebaseConfig } from './firebase-config.js';
+import { auth } from './firebase-config.js';
 import { DATA_API_URL } from './supabase-config.js';
 const API=DATA_API_URL;
 const collections=["services", "serviceActions", "formFields", "users", "applications", "payments", "paymentScreenshots", "commissionRates", "commissionLedger", "publicApplicationStatus", "settings", "categories", "updates", "notifications", "images", "documents", "documentChecklists", "youtube", "themes", "pageContent", "siteSections", "dynamicPages", "dynamicSections", "menuItems", "recycleBin", "seoSettings", "customButtons"];
@@ -32,8 +31,9 @@ run.onclick=async()=>{
  try{
   if(!auth.currentUser)throw new Error('Admin login required. Pehle Admin Dashboard login karein.');
   const token=await auth.currentUser.getIdToken(true);
-  const oldApp=getApps().find(a=>a.name==='kcscMigrationOld')||initializeApp(firebaseConfig,'kcscMigrationOld');
-  const oldDb=getFirestore(oldApp);
+  // Use the SAME default Firebase app/session as Admin login.
+  // This preserves Admin authentication for protected collections like users/applications/payments.
+  const oldDb=getFirestore();
   let total=0;
   for(const name of collections){
     log('Reading '+name+' ...');

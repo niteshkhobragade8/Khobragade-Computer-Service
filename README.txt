@@ -1,17 +1,17 @@
-PASSWORD RESET FULL FLOW FINAL
+MIGRATION PAGE AUTH FIX ONLY
 
-WEBSITE:
-- Admin Login: Show/Hide existing + Forgot Password email reset.
-- Normal/Commission Login & Register: Show/Hide password.
-- Forgot Password by mobile -> Admin Dashboard request.
-- Admin Dashboard > Password Reset Requests.
-- Admin sets Temporary Password.
-- Next user login is forced to Change Password.
-- New permanent password is saved only in Firebase Authentication.
-- Commission User Create password field gets Show/Hide too.
+Replace ONLY:
+supabase-migrate.html
 
-BACKEND:
-Replace kcc-payu-backend/server.js and redeploy Render.
-Existing PayU + commission backend logic is preserved.
+Why:
+- Firestore Rules are already correct.
+- Old migration page created a second Firebase app without Admin Auth session.
+- Public collections copied, but protected users collection failed.
+- Fixed page uses the existing authenticated default Firebase app.
 
-No Cloud Functions/Blaze required.
+After replacing:
+1. Admin login karo.
+2. Open /supabase-migrate.html
+3. Start Safe Migration again.
+4. Already copied documents will safely upsert/overwrite same IDs in Supabase.
+5. Firebase original data remains untouched.
