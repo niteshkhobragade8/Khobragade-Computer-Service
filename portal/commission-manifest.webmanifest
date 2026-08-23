@@ -1,7 +1,7 @@
 {
   "name": "KCSC Commission Partner",
   "short_name": "KCSC Partner",
-  "start_url": "./commission.html",
+  "start_url": "./commission-dashboard.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f8fafc",

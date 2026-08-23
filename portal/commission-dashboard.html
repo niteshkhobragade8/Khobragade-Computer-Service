@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Commission Dashboard - KCSC</title>
+<meta name="theme-color" content="#172554">
+<link rel="manifest" href="commission-manifest.webmanifest">
+<link rel="stylesheet" href="assets/portal.css?v=20260821-final24r3">
+<link rel="stylesheet" href="assets/commission-dashboard.css?v=20260823-cdash1">
+</head>
+<body class="member-dashboard commission-dashboard-page">
+<div class="topbar"><div class="container">Khobragade Computer Service Centre · Commission Partner Portal</div></div>
+<header class="nav"><div class="container nav-inner"><a class="brand" href="commission-dashboard.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Commission Partner Portal</small></span></a><div class="member-head-tools"><span id="navAuth"></span></div></div></header>
+
+<main class="section member-main">
+<div class="container account-grid">
+<aside class="account-menu member-menu"></aside>
+<section class="dashboard-content">
+
+<section class="commission-hero">
+  <div>
+    <span class="commission-eyebrow">COMMISSION PARTNER DASHBOARD</span>
+    <h1>Welcome Commission Partner</h1>
+    <p>Applications, payments, screenshot proofs, service commission aur ledger ek hi professional dashboard me manage karein.</p>
+    <div class="commission-partner-meta">
+      <span id="cPartnerCode">Code: —</span>
+      <span id="cPartnerStatus">Status: —</span>
+      <span id="cDefaultRate">Default Commission: —</span>
+    </div>
+  </div>
+  <a class="commission-primary-action" href="services.html">+ New Application</a>
+</section>
+
+<section class="commission-stats-grid">
+  <a class="commission-stat-card tone-blue" href="my-applications.html"><span>📄</span><div><small>Total Applications</small><strong id="cTotal">0</strong></div></a>
+  <a class="commission-stat-card tone-green" href="payments.html"><span>✅</span><div><small>Paid Payments</small><strong id="cPaid">0</strong></div></a>
+  <article class="commission-stat-card tone-pink"><span>💸</span><div><small>Total Commission Benefit</small><strong id="cBenefit">₹0</strong></div></article>
+  <article class="commission-stat-card tone-orange"><span>⏳</span><div><small>Pending Payments</small><strong id="cPending">0</strong></div></article>
+  <article class="commission-stat-card tone-violet"><span>🧾</span><div><small>Payment Screenshots</small><strong id="cScreenshots">0</strong></div></article>
+  <article class="commission-stat-card tone-dark"><span>📚</span><div><small>Ledger Entries</small><strong id="cLedgerCount">0</strong></div></article>
+</section>
+
+<section class="commission-shortcuts">
+  <a href="my-applications.html"><span>📋</span><b>Applications</b><small>All commission applications</small></a>
+  <a href="payments.html"><span>💳</span><b>Payments / PayU</b><small>Payment status & transaction</small></a>
+  <a href="#paymentScreenshotsPanel"><span>🧾</span><b>Payment Screenshots</b><small>Uploaded payment proofs</small></a>
+  <a href="services.html"><span>🧰</span><b>Services & Commission</b><small>Commission ke baad final charge</small></a>
+  <a href="#commissionLedgerPanel"><span>📒</span><b>Commission Ledger</b><small>Benefit & payment history</small></a>
+</section>
+
+<section class="commission-panel">
+  <div class="commission-panel-head">
+    <div><span>RECENT ACTIVITY</span><h2>Commission Applications</h2><p>Original charge → Commission → Final payable amount.</p></div>
+    <a href="my-applications.html">View All →</a>
+  </div>
+  <div id="commissionHistory" class="commission-list"></div>
+</section>
+
+<section class="commission-two-col">
+  <section class="commission-panel" id="paymentScreenshotsPanel">
+    <div class="commission-panel-head"><div><span>PAYMENT PROOF</span><h2>Payment Screenshots</h2><p>Aapke latest submitted payment proofs.</p></div></div>
+    <div id="commissionScreenshots" class="commission-list compact"></div>
+  </section>
+
+  <section class="commission-panel" id="commissionLedgerPanel">
+    <div class="commission-panel-head"><div><span>COMMISSION HISTORY</span><h2>Commission Ledger</h2><p>Application-wise commission records.</p></div></div>
+    <div id="commissionLedger" class="commission-list compact"></div>
+  </section>
+</section>
+
+</section>
+</div>
+</main>
+
+<footer class="member-footer"><div class="container">© 2026 Khobragade Computer Service Centre · Commission Partner Portal</div></footer>
+
+<script type="module">
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+window.scrollTo(0,0);
+import './assets/portal.js?v=20260823-commission-pro1';
+
+const safeDate=v=>{
+  try{
+    const d=v?.toDate?v.toDate():v?.seconds?new Date(v.seconds*1000):new Date(v);
+    return Number.isNaN(d.getTime())?'—':d.toLocaleDateString('en-IN');
+  }catch(_){return '—'}
+};
+
+document.addEventListener('portal-auth',async e=>{
+  if(!e.detail.user){location.href='index.html?auth=login';return}
+  const p=e.detail.profile||{};
+  if(!Portal.commissionProfileActive(p)){location.replace('account.html');return}
+
+  cPartnerCode.textContent='Code: '+(p.commissionCode||'—');
+  cPartnerStatus.textContent='Status: '+(p.commissionStatus||'Active');
+  cDefaultRate.textContent='Default Commission: '+(p.defaultCommissionType==='percent'?(Number(p.defaultCommissionValue||0)+'%'):Portal.money(p.defaultCommissionValue||0));
+
+  const [apps,ledger,screenshots]=await Promise.all([
+    Portal.myApplications(),
+    Portal.myCommissionLedger(),
+    Portal.myPaymentScreenshots()
+  ]);
+
+  const commissionApps=apps.filter(x=>x.isCommissionApplication||Number(x.commissionAmount||0)>0);
+  const paid=commissionApps.filter(x=>x.paymentStatus==='Paid');
+  const pending=commissionApps.filter(x=>x.paymentStatus!=='Paid');
+
+  cTotal.textContent=commissionApps.length;
+  cPaid.textContent=paid.length;
+  cPending.textContent=pending.length;
+  cBenefit.textContent=Portal.money(commissionApps.reduce((s,x)=>s+Number(x.commissionAmount||0),0));
+  cScreenshots.textContent=screenshots.length;
+  cLedgerCount.textContent=ledger.length;
+
+  commissionHistory.innerHTML=commissionApps.slice(0,8).map(x=>`
+    <article class="commission-row">
+      <div class="commission-row-main">
+        <div><span class="status ${Portal.statusClass(x.paymentStatus||'Pending')}">${Portal.esc(x.paymentStatus||'Pending')}</span>
+        <h3>${Portal.esc(x.serviceName||'Service')}</h3>
+        <p>${Portal.esc(x.actionName||'')}</p></div>
+        <b>${Portal.esc(x.applicationId||x.id||'')}</b>
+      </div>
+      <div class="commission-money-flow">
+        <span>Original <b>${Portal.money(x.originalAmount??x.amount)}</b></span>
+        <span class="benefit">Commission <b>- ${Portal.money(x.commissionAmount||0)}</b></span>
+        <span class="final">Final <b>${Portal.money(x.amount||0)}</b></span>
+      </div>
+    </article>`).join('') || '<div class="commission-empty">Abhi koi commission application nahi hai.</div>';
+
+  commissionScreenshots.innerHTML=screenshots.slice(0,6).map(x=>`
+    <article class="commission-mini-row">
+      <div><b>${Portal.esc(x.applicationId||'Payment Proof')}</b><small>${safeDate(x.createdAt||x.updatedAt)}</small></div>
+      <span class="status ${Portal.statusClass(x.status||'Pending')}">${Portal.esc(x.status||'Pending')}</span>
+    </article>`).join('') || '<div class="commission-empty">Koi payment screenshot submit nahi hua.</div>';
+
+  commissionLedger.innerHTML=ledger.slice(0,8).map(x=>`
+    <article class="commission-mini-row">
+      <div><b>${Portal.esc(x.serviceName||'Service')}</b><small>${Portal.esc(x.applicationId||x.id||'')} · ${safeDate(x.createdAt||x.updatedAt)}</small></div>
+      <div class="commission-ledger-amount"><strong>${Portal.money(x.commissionAmount||0)}</strong><small>${Portal.esc(x.paymentStatus||x.status||'Pending')}</small></div>
+    </article>`).join('') || '<div class="commission-empty">Commission ledger abhi empty hai.</div>';
+},{once:true});
+</script>
+</body>
+</html>
