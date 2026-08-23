@@ -1,6 +1,6 @@
 
 import {db} from './firebase-config.js';
-import {collection,onSnapshot,doc,setDoc,increment,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {collection,onSnapshot,doc,setDoc,increment,serverTimestamp,writeBatch} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 import {DEFAULT_SERVICES,DEFAULT_SCHEMES,DEFAULT_DIVYANG,DOCUMENT_CHECKLISTS} from './catalog-data.js';
 const $=id=>document.getElementById(id), esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
 const norm=v=>String(v||'').replace(/\s+/g,' ').trim().toLowerCase(), digits=v=>String(v||'').replace(/\D/g,'');
@@ -130,7 +130,7 @@ onSnapshot(collection(db,'documents'),s=>{docs=s.docs.map(d=>({id:d.id,...d.data
 onSnapshot(collection(db,'notifications'),s=>{notifications=s.docs.map(d=>({id:d.id,...d.data()}));renderNotice();renderPopup()});
 onSnapshot(collection(db,'updates'),s=>{updates=s.docs.map(d=>({id:d.id,...d.data()}));renderUpdates()});
 onSnapshot(collection(db,'pageContent'),s=>{pages={};s.docs.forEach(d=>pages[d.id]=d.data());applyPage()});
-if(!sessionStorage.getItem('khobragadeVisitorCounted')){sessionStorage.setItem('khobragadeVisitorCounted','yes');let today=new Date().toISOString().slice(0,10);Promise.all([setDoc(doc(db,'analytics','site'),{totalVisitors:increment(1),updatedAt:serverTimestamp()},{merge:true}),setDoc(doc(db,'visitorDaily',today),{date:today,count:increment(1),updatedAt:serverTimestamp()},{merge:true})]).catch(()=>{})}
+if(!sessionStorage.getItem('khobragadeVisitorCounted')){let today=new Date(Date.now()+330*60*1000).toISOString().slice(0,10);const visitorBatch=writeBatch(db);visitorBatch.set(doc(db,'analytics','site'),{totalVisitors:increment(1),updatedAt:serverTimestamp()},{merge:true});visitorBatch.set(doc(db,'visitorDaily',today),{date:today,count:increment(1),updatedAt:serverTimestamp()},{merge:true});visitorBatch.commit().then(()=>sessionStorage.setItem('khobragadeVisitorCounted','yes')).catch(()=>{})}
 
 onSnapshot(collection(db,'youtube'),s=>{youtubeVideos=s.docs.map(d=>({id:d.id,...d.data()}));renderYoutube()});
 

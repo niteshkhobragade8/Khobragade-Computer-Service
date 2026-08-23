@@ -81,7 +81,11 @@
         <article class="dashboard-stat-card green"><span class="stat-icon">👤</span><div><p>Total Users / Customers</p><h2 id="totalUsers">0</h2></div></article>
         <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
         <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
-        <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div></article>
+        <article class="dashboard-stat-card red visitor-card">
+          <span class="stat-icon">👥</span>
+          <div class="visitor-card-main"><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div>
+          <button id="overviewResetVisitorsBtn" class="visitor-reset-mini" type="button" title="Reset Total Visitors to 0"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </article>
       </div>
 
       <div class="dashboard-cards portal-stats">
