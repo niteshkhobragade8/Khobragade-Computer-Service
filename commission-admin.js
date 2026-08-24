@@ -9,7 +9,24 @@ import {
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-const date=v=>{try{return (v?.toDate?v.toDate():new Date(v)).toLocaleString('en-IN')}catch{return'—'}};
+const date=v=>{
+ try{
+  if(!v)return'—';
+  let d;
+  if(v?.toDate)d=v.toDate();
+  else if(typeof v==='string'||typeof v==='number')d=new Date(v);
+  else if(typeof v==='object'){
+   const sec=Number(v.seconds??v._seconds??v.sec??NaN);
+   const nano=Number(v.nanoseconds??v._nanoseconds??0);
+   if(Number.isFinite(sec))d=new Date(sec*1000+Math.floor(nano/1e6));
+   else if(v.iso)d=new Date(v.iso);
+   else if(v.date)d=new Date(v.date);
+   else if(v.value)d=new Date(v.value);
+  }
+  if(!d||Number.isNaN(d.getTime()))return'—';
+  return d.toLocaleString('en-IN');
+ }catch{return'—'}
+};
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 
 let initialized=false, unsubs=[];
