@@ -32,16 +32,12 @@
 <section class="commission-stats-grid">
   <a class="commission-stat-card tone-blue" href="my-applications.html"><span>📄</span><div><small>Total Applications</small><strong id="cTotal">0</strong></div></a>
   <a class="commission-stat-card tone-green" href="payments.html"><span>✅</span><div><small>Paid Payments</small><strong id="cPaid">0</strong></div></a>
-  <article class="commission-stat-card tone-pink"><span>💸</span><div><small>Total Commission Benefit</small><strong id="cBenefit">₹0</strong></div></article>
-  <article class="commission-stat-card tone-orange"><span>⏳</span><div><small>Pending Payments</small><strong id="cPending">0</strong></div></article>
-  <article class="commission-stat-card tone-violet"><span>🧾</span><div><small>Payment Screenshots</small><strong id="cScreenshots">0</strong></div></article>
   <article class="commission-stat-card tone-dark"><span>📚</span><div><small>Ledger Entries</small><strong id="cLedgerCount">0</strong></div></article>
 </section>
 
 <section class="commission-shortcuts">
   <a href="my-applications.html"><span>📋</span><b>Applications</b><small>All commission applications</small></a>
   <a href="payments.html"><span>💳</span><b>Payments / PayU</b><small>Payment status & transaction</small></a>
-  <a href="#paymentScreenshotsPanel"><span>🧾</span><b>Payment Screenshots</b><small>Uploaded payment proofs</small></a>
   <a href="services.html"><span>🧰</span><b>Services & Commission</b><small>Commission ke baad final charge</small></a>
   <a href="#commissionLedgerPanel"><span>📒</span><b>Commission Ledger</b><small>Benefit & payment history</small></a>
 </section>
@@ -55,10 +51,6 @@
 </section>
 
 <section class="commission-two-col">
-  <section class="commission-panel" id="paymentScreenshotsPanel">
-    <div class="commission-panel-head"><div><span>PAYMENT PROOF</span><h2>Payment Screenshots</h2><p>Aapke latest submitted payment proofs.</p></div></div>
-    <div id="commissionScreenshots" class="commission-list compact"></div>
-  </section>
 
   <section class="commission-panel" id="commissionLedgerPanel">
     <div class="commission-panel-head"><div><span>COMMISSION HISTORY</span><h2>Commission Ledger</h2><p>Application-wise commission records.</p></div></div>
@@ -93,11 +85,9 @@ document.addEventListener('portal-auth',async e=>{
   cPartnerStatus.textContent='Status: '+(p.commissionStatus||'Active');
   cDefaultRate.textContent='Default Commission: '+(p.defaultCommissionType==='percent'?(Number(p.defaultCommissionValue||0)+'%'):Portal.money(p.defaultCommissionValue||0));
 
-  const [apps,ledger,screenshots]=await Promise.all([
+  const [apps,ledger]=await Promise.all([
     Portal.myApplications(),
-    Portal.myCommissionLedger(),
-    Portal.myPaymentScreenshots()
-  ]);
+    Portal.myCommissionLedger(),]);
 
   const commissionApps=apps.filter(x=>x.isCommissionApplication||Number(x.commissionAmount||0)>0);
   const paid=commissionApps.filter(x=>x.paymentStatus==='Paid');
@@ -107,7 +97,6 @@ document.addEventListener('portal-auth',async e=>{
   cPaid.textContent=paid.length;
   cPending.textContent=pending.length;
   cBenefit.textContent=Portal.money(commissionApps.reduce((s,x)=>s+Number(x.commissionAmount||0),0));
-  cScreenshots.textContent=screenshots.length;
   cLedgerCount.textContent=ledger.length;
 
   commissionHistory.innerHTML=commissionApps.slice(0,8).map(x=>`

@@ -9,11 +9,28 @@ import {
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-const date=v=>{try{return (v?.toDate?v.toDate():new Date(v)).toLocaleString('en-IN')}catch{return'—'}};
+const date=v=>{
+ try{
+  if(!v)return'—';
+  let d;
+  if(v?.toDate)d=v.toDate();
+  else if(typeof v==='string'||typeof v==='number')d=new Date(v);
+  else if(typeof v==='object'){
+   const sec=Number(v.seconds??v._seconds??v.sec??NaN);
+   const nano=Number(v.nanoseconds??v._nanoseconds??0);
+   if(Number.isFinite(sec))d=new Date(sec*1000+Math.floor(nano/1e6));
+   else if(v.iso)d=new Date(v.iso);
+   else if(v.date)d=new Date(v.date);
+   else if(v.value)d=new Date(v.value);
+  }
+  if(!d||Number.isNaN(d.getTime()))return'—';
+  return d.toLocaleString('en-IN');
+ }catch{return'—'}
+};
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 
 let initialized=false, unsubs=[];
-let users=[], apps=[], payments=[], screenshots=[], services=[], actions=[], rates=[], ledger=[];
+let users=[], apps=[], payments=[], services=[], actions=[], rates=[], ledger=[];
 let editingUid='';
 
 function activeCommissionUsers(){return users.filter(u=>u.isCommissionUser===true)}
@@ -83,10 +100,6 @@ function renderPayments(){
   const rows=payments.filter(p=>{const a=appByDocOrId(p.applicationDocId||p.applicationId);return a&&(a.isCommissionApplication||isCommissionUserId(a.userId))});
   $('commissionPaymentsTable').innerHTML=rows.map(p=>{const a=appByDocOrId(p.applicationDocId||p.applicationId);return `<tr><td>${esc(p.paymentId||p.id)}</td><td>${esc(a?.userName||userName(a?.userId))}</td><td>${esc(p.applicationId||a?.applicationId||'')}</td><td>${money(p.amount||a?.amount||0)}</td><td><select data-cp-status="${p.id}"><option ${p.status==='Pending'?'selected':''}>Pending</option><option ${p.status==='Paid'?'selected':''}>Paid</option><option ${p.status==='Failed'?'selected':''}>Failed</option><option ${p.status==='Review'?'selected':''}>Review</option></select></td><td>${date(p.createdAt||p.updatedAt)}</td><td><button class="action-btn edit" data-cp-save="${p.id}">Update</button><button class="action-btn delete" data-cp-delete="${p.id}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="7">No commission payments.</td></tr>';
 }
-function renderScreenshots(){
-  const rows=screenshots.filter(s=>{const a=appByDocOrId(s.applicationDocId||s.applicationId);return isCommissionUserId(s.userId)||a?.isCommissionApplication||isCommissionUserId(a?.userId)});
-  $('commissionScreenshotsList').innerHTML=rows.map(s=>`<article class="content-card"><span class="status-badge ${(s.reviewStatus||s.status)==='Approved'?'published':'draft'}">${esc(s.reviewStatus||s.status||'Pending')}</span><h3>${esc(s.applicationId||'Payment Proof')}</h3><p>${esc(userName(s.userId))} · ${money(s.amount||0)}</p>${s.screenshotUrl?`<a class="action-btn edit" target="_blank" rel="noopener" href="${esc(s.screenshotUrl)}">Preview Screenshot</a>`:''}<div class="card-actions"><select data-cs-status="${s.id}"><option ${s.status==='Pending'?'selected':''}>Pending</option><option ${(s.reviewStatus||s.status)==='Approved'?'selected':''}>Approved</option><option ${s.status==='Rejected'?'selected':''}>Rejected</option></select><button class="action-btn edit" data-cs-save="${s.id}">Update</button><button class="action-btn delete" data-cs-delete="${s.id}">Delete</button></div></article>`).join('')||'<div class="empty-state">No commission payment screenshots.</div>';
-}
 function renderLedger(){
   $('commissionLedgerTable').innerHTML=ledger.map(x=>`<tr><td>${esc(x.applicationId||x.id)}</td><td>${esc(userName(x.userId))}</td><td>${esc(x.serviceName||'')}<br><small>${esc(x.actionName||'')}</small></td><td>${money(x.originalCharge||0)}</td><td>${money(x.commissionAmount||0)}</td><td>${money(x.finalCharge||0)}</td><td><select data-ledger-status="${x.id}"><option ${x.status==='Pending'?'selected':''}>Pending</option><option ${x.status==='Paid'?'selected':''}>Paid</option><option ${x.status==='Cancelled'?'selected':''}>Cancelled</option></select></td><td><button class="action-btn edit" data-ledger-save="${x.id}">Update</button><button class="action-btn delete" data-ledger-delete="${x.id}">Delete</button></td></tr>`).join('')||'<tr><td colspan="8">No commission ledger entries.</td></tr>';
 }
@@ -98,7 +111,7 @@ function renderServices(){
   $('commissionServicesTable').innerHTML=rows.map(a=>{const c=commissionFor(uid,a),r=rates.find(x=>x.userId===uid&&x.actionId===a.id);return `<tr data-rate-row="${esc(a.id)}" data-has-rate="${r?'true':'false'}" data-orig-type="${esc(c.type)}" data-orig-value="${Number(c.value||0)}" data-orig-active="${r?.active===false?'false':'true'}"><td><b>${esc(serviceName(a.serviceId))}</b></td><td>${esc(a.name||'Action')}</td><td><b>${money(a.serviceCharge||0)}</b><br><small>Read-only</small></td><td><select class="commission-rate-type" data-rate-type="${esc(a.id)}"><option value="fixed" ${c.type==='fixed'?'selected':''}>₹ Fixed</option><option value="percent" ${c.type==='percent'?'selected':''}>% Percentage</option></select></td><td><input class="commission-rate-input" data-rate-value="${esc(a.id)}" type="number" min="0" step="0.01" value="${Number(c.value||0)}"></td><td class="commission-final" data-rate-final="${esc(a.id)}">${money(c.final)}</td><td><select class="commission-active-select" data-rate-active="${esc(a.id)}"><option value="true" ${r?.active!==false?'selected':''}>Active</option><option value="false" ${r?.active===false?'selected':''}>Inactive</option></select></td><td><button class="action-btn edit" data-rate-save="${esc(a.id)}">${r?'Update':'Set Commission'}</button> <button class="action-btn delete" data-rate-delete="${esc(a.id)}" ${r?'':'disabled'}>Delete</button></td></tr>`}).join('')||'<tr><td colspan="8">No services/actions.</td></tr>';
   setMsg('commissionServiceMessage',`${rows.length} services/actions loaded. User ke liye individual commission set karein.`,'success');
 }
-function renderAll(){renderSummary();renderUserSelects();renderUsers();renderApps();renderPayments();renderScreenshots();renderLedger();renderServices()}
+function renderAll(){renderSummary();renderUserSelects();renderUsers();renderApps();renderPayments();renderLedger();renderServices()}
 
 async function saveCommissionUser(){
   const edit=editingUid||$('commissionEditUid').value;
@@ -203,7 +216,6 @@ $('commissionApplicationsTable')?.addEventListener('click',async e=>{
   if(!confirm('Application aur uske related payment/proof/ledger records delete karein?'))return;
   const batch=writeBatch(db);
   payments.filter(x=>x.applicationDocId===id||x.applicationId===a.applicationId).forEach(x=>batch.delete(doc(db,'payments',x.id)));
-  screenshots.filter(x=>x.applicationDocId===id||x.applicationId===a.applicationId).forEach(x=>batch.delete(doc(db,'paymentScreenshots',x.id)));
   ledger.filter(x=>x.applicationDocId===id||x.applicationId===a.applicationId||x.id===id).forEach(x=>batch.delete(doc(db,'commissionLedger',x.id)));
   batch.delete(doc(db,'publicApplicationStatus',a.applicationId||id));
   batch.delete(doc(db,'applications',id));
@@ -234,12 +246,6 @@ $('commissionPaymentsTable')?.addEventListener('click',async e=>{
   const status=document.querySelector(`[data-cp-status="${CSS.escape(id)}"]`)?.value||'Pending';
   await updateDoc(doc(db,'payments',id),{status,updatedAt:serverTimestamp()});
 });
-$('commissionScreenshotsList')?.addEventListener('click',async e=>{
-  const b=e.target.closest('button');if(!b)return;const id=b.dataset.csSave||b.dataset.csDelete;if(!id)return;
-  if(b.dataset.csDelete){if(confirm('Payment screenshot record delete karein?'))await deleteDoc(doc(db,'paymentScreenshots',id));return}
-  const status=document.querySelector(`[data-cs-status="${CSS.escape(id)}"]`)?.value||'Pending';
-  await updateDoc(doc(db,'paymentScreenshots',id),{reviewStatus:status,updatedAt:serverTimestamp()});
-});
 $('commissionServicesTable')?.addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
   const uid=$('commissionServiceUser').value;
@@ -267,7 +273,7 @@ $('commissionLedgerTable')?.addEventListener('click',async e=>{const b=e.target.
 function subscribe(){
   if(initialized)return; initialized=true;
   const listen=(name,setter)=>unsubs.push(onSnapshot(collection(db,name),snap=>{setter(snap.docs.map(d=>({id:d.id,...d.data()})));renderAll()},e=>console.error('Commission '+name,e)));
-  listen('users',x=>users=x);listen('applications',x=>apps=x);listen('payments',x=>payments=x);listen('paymentScreenshots',x=>screenshots=x);listen('services',x=>services=x);listen('serviceActions',x=>actions=x);listen('commissionRates',x=>rates=x);listen('commissionLedger',x=>ledger=x);
+  listen('users',x=>users=x);listen('applications',x=>apps=x);listen('payments',x=>payments=x);listen('services',x=>services=x);listen('serviceActions',x=>actions=x);listen('commissionRates',x=>rates=x);listen('commissionLedger',x=>ledger=x);
 }
 const page=$('commissionpanelPage');
 if(page){

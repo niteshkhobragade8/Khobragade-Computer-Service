@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Khobragade CSC Admin Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css?v=20260824-supabasefinal1">
+  <link rel="stylesheet" href="dashboard.css?v=20260824-layoutrestore1">
   <link rel="stylesheet" href="commission-admin.css?v=20260824-supabasefinal1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" href="favicon.ico">
@@ -37,7 +37,6 @@
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
       <li data-page="passwordreset"><i class="fa-solid fa-key"></i><span>Password Reset Requests</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
-      <li data-page="paymentscreenshots"><i class="fa-solid fa-receipt"></i><span>Payment Screenshots</span></li>
       <li data-page="servicesmanager"><i class="fa-solid fa-layer-group"></i><span>Services</span></li>
       <li data-page="actionsmanager"><i class="fa-solid fa-bolt"></i><span>Actions</span></li>
       <li data-page="formsmanager"><i class="fa-solid fa-file-pen"></i><span>Forms</span></li>
@@ -123,13 +122,12 @@
 
 
     <section id="commissionpanelPage" class="page">
-      <div class="page-intro"><div><h2>💸 Commission Panel</h2><p>Selected commission users ke applications, payments, screenshots aur service-wise discounted charges manage karein.</p></div></div>
+      <div class="page-intro"><div><h2>💸 Commission Panel</h2><p>Selected commission users ke applications, payments aur service-wise discounted charges manage karein.</p></div></div>
       <div class="commission-shell">
         <aside class="commission-side">
           <button class="active" data-commission-tab="applications">Applications</button>
           <button data-commission-tab="users">Users</button>
           <button data-commission-tab="payments">Payments / PayU</button>
-          <button data-commission-tab="screenshots">Payment Screenshots</button>
           <button data-commission-tab="services">Services</button>
           <button data-commission-tab="ledger">Commission Ledger</button>
         </aside>
@@ -166,11 +164,6 @@
           <section class="commission-tab" id="commissionPaymentsTab">
             <div class="box-heading"><div><span class="box-kicker">PAYMENTS</span><h2>Commission Payments / PayU</h2></div></div>
             <div class="table-wrap"><table class="admin-table"><thead><tr><th>Transaction</th><th>User</th><th>Application</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="commissionPaymentsTable"></tbody></table></div>
-          </section>
-
-          <section class="commission-tab" id="commissionScreenshotsTab">
-            <div class="box-heading"><div><span class="box-kicker">PAYMENT PROOFS</span><h2>Commission User Payment Screenshots</h2></div></div>
-            <div id="commissionScreenshotsList" class="content-grid"></div>
           </section>
 
           <section class="commission-tab" id="commissionServicesTab">
@@ -659,21 +652,6 @@
   <div class="manager-layout portal-form-builder"><div class="manager-form"><div class="form-title"><span>🧾</span><div><h3>Dynamic Form Field</h3><p>Selected service/action ke Apply form ke fields.</p></div></div><label>Action</label><select id="fieldAction"></select><label>Field Label</label><input id="fieldLabel" placeholder="Full Name"><label>Field Type</label><select id="fieldType"><option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="email">Email</option><option value="select">Dropdown</option><option value="checkbox">Checkbox</option><option value="file">File Upload</option></select><label>Options (dropdown, comma separated)</label><input id="fieldOptions"><label>Auto-fill from User Profile</label><select id="fieldProfileKey"><option value="">Auto Detect / None</option><option value="fullName">Full Name</option><option value="email">Email</option><option value="mobile">Mobile</option><option value="dob">Date of Birth</option><option value="gender">Gender</option><option value="address">Full Address</option><option value="villageCity">Village / City</option><option value="taluka">Taluka</option><option value="district">District</option><option value="state">State</option><option value="pinCode">PIN Code</option></select><div class="form-grid two"><div><label>Required</label><select id="fieldRequired"><option value="true">Required</option><option value="false">Optional</option></select></div><div><label>Order</label><input id="fieldOrder" type="number" value="1"></div></div><div class="settings-actions"><button id="saveFormField" class="primary-btn">Save Field</button><button id="clearFormField" class="secondary-btn">Clear</button></div></div><div class="manager-content"><h3>Form Fields</h3><div id="formFieldsList" class="content-grid"></div></div></div>
 </section>
 
-<section id="paymentscreenshotsPage" class="page">
-  <div class="page-intro"><div><h2>🧾 Payment Screenshots</h2><p>PayU success ke baad status sync fail hone par customer ke uploaded payment proofs yahan review karein.</p></div></div>
-  <div class="summary-grid">
-    <div class="summary-card"><span>Total Proofs</span><strong id="proofTotal">0</strong></div>
-    <div class="summary-card"><span>Pending Review</span><strong id="proofPending">0</strong></div>
-    <div class="summary-card"><span>Approved</span><strong id="proofApproved">0</strong></div>
-    <div class="summary-card"><span>Rejected</span><strong id="proofRejected">0</strong></div>
-  </div>
-  <div class="manager-content" style="margin-top:18px">
-    <div class="box-heading"><div><span class="box-kicker">PAYMENT PROOF REVIEW</span><h2>Customer Payment Screenshots</h2><p class="field-help">Approve karne se matching payment/application ko Paid mark karne ki koshish hogi. database quota unavailable ho to baad me dobara Approve karein.</p></div></div>
-    <div class="toolbar"><input id="paymentProofSearch" type="search" placeholder="Search Application ID / Transaction ID / customer"></div>
-    <div id="paymentProofList" class="content-grid"><div class="empty-state">Loading payment screenshots...</div></div>
-  </div>
-</section>
-
 <section id="servicesmanagerPage" class="page">
   <div class="page-intro"><div><h2>🧰 Services</h2><p>Sabhi existing aur new services ka Add / Edit / Update / Delete, category, target, status aur availability.</p></div></div>
   <div id="servicesmanagerMount"></div>
@@ -788,7 +766,7 @@
 
 <script type="module" src="supabase-app.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="dashboard.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="commission-admin.js?v=20260824-supabasefinal1"></script>
+<script type="module" src="commission-admin.js?v=20260824-cleanup1"></script>
 <script type="module" src="updates.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="services.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="categories.js?v=20260824-supabasefinal1"></script>
@@ -813,7 +791,6 @@
 <script type="module" src="users-admin.js?v=20260824-fastdelete1"></script>
 <script type="module" src="password-reset-admin.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="payments-admin.js?v=20260824-fastdelete1"></script>
-<script type="module" src="payment-screenshots-admin.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="portal-builder.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="user-portal-cms.js?v=20260824-supabasefinal1"></script>
 <script type="module" src="admin-v30.js?v=20260824-supabasefinal1"></script>

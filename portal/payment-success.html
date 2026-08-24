@@ -1,107 +1,50 @@
 <!doctype html>
 <html lang="hi">
-<head>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<head><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Payment Successful - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260824-paymentsuccess2">
+<link rel="stylesheet" href="assets/portal.css?v=20260824-supabasefinal1">
 <style>
 .result-wrap{min-height:100vh;display:grid;place-items:center;padding:28px 16px;background:linear-gradient(135deg,#f8fafc,#eef2ff)}
 .result-card{width:min(720px,100%);background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(15,23,42,.12);text-align:center}
 .result-icon{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:#dcfce7;font-size:38px}
-.result-card h1{margin:0 0 8px;font-size:32px;color:#0f172a}
-.result-card p{color:#64748b}
-.result-meta{margin:22px 0;text-align:left;background:#f8fafc;border-radius:16px;padding:18px}
-.result-meta div{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px dashed #dbe3ee}
-.result-meta div:last-child{border-bottom:0}
-.result-meta b{word-break:break-all;color:#0f172a}
-.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
-.status-note{margin:16px 0 0;padding:12px 14px;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-size:14px}
-.status-note.ok{background:#ecfdf5;color:#047857}
-.status-note.warn{background:#fff7ed;color:#c2410c}
+.result-card h1{margin:0 0 8px;font-size:32px;color:#0f172a}.result-card p{color:#64748b}.result-meta{margin:22px 0;text-align:left;background:#f8fafc;border-radius:16px;padding:18px}.result-meta div{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px dashed #dbe3ee}.result-meta div:last-child{border-bottom:0}.result-meta b{word-break:break-all;color:#0f172a}.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.status-note{margin:16px 0 0;padding:12px 14px;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-size:14px}.proof-box{display:none;margin-top:18px;padding:18px;text-align:left;border:1px solid #fecaca;background:#fff7ed;border-radius:16px}.proof-box.show{display:block}.proof-box label{display:block;font-weight:700;margin:10px 0 6px}.proof-box input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px}.proof-box button{margin-top:14px;border:0;border-radius:10px;padding:11px 16px;font-weight:800;background:#2563eb;color:#fff;cursor:pointer}.proof-msg{margin-top:10px;font-size:14px}
 </style>
 </head>
 <body>
 <main class="result-wrap">
-  <section class="result-card">
-    <div class="result-icon">✅</div>
-    <span class="dashboard-kicker">PAYMENT RESPONSE RECEIVED</span>
-    <h1>Payment Successful</h1>
-    <p>PayU payment response receive ho gaya hai.</p>
 
-    <div class="result-meta">
-      <div><span>Application ID</span><b id="applicationId">—</b></div>
-      <div><span>Transaction ID</span><b id="txnid">—</b></div>
-    </div>
-
-    <div class="status-note" id="statusNote">Payment verify ho raha hai…</div>
-
-    <div class="result-actions">
-      <a class="btn btn-primary" href="my-applications.html">My Applications</a>
-      <a class="btn btn-soft" href="payments.html">Payment Status</a>
-    </div>
-  </section>
 </main>
-
 <script type="module">
 import { DATA_API_URL } from '../supabase-config.js';
-
-const q = new URLSearchParams(location.search);
-const applicationId = q.get('applicationId') || '';
-const txnid = q.get('txnid') || '';
-const paymentHint = (q.get('payment') || '').toLowerCase();
-
-const appEl = document.getElementById('applicationId');
-const txnEl = document.getElementById('txnid');
-const note = document.getElementById('statusNote');
-
-appEl.textContent = applicationId || '—';
-txnEl.textContent = txnid || '—';
-
-function setNote(message, type=''){
-  note.textContent = message;
-  note.className = 'status-note' + (type ? ' ' + type : '');
-}
-
+import {auth,db} from './assets/portal-supabase.js';
+import {onAuthStateChanged} from '../supabase-auth.js';
+import {addDoc,collection,serverTimestamp,getDoc,doc} from '../supabase-db.js';
+const q=new URLSearchParams(location.search);
+const applicationId=q.get('applicationId')||''; const txnid=q.get('txnid')||''; const amount=q.get('amount')||'';
+document.getElementById('applicationId').textContent=applicationId||'—'; document.getElementById('txnid').textContent=txnid||'—'; document.getElementById('paymentProofAmount').value=amount;
+const note=document.getElementById('statusNote'), proofBox=document.getElementById('proofBox');
+function showProof(message){note.textContent=message||'Payment received, lekin status sync pending hai.';proofBox.classList.add('show')}
 (async()=>{
-  if(!txnid){
-    setNote('Transaction ID missing hai. Payment Status page check karein.','warn');
-    return;
-  }
-
-  try{
-    const r = await fetch(DATA_API_URL + '/reconcile-payment',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({txnid,applicationId})
-    });
-
-    const j = await r.json().catch(()=>({}));
-
-    if(r.ok && j.paymentStatus === 'Paid'){
-      setNote('Payment verified ✅ Status Paid update ho gaya.','ok');
-      return;
-    }
-
-    if(r.ok){
-      setNote('Payment response receive hua hai. Current status: ' + (j.paymentStatus || 'Pending') + '.','warn');
-      return;
-    }
-
-    // TEST txn or PayU verification not yet available.
-    if(paymentHint === 'success'){
-      setNote('Payment response receive hua hai. Verification processing me hai.','warn');
-    }else{
-      setNote('Payment response receive hua hai. Payment Status page par latest status check karein.','warn');
-    }
-  }catch(e){
-    console.error('Payment reconcile error:', e);
-    setNote('Payment response receive hua hai. Payment Status page par latest status check karein.','warn');
-  }
+ if(!txnid){showProof('Transaction ID missing. Payment proof upload karein.');return;}
+ if(q.get('payment')==='proof'){showProof('Payment received, lekin database status update fail hua. Screenshot upload karein.');return;}
+ try{const r=await fetch(DATA_API_URL+'/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});const j=await r.json().catch(()=>({}));if(r.ok&&j.paymentStatus==='Paid'){note.textContent='Payment verified ✅ Portal status Paid update ho gaya.';}else if(r.ok){showProof('Payment verification complete, lekin status '+(j.paymentStatus||'Pending')+' hai. Screenshot upload kar sakte hain.');}else{showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}}catch(e){showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}
 })();
+let signedUser=null; onAuthStateChanged(auth,u=>signedUser=u);
+document.getElementById('uploadPaymentProof').addEventListener('click',async()=>{
+ const file=document.getElementById('paymentProofFile').files[0], msg=document.getElementById('proofMsg'), btn=document.getElementById('uploadPaymentProof');
+ if(!file){msg.textContent='Payment screenshot select karein.';return} if(!file.type.startsWith('image/')){msg.textContent='Sirf image upload karein.';return} if(file.size>10*1024*1024){msg.textContent='Image 10 MB se kam rakhein.';return}
+ if(!signedUser){msg.textContent='Login session nahi mila. Portal me login karke is page ko dobara open karein.';return}
+ btn.disabled=true;msg.textContent='Uploading screenshot...';
+ try{
+  const fd=new FormData();fd.append('file',file);fd.append('upload_preset','khobragade_csc');fd.append('folder','khobragade-csc/payment-proofs');
+  const up=await fetch('https://api.cloudinary.com/v1_1/jkia38fa/image/upload',{method:'POST',body:fd});const uj=await up.json();if(!up.ok)throw new Error(uj?.error?.message||'Screenshot upload failed');
+  let profile={};try{const ps=await getDoc(doc(db,'users',signedUser.uid));if(ps.exists())profile=ps.data()}catch(_){}
+  await addDoc(collection(db,'paymentScreenshots'),{userId:signedUser.uid,userName:profile.fullName||'',mobile:profile.mobile||'',applicationId,txnid,amount:Number(document.getElementById('paymentProofAmount').value||0),screenshotUrl:uj.secure_url,cloudinaryPublicId:uj.public_id||'',reviewStatus:'Pending',createdAt:serverTimestamp()});
+  msg.textContent='Screenshot submitted successfully ✅ Admin review karega.';btn.style.display='none';document.getElementById('paymentProofFile').disabled=true;
+ }catch(e){console.error(e);msg.textContent='Screenshot image upload ho sakta hai, lekin proof record save nahi hua. Please try again.';}finally{btn.disabled=false}
+});
 </script>
 </body>
 </html>

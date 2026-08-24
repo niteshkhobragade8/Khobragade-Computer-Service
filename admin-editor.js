@@ -8,7 +8,6 @@ const FIXED=[
  ['users','Users / Customers','fa-solid fa-users',30],
  ['passwordreset','Password Reset Requests','fa-solid fa-key',35],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],
- ['paymentscreenshots','Payment Screenshots','fa-solid fa-receipt',45],
  ['servicesmanager','Services','fa-solid fa-layer-group',50],
  ['actionsmanager','Actions','fa-solid fa-bolt',60],
  ['formsmanager','Forms','fa-solid fa-file-pen',70],
