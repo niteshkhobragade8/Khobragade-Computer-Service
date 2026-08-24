@@ -1,32 +1,14 @@
-KCSC APPLICATION-STYLE LAYOUT FIX
+ROLLBACK LAST BROKEN ADMIN LAYOUT
 
-Replace only:
+Replace ONLY:
 1. dashboard.html
 2. dashboard.css
 
-These Admin pages are changed to use the same full-width layout pattern as Applications:
-- Services
-- Actions
-- Forms
-- Service Charges
-- All Charge
-- Website CMS
-- Portal Settings
+This restores the exact previous Admin state from:
+KCSC ADMIN LAYOUT RESTORE + SCREENSHOT CLEANUP FINAL
 
-Preserved:
-- all existing IDs
-- dropdowns
-- Add/Edit/Update/Delete
-- existing record loading
-- search/filter
-- Services -> Actions -> Forms linkage
-- charge controls
-- Website CMS logic
-- Portal Settings logic
-- PayU/backend
-- Supabase/Auth
-- commission logic
-- fast delete
-- all other Admin pages
+Purpose:
+- Undo the last broken Applications-style HTML restructuring.
+- Restore the previous working layout state immediately.
 
-No JS file changed.
+No JS, PayU, Supabase, Commission, Login, Delete, Services/Actions/Forms data logic, Charges, Website CMS, or Portal Settings logic changed.
