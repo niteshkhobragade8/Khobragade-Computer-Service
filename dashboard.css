@@ -16,7 +16,7 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
 body{
   min-height:100vh;
   background:linear-gradient(135deg,#f8fbff,#eef4ff 55%,#fff);
@@ -154,7 +154,7 @@ a{text-decoration:none;color:inherit}
 .notification-item:last-child{border-bottom:0}
 .notification-item p{color:var(--muted);font-size:13px;margin-top:3px}
 
-.page{display:none;animation:pageIn .22s ease}
+.page{display:none}
 .page.active{display:block}
 @keyframes pageIn{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
 .page-intro{
@@ -544,3 +544,10 @@ html.admin-shell-ready body{visibility:visible!important}
 .password-reset-dialog{border:0;padding:0;border-radius:18px;max-width:560px;width:calc(100% - 28px);box-shadow:0 24px 70px rgba(15,23,42,.25)}
 .password-reset-dialog::backdrop{background:rgba(15,23,42,.55)}
 .password-reset-dialog-card{padding:22px;background:#fff}
+
+/* KCSC Admin performance */
+.page:not(.active){display:none!important}
+.page.active{contain:layout style}
+.content-grid,.table-wrap{content-visibility:auto;contain-intrinsic-size:1px 600px}
+#sidebarMenu li{will-change:auto}
+.notification-dropdown{contain:layout paint}

@@ -1,20 +1,30 @@
-KCSC ADMIN FAST DELETE + OLD PAYU PANEL REMOVE
+KCSC ADMIN GLOBAL PERFORMANCE FIX
 
-Replace only these 4 website files:
-1. dashboard.html
-2. applications-admin.js
-3. users-admin.js
-4. payments-admin.js
+Replace only:
+1. supabase-db.js
+2. menu.js
+3. dashboard.js
+4. dashboard.css
 
-Fixes:
-- Old Firebase-era PayU Integration editor removed from Admin Dashboard.
-- Working PayU/Render configuration is NOT changed.
-- Payments page now shows only live Transaction Records.
-- Application delete disappears from Admin UI immediately.
-- Payment transaction delete disappears immediately.
-- User delete disappears immediately.
-- User cascade delete is faster: removed full publicApplicationStatus collection scan.
-- User related application/payment/public status/profile cleanup runs in parallel where safe.
-- If a delete actually fails, the row is restored in Admin UI and an error is shown.
+Performance fixes:
+- Identical Supabase requests are deduplicated while in-flight.
+- Multiple modules watching the same collection no longer create duplicate simultaneous fetches.
+- Realtime bursts are debounced.
+- Old 8-second polling across every Admin collection reduced:
+  applications/payments/users/commission = 20 sec fallback
+  other dynamic = 60 sec
+  static CMS = 180 sec
+  Supabase Realtime remains primary.
+- Initial onSnapshot uses cache when available instead of forced re-fetch.
+- Sidebar page switch changes only current/target page, not every page/menu item.
+- Dashboard listeners are not recreated on every Dashboard click.
+- Smooth scrolling/page animation removed from Admin page switching.
+- Large grids/tables use browser content-visibility optimization.
 
-No backend server.js / PayU keys / BACKEND_URL / Supabase tables are changed.
+NOT CHANGED:
+- PayU/backend configuration
+- Payment status logic
+- Fast delete logic
+- Commission calculations
+- Admin colors/design/layout
+- Supabase data

@@ -5,6 +5,8 @@ const CACHE=new Map();
 const CHANNELS=new Map();
 const SUBSCRIBERS=new Map();
 const POLLERS=new Map();
+const INFLIGHT=new Map();
+const REALTIME_DEBOUNCE=new Map();
 const STATIC_COLLECTIONS=new Set([
   'services','serviceActions','formFields','settings','categories','updates','images','documents',
   'documentChecklists','youtube','themes','pageContent','siteSections','dynamicPages','dynamicSections',
@@ -85,11 +87,23 @@ async function fetchRows(ref,force=false){
   await authReady();
   const name=baseCollection(ref),key=cacheKey(ref),c=CACHE.get(key);
   if(!force&&c&&Date.now()-c.at<ttl(name))return c.rows;
-  const constraints=ref.constraints||[];
-  const{data,error}=await buildSelect(name,constraints);errorOut(error);
-  let rows=(data||[]).map(r=>mapRow(r,name));
-  rows=clientFilter(rows,constraints.filter(c=>!(c.type==='where'&&c.op==='==')));
-  CACHE.set(key,{at:Date.now(),rows});return rows;
+
+  // Coalesce identical requests. Many Admin modules watch the same collection.
+  // Without this, one page action can trigger the same Supabase query many times.
+  if(INFLIGHT.has(key))return INFLIGHT.get(key);
+
+  const task=(async()=>{
+    const constraints=ref.constraints||[];
+    const{data,error}=await buildSelect(name,constraints);errorOut(error);
+    let rows=(data||[]).map(r=>mapRow(r,name));
+    rows=clientFilter(rows,constraints.filter(c=>!(c.type==='where'&&c.op==='==')));
+    CACHE.set(key,{at:Date.now(),rows});
+    return rows;
+  })();
+
+  INFLIGHT.set(key,task);
+  try{return await task}
+  finally{if(INFLIGHT.get(key)===task)INFLIGHT.delete(key)}
 }
 function invalidate(name){for(const key of [...CACHE.keys()]){try{if(JSON.parse(key)[0]===name)CACHE.delete(key)}catch(_){}}}
 async function getDocs(ref){return makeQuerySnap(await fetchRows(ref,false))}
@@ -125,49 +139,56 @@ async function deleteDoc(ref){await authReady();const{error}=await supabase.from
 async function addDoc(col,data){const id=crypto.randomUUID();await setDoc({kind:'doc',collection:col.name,id},data);return{id}}
 
 function listenerKey(ref){return JSON.stringify([baseCollection(ref),ref.constraints||[]])+'::'+crypto.randomUUID()}
-async function emitEntry(entry){
+async function emitEntry(entry,{force=true}={}){
   if(entry.closed)return;
   try{
     const name=entry.ref.kind==='doc'?entry.ref.collection:baseCollection(entry.ref);
-    invalidate(name);
-    entry.cb(entry.ref.kind==='doc'?await getDoc(entry.ref):makeQuerySnap(await fetchRows(entry.ref,true)));
+    if(force)invalidate(name);
+    const snap=entry.ref.kind==='doc'
+      ? await getDoc(entry.ref)
+      : makeQuerySnap(await fetchRows(entry.ref,force));
+    if(!entry.closed)entry.cb(snap);
   }catch(e){entry.err?.(e)}
 }
+function refreshCollection(name,{force=true}={}){
+  const entries=[...(SUBSCRIBERS.get(name)||[])];
+  if(!entries.length)return;
+
+  // One short debounce for a burst of INSERT/UPDATE events.
+  const old=REALTIME_DEBOUNCE.get(name);
+  if(old)clearTimeout(old);
+  const timer=setTimeout(()=>{
+    REALTIME_DEBOUNCE.delete(name);
+    for(const entry of entries)emitEntry(entry,{force});
+  },120);
+  REALTIME_DEBOUNCE.set(name,timer);
+}
+
 function ensureCollectionRealtime(name){
   if(CHANNELS.has(name))return;
-  const channel=supabase.channel('kcsc-'+name).on('postgres_changes',{event:'*',schema:'public',table:'kcsc_documents',filter:`collection=eq.${name}`},()=>{
-    for(const entry of SUBSCRIBERS.get(name)||[])emitEntry(entry);
-  }).subscribe();
+  const channel=supabase.channel('kcsc-'+name)
+    .on('postgres_changes',{event:'*',schema:'public',table:'kcsc_documents',filter:`collection=eq.${name}`},()=>{
+      refreshCollection(name,{force:true});
+    })
+    .subscribe();
   CHANNELS.set(name,channel);
-  const pollMs=STATIC_COLLECTIONS.has(name)?120000:(name==='applications'?2500:6000);
-  const refreshNow=()=>{
-    if(document.visibilityState==='hidden')return;
-    for(const entry of SUBSCRIBERS.get(name)||[])emitEntry(entry);
-  };
-  const timer=setInterval(refreshNow,pollMs);
-  POLLERS.set(name,timer);
 
-  // Re-check instantly when Admin/User returns to the tab.
-  // This makes application changes appear without manual browser refresh,
-  // even if a Realtime websocket event was missed.
-  if(name==='applications'){
-    const vis=()=>{if(document.visibilityState==='visible')refreshNow()};
-    const focus=()=>refreshNow();
-    document.addEventListener('visibilitychange',vis);
-    window.addEventListener('focus',focus);
-    CHANNELS.get(name).__kcscCleanup=()=>{
-      document.removeEventListener('visibilitychange',vis);
-      window.removeEventListener('focus',focus);
-    };
-  }
+  // Realtime is primary. Polling is only a safety-net now.
+  // Heavy 8-second polling across every Admin module was blocking menu/dropdown UI.
+  const fast=new Set(['applications','payments','users','commissionLedger']);
+  const pollMs=STATIC_COLLECTIONS.has(name)?180000:(fast.has(name)?20000:60000);
+  const timer=setInterval(()=>{
+    if(document.visibilityState==='hidden')return;
+    refreshCollection(name,{force:true});
+  },pollMs);
+  POLLERS.set(name,timer);
 }
 function releaseCollectionRealtime(name){
   if((SUBSCRIBERS.get(name)?.size||0)>0)return;
-  const ch=CHANNELS.get(name);
-  try{ch?.__kcscCleanup?.()}catch(_){}
-  if(ch)supabase.removeChannel(ch).catch(()=>{});
+  const ch=CHANNELS.get(name);if(ch)supabase.removeChannel(ch).catch(()=>{});
   CHANNELS.delete(name);
   const timer=POLLERS.get(name);if(timer)clearInterval(timer);POLLERS.delete(name);
+  const deb=REALTIME_DEBOUNCE.get(name);if(deb)clearTimeout(deb);REALTIME_DEBOUNCE.delete(name);
   SUBSCRIBERS.delete(name);
 }
 function onSnapshot(ref,cb,err){
@@ -176,7 +197,7 @@ function onSnapshot(ref,cb,err){
   if(!SUBSCRIBERS.has(name))SUBSCRIBERS.set(name,new Set());
   SUBSCRIBERS.get(name).add(entry);
   ensureCollectionRealtime(name);
-  queueMicrotask(()=>emitEntry(entry));
+  queueMicrotask(()=>emitEntry(entry,{force:false}));
   return()=>{entry.closed=true;SUBSCRIBERS.get(name)?.delete(entry);releaseCollectionRealtime(name)};
 }
 function writeBatch(){

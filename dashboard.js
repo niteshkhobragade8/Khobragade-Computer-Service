@@ -139,6 +139,7 @@ function watchVisitorSummary() {
 }
 
 async function loadDashboard() {
+  if(dashboardUnsubscribers.length)return;
   Object.entries(collectionMap).forEach(([elementId, collectionName]) => {
     watchCollectionCount(elementId, collectionName);
   });
