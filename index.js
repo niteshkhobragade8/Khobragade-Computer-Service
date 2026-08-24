@@ -1,4 +1,4 @@
-import { db } from "./supabase-app.js";
+import { db } from "./firebase-config.js";
 import {
   collection,
   onSnapshot,
@@ -6,9 +6,8 @@ import {
   onSnapshot as watchDoc,
   setDoc,
   increment,
-  serverTimestamp,
-  writeBatch
-} from './supabase-db.js';
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
 let publicServices = [];
@@ -161,15 +160,15 @@ function renderMedia(container) {
 
 async function trackVisitor() {
   if (sessionStorage.getItem("khobragadeVisitorCounted") === "yes") return;
-  const today = new Date(Date.now() + 330 * 60 * 1000).toISOString().slice(0,10);
+  sessionStorage.setItem("khobragadeVisitorCounted", "yes");
+  const today = new Date().toISOString().slice(0,10);
   try {
-    const batch = writeBatch(db);
-    batch.set(doc(db, "analytics", "site"), { totalVisitors: increment(1), updatedAt: serverTimestamp() }, { merge:true });
-    batch.set(doc(db, "visitorDaily", today), { date: today, count: increment(1), updatedAt: serverTimestamp() }, { merge:true });
-    await batch.commit();
-    sessionStorage.setItem("khobragadeVisitorCounted", "yes");
+    await Promise.all([
+      setDoc(doc(db, "analytics", "site"), { totalVisitors: increment(1), updatedAt: serverTimestamp() }, { merge:true }),
+      setDoc(doc(db, "visitorDaily", today), { date: today, count: increment(1), updatedAt: serverTimestamp() }, { merge:true })
+    ]);
   } catch (error) {
-    console.warn("Visitor tracking unavailable; will retry on next page load:", error.message);
+    console.warn("Visitor tracking disabled by Firebase rules:", error.message);
   }
 }
 

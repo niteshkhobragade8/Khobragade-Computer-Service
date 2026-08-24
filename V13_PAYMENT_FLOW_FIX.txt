@@ -3,5 +3,5 @@ KCSC V13 PAYMENT FLOW FIX
 1. Submit now always creates Application ID first.
 2. Paid action redirects to portal/payment.html.
 3. Pay with PayU button gives clear connection result.
-4. Supabase Storage unavailable -> application/profile upload falls back to existing Cloudinary unsigned preset.
+4. Firebase Storage unavailable -> application/profile upload falls back to existing Cloudinary unsigned preset.
 5. Real PayU still requires secure backend URL + backend PAYU_KEY/PAYU_SALT. Salt is not exposed in browser.

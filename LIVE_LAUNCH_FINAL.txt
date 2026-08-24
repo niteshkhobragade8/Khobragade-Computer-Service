@@ -4,4 +4,4 @@ KCSC V23 FINAL LIVE LAUNCH
 - /portal/ kept intact.
 - /functions/ kept intact.
 - Admin dashboard/login files kept intact.
-- PayU/Render/Supabase configuration files preserved.
+- PayU/Render/Firebase configuration files preserved.

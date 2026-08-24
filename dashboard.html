@@ -1,47 +1,16 @@
 <!DOCTYPE html>
-<html class="admin-shell-wait" lang="en">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
   <title>Khobragade CSC Admin Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css?v=20260824-layout-final-fixed">
-  <link rel="stylesheet" href="commission-admin.css?v=20260824-supabasefinal1">
+  <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" href="favicon.ico">
 <link rel="manifest" href="admin-manifest.webmanifest">
 <meta name="theme-color" content="#172554">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="admin-icon-192.png">
-
-<style id="kcsc-seven-pages-verified-layout">
-#servicesmanagerPage #servicesmanagerMount > .manager-layout,
-#actionsmanagerPage #actionsmanagerMount > .manager-layout,
-#formsmanagerPage #formsmanagerMount > .manager-layout,
-#servicechargesPage #servicechargesMount > .manager-layout,
-#userportalcmsPage > .manager-layout{
-  grid-template-columns:minmax(0,1fr)!important;width:100%!important;
-}
-#servicesmanagerPage #servicesmanagerMount > .manager-content,
-#actionsmanagerPage #actionsmanagerMount > .manager-content,
-#formsmanagerPage #formsmanagerMount > .manager-content,
-#servicechargesPage #servicechargesMount > .manager-content,
-#allchargePage > .manager-content,
-#userportalcmsPage > .manager-content,
-#settingsPage > .settings-shell{
-  width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;
-}
-#servicesmanagerPage .manager-form,#servicesmanagerPage .manager-content,
-#actionsmanagerPage .manager-form,#actionsmanagerPage .manager-content,
-#formsmanagerPage .manager-form,#formsmanagerPage .manager-content,
-#servicechargesPage .manager-form,#servicechargesPage .manager-content,
-#userportalcmsPage .manager-form,#userportalcmsPage .manager-content{
-  min-width:0!important;max-width:none!important;
-}
-</style>
-
 </head>
 <body>
 
@@ -59,16 +28,13 @@
 
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
-      <li data-page="commissionpanel"><i class="fa-solid fa-percent"></i><span>Commission Panel</span></li>
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
-      <li data-page="passwordreset"><i class="fa-solid fa-key"></i><span>Password Reset Requests</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
       <li data-page="servicesmanager"><i class="fa-solid fa-layer-group"></i><span>Services</span></li>
       <li data-page="actionsmanager"><i class="fa-solid fa-bolt"></i><span>Actions</span></li>
       <li data-page="formsmanager"><i class="fa-solid fa-file-pen"></i><span>Forms</span></li>
       <li data-page="servicecharges"><i class="fa-solid fa-indian-rupee-sign"></i><span>Service Charges</span></li>
-      <li data-page="allcharge"><i class="fa-solid fa-list-check"></i><span>All Charge</span></li>
       <li data-page="userportalcms"><i class="fa-solid fa-window-maximize"></i><span>Website CMS</span></li>
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
@@ -81,7 +47,7 @@
     </ul>
 
     <div class="sidebar-foot">
-      <span>Supabase CMS</span>
+      <span>Firebase CMS</span>
       <small id="adminIdentity">Administrator</small>
     </div>
   </aside>
@@ -114,11 +80,7 @@
         <article class="dashboard-stat-card green"><span class="stat-icon">👤</span><div><p>Total Users / Customers</p><h2 id="totalUsers">0</h2></div></article>
         <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
         <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
-        <article class="dashboard-stat-card red visitor-card">
-          <span class="stat-icon">👥</span>
-          <div class="visitor-card-main"><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div>
-          <button id="overviewResetVisitorsBtn" class="visitor-reset-mini" type="button" title="Reset Total Visitors to 0"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-        </article>
+        <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div></article>
       </div>
 
       <div class="dashboard-cards portal-stats">
@@ -143,68 +105,6 @@
           <div class="box-heading"><div><span class="box-kicker">WEBSITE</span><h2>Website CMS</h2></div><button class="text-button" type="button" onclick="openDashboardPage('userportalcms')">Manage</button></div>
           <div class="mini-feed"><div class="mini-feed-item"><div class="mini-feed-dot"></div><div><strong>New Website / User Portal</strong><p>Profile fields, auto-fill, user menu aur website portal controls yahan manage karein.</p></div></div></div>
         </article>
-      </div>
-    </section>
-
-
-
-    <section id="commissionpanelPage" class="page">
-      <div class="page-intro"><div><h2>💸 Commission Panel</h2><p>Selected commission users ke applications, payments aur service-wise discounted charges manage karein.</p></div></div>
-      <div class="commission-shell">
-        <aside class="commission-side">
-          <button class="active" data-commission-tab="applications">Applications</button>
-          <button data-commission-tab="users">Users</button>
-          <button data-commission-tab="payments">Payments / PayU</button>
-          <button data-commission-tab="services">Services</button>
-          <button data-commission-tab="ledger">Commission Ledger</button>
-        </aside>
-        <div class="commission-main">
-          <div class="commission-summary">
-            <article><small>Commission Users</small><b id="commissionUsersCount">0</b></article>
-            <article><small>Commission Applications</small><b id="commissionAppsCount">0</b></article>
-            <article><small>Total Commission Benefit</small><b id="commissionBenefitTotal">₹0</b></article>
-            <article><small>Paid Commission Orders</small><b id="commissionPaidCount">0</b></article>
-          </div>
-
-          <section class="commission-tab active" id="commissionApplicationsTab">
-            <div class="box-heading"><div><span class="box-kicker">APPLICATIONS</span><h2>Commission User Applications</h2></div><input id="commissionAppSearch" placeholder="Search application / user"></div>
-            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead><tbody id="commissionApplicationsTable"></tbody></table></div>
-          </section>
-
-          <section class="commission-tab" id="commissionUsersTab">
-            <div class="manager-layout">
-              <div class="manager-form">
-                <div class="form-title"><span>👤</span><div><h3>Create / Edit Commission User</h3><p>Commission User sirf Admin yahan se create karega. Existing normal users Commission Panel me use nahi honge.</p></div></div>
-                <input id="commissionEditUid" type="hidden">
-                <label>Full Name</label><input id="commissionFullName">
-                <div class="form-grid two"><div><label>Mobile</label><input id="commissionMobile" maxlength="10"></div><div><label>Email</label><input id="commissionEmail" type="email"></div></div>
-                <div class="form-grid two"><div><label>Login Password (new user)</label><div class="admin-password-wrap"><input id="commissionPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="commissionPassword">👁</button></div></div><div><label>Commission Code</label><input id="commissionCode" placeholder="AGENT001"></div></div>
-                <div class="form-grid three"><div><label>Default Type</label><select id="commissionDefaultType"><option value="fixed">₹ Fixed</option><option value="percent">% Percentage</option></select></div><div><label>Default Commission</label><input id="commissionDefaultValue" type="number" min="0" step="0.01" value="0"></div><div><label>Status</label><select id="commissionUserStatus"><option>Active</option><option>Inactive</option></select></div></div>
-                <div class="form-grid two"><div><label>Start Date</label><input id="commissionStartDate" type="date"></div><div><label>End Date (optional)</label><input id="commissionEndDate" type="date"></div></div>
-                <div class="settings-actions"><button id="commissionSaveUser" class="primary-btn" type="button">Save Commission User</button><button id="commissionClearUser" class="secondary-btn" type="button">Clear</button></div>
-                <div id="commissionUserMessage" class="settings-message info">Ready.</div>
-              </div>
-              <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USERS</span><h2>All Commission Users</h2></div><input id="commissionUserSearch" placeholder="Search user"></div><div id="commissionUsersList" class="content-grid"></div></div>
-            </div>
-          </section>
-
-          <section class="commission-tab" id="commissionPaymentsTab">
-            <div class="box-heading"><div><span class="box-kicker">PAYMENTS</span><h2>Commission Payments / PayU</h2></div></div>
-            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Transaction</th><th>User</th><th>Application</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="commissionPaymentsTable"></tbody></table></div>
-          </section>
-
-          <section class="commission-tab" id="commissionServicesTab">
-            <div class="box-heading"><div><span class="box-kicker">SERVICE COMMISSION</span><h2>Existing Service Charge Commission</h2><p class="field-help">Current Service Charge read-only rahega. Selected Commission User ke liye commission Set / Update / Delete karein. Current Charge → Commission → Final User Charge.</p></div></div>
-            <div class="toolbar"><select id="commissionServiceUser"><option value="">Select Commission User</option></select><input id="commissionServiceSearch" placeholder="Search service / action"><button id="commissionSaveRates" class="primary-btn" type="button">Save All Commission Changes</button></div>
-            <div id="commissionServiceMessage" class="settings-message info">Commission user select karein.</div>
-            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Current Charge</th><th>Type</th><th>Commission</th><th>Final Charge</th><th>Active</th><th>Action</th></tr></thead><tbody id="commissionServicesTable"></tbody></table></div>
-          </section>
-
-          <section class="commission-tab" id="commissionLedgerTab">
-            <div class="box-heading"><div><span class="box-kicker">HISTORY</span><h2>Commission Ledger</h2></div></div>
-            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Action</th></tr></thead><tbody id="commissionLedgerTable"></tbody></table></div>
-          </section>
-        </div>
       </div>
     </section>
 
@@ -380,7 +280,7 @@
     </section>
 
     <section id="analyticsPage" class="page">
-      <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Supabase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
+      <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Firebase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
       <div class="analytics-cards">
         <div class="analytics-card"><span>👥</span><p>Total Visitors</p><h2 id="analyticsVisitors">0</h2></div>
         <div class="analytics-card"><span>📅</span><p>Today Visitors</p><h2 id="todayVisitors">0</h2></div>
@@ -418,7 +318,7 @@
     </section>
 
     <section id="imagesPage" class="page">
-      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Supabase Storage or add an external image URL.</p></div></div>
+      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Firebase Storage or add an external image URL.</p></div></div>
       <div class="manager-form image-form horizontal-form">
         <input type="text" id="imageTitle" placeholder="Image Title">
         <select id="imageCategory"><option>Gallery</option><option>Header Logo</option><option>Home Banner</option><option>Services Banner</option><option>Yojana Banner</option><option>Divyang Banner</option><option>Documents Banner</option><option>Contact Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
@@ -582,7 +482,7 @@
       </div>
       <div class="dashboard-info-box" style="margin-top:22px">
         <div class="box-heading"><div><span class="box-kicker">ONE-TIME</span><h2>Make Existing Content Fully Editable</h2></div></div>
-        <p>Existing default catalog ko Supabase/Admin me import karke code fallback band karein.</p>
+        <p>Existing default catalog ko Firebase/Admin me import karke code fallback band karein.</p>
         <div class="settings-actions"><button id="importEditableCatalog" class="secondary-btn" type="button">⚡ Import Services + Yojana + Divyang</button><button id="importEditableChecklists" class="secondary-btn" type="button">📋 Import Document Checklists</button></div>
         <div id="migrationMessage" class="settings-message info">Import ek baar karna hai.</div>
       </div>
@@ -638,35 +538,15 @@
   </div>
 </section>
 
-<section id="passwordresetPage" class="page">
-<div class="page-intro"><div><h2>🔑 Password Reset Requests</h2><p>Normal User aur Commission User ke Forgot Password requests. Verify karke temporary password set karein.</p></div><button id="refreshPasswordRequests" class="secondary-btn" type="button">Refresh</button></div>
-<div class="manager-content"><div class="table-wrap"><table class="admin-table"><thead><tr><th>User</th><th>Mobile</th><th>Account Type</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead><tbody id="passwordResetRequestsTable"><tr><td colspan="6">Loading...</td></tr></tbody></table></div><div id="passwordResetAdminMessage" class="settings-message info">Password reset requests ready.</div></div>
-<dialog id="passwordResetDialog" class="password-reset-dialog"><form method="dialog" class="password-reset-dialog-card"><div class="box-heading"><div><span class="box-kicker">ADMIN VERIFIED RESET</span><h2>Set Temporary Password</h2></div><button value="cancel" class="secondary-btn">✕</button></div><p id="passwordResetSelectedUser" class="field-help"></p><label>Temporary Password</label><div class="admin-password-wrap"><input id="temporaryPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="temporaryPassword">👁</button></div><p class="field-help">User temporary password se login karega aur next login par Change Password compulsory hoga.</p><div class="settings-actions"><button id="confirmTemporaryPassword" type="button" class="primary-btn">Reset Password</button><button value="cancel" class="secondary-btn">Cancel</button></div></form></dialog>
-</section>
-
 <section id="usersPage" class="page">
   <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Sabhi registered users/customers yahan aayenge, profile aur application summary ke saath.</p></div></div>
   <div class="manager-content"><div class="toolbar"><input id="userSearch" type="search" placeholder="🔍 Name / mobile / email"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Applications</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
 </section>
 
 <section id="paymentsPage" class="page">
-  <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions audit, individual record delete control + secure PayU backend configuration.</p></div></div>
+  <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions read-only audit + secure PayU backend configuration.</p></div></div>
   <div class="dashboard-cards"><article class="dashboard-stat-card green"><span class="stat-icon">₹</span><div><p>Total Collection</p><h2 id="paymentTotalCollection">₹0</h2></div></article><article class="dashboard-stat-card blue"><span class="stat-icon">✅</span><div><p>Success</p><h2 id="paymentSuccessCount">0</h2></div></article><article class="dashboard-stat-card yellow"><span class="stat-icon">⏳</span><div><p>Pending</p><h2 id="paymentPendingCount">0</h2></div></article><article class="dashboard-stat-card red"><span class="stat-icon">❌</span><div><p>Failed</p><h2 id="paymentFailedCount">0</h2></div></article></div>
-  <div class="manager-content">
-    <div class="box-heading">
-      <div>
-        <span class="box-kicker">LIVE PAYMENTS</span>
-        <h2>Transaction Records</h2>
-        <p class="field-help">Working PayU configuration backend/Render me locked hai. Yahan sirf live payment records manage karein.</p>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table class="admin-table">
-        <thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th><th>Action</th></tr></thead>
-        <tbody id="paymentsTable"><tr><td colspan="7">Loading...</td></tr></tbody>
-      </table>
-    </div>
-  </div></div>
+  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>🔐</span><div><h3>PayU Integration</h3><p>Merchant Salt/Secret public JS ya Firestore me save nahi hoga.</p></div></div><label>Environment</label><select id="payuEnvironment"><option value="test">Test</option><option value="production">Production</option></select><label>Merchant Key (public identifier)</label><input id="payuMerchantKey" placeholder="PayU merchant key"><label>Secure Backend Payment URL</label><input id="payuBackendUrl" type="url" placeholder="https://your-backend.example.com/api/payu"><label>Success URL</label><input id="payuSuccessUrl" type="url"><label>Failure URL</label><input id="payuFailureUrl" type="url"><label>Portal Return URL</label><input id="payuPortalReturnUrl" type="url" placeholder="https://test-domain/portal/my-applications.html"><div class="settings-message info">Customer-facing merchant/display name PayU Dashboard se set hota hai. Personal account-holder name ko checkout branding me use na karein.</div><div class="settings-actions"><button id="savePayuSettings" class="primary-btn">Save PayU Settings</button></div><div id="payuMessage" class="settings-message info">Secret/Salt must remain backend-only.</div></div><div class="manager-content"><h3>Transaction Records</h3><p class="field-help">Admin can permanently delete an individual transaction record when required.</p><div class="table-wrap"><table class="admin-table"><thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th><th>Action</th></tr></thead><tbody id="paymentsTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div></div>
 </section>
 
 <section id="portalbuilderPage" class="page">
@@ -691,11 +571,6 @@
 
 <section id="formsmanagerPage" class="page">
   <div class="page-intro"><div><h2>🧾 Forms</h2><p>Sabhi application form fields aur required documents ko full control ke saath manage karein.</p></div></div>
-  <div class="manager-content" style="margin-bottom:18px">
-    <div class="box-heading"><div><span class="box-kicker">EXISTING FORMS</span><h2>📋 All Existing Forms — Edit / Update / Delete</h2><p class="field-help">Har service/action ka current form, fields aur required documents ek jagah. Edit / Update se niche form editor khulega. Delete Form sirf form fields + document requirements delete karega; service/action safe rahega.</p></div></div>
-    <div class="toolbar"><input id="existingFormSearch" type="search" placeholder="Search service / action / form"></div>
-    <div id="existingFormsList" class="content-grid"><div class="empty-state">Loading existing forms...</div></div>
-  </div>
   <div id="formsmanagerMount"></div>
   <div class="manager-layout" style="margin-top:18px">
     <div class="manager-form"><div class="form-title"><span>📎</span><div><h3>Required Documents</h3><p>Selected action ke document upload list me add/remove/update.</p></div></div>
@@ -711,24 +586,6 @@
 <section id="servicechargesPage" class="page">
   <div class="page-intro"><div><h2>💰 Service Charges</h2><p>Sabhi existing aur future service actions ke charges ko ek jagah Edit / Update / ₹0 karein.</p></div></div>
   <div id="servicechargesMount"></div>
-</section>
-
-<section id="allchargePage" class="page">
-  <div class="page-intro"><div><h2>💵 All Charge</h2><p>Sabhi services/actions ke charge aur availability ek hi screen par alag-alag set karein.</p></div></div>
-  <div class="manager-content">
-    <div class="box-heading"><div><span class="box-kicker">ALL SERVICE CHARGES</span><h2>Service-wise Charge + Availability Editor</h2><p class="field-help">Har row ka charge aur availability alag set karein. Save All Changes sirf badli hui values ko update karega.</p></div></div>
-    <div class="toolbar">
-      <input id="allChargeSearch" type="search" placeholder="Search service / action">
-      <button id="allChargeSaveAll" class="primary-btn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save All Changes</button>
-    </div>
-    <div id="allChargeMessage" class="settings-message info">Charges loading...</div>
-    <div class="table-wrap">
-      <table class="admin-table">
-        <thead><tr><th>#</th><th>Service Name</th><th>Action</th><th>Current Charge ₹</th><th>New Charge ₹</th><th>Availability</th></tr></thead>
-        <tbody id="allChargeTable"><tr><td colspan="6">Loading charges...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
 </section>
 
 <section id="userportalcmsPage" class="page">
@@ -781,7 +638,7 @@
 <p class="field-help">Visitors header se English / हिंदी / मराठी aur Light / Dark change kar sakte hain.</p>
 </div>
 <div class="settings-group"><h3>🛠 Data Recovery & Sync</h3>
-<p class="field-help">Existing Services se Categories rebuild karein; Settings me saved logo/banner ko Images Manager me recover karein. Existing database data duplicate nahi hoga.</p>
+<p class="field-help">Existing Services se Categories rebuild karein; Settings me saved logo/banner ko Images Manager me recover karein. Existing Firestore data duplicate nahi hoga.</p>
 <div class="settings-actions"><button id="recoverCategories" class="secondary-btn" type="button">Recover Categories from Services</button><button id="recoverImages" class="secondary-btn" type="button">Recover Logo / Banner Images</button><button id="syncDashboardCounts" class="secondary-btn" type="button">Refresh Dashboard Counts</button></div>
 <div id="recoveryMessage" class="settings-message info">Recovery ready.</div></div>
 <div id="settingsMessage" class="settings-message info">Settings ready.</div>
@@ -791,37 +648,34 @@
   </main>
 </div>
 
-<script type="module" src="supabase-app.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="dashboard.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="commission-admin.js?v=20260824-cleanup1"></script>
-<script type="module" src="updates.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="services.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="categories.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="notification.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="analytics.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="seo-manager.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="admin-editor.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="button-manager.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="menu.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="images.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="documents.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="youtube.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="settings.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="page-manager.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="site-builder.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="checklists.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="dynamic-pages.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="recycle-bin.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="theme-manager.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="data-recovery.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="applications-admin.js?v=20260824-fastdelete1"></script>
-<script type="module" src="users-admin.js?v=20260824-fastdelete1"></script>
-<script type="module" src="password-reset-admin.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="payments-admin.js?v=20260824-fastdelete1"></script>
-<script type="module" src="portal-builder.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="user-portal-cms.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="admin-v30.js?v=20260824-supabasefinal1"></script>
-<script type="module" src="all-charge.js?v=20260824-supabasefinal1"></script>
-<script src="admin-pwa.js?v=20260824-supabasefinal1"></script>
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="updates.js"></script>
+<script type="module" src="services.js?v=20260821-final24r3"></script>
+<script type="module" src="categories.js"></script>
+<script type="module" src="notification.js?v=20260821-final24r3"></script>
+<script type="module" src="analytics.js"></script>
+<script type="module" src="seo-manager.js"></script>
+<script type="module" src="admin-editor.js"></script>
+<script type="module" src="button-manager.js"></script>
+<script type="module" src="menu.js"></script>
+<script type="module" src="images.js"></script>
+<script type="module" src="documents.js"></script>
+<script type="module" src="youtube.js?v=20260821-final24r3"></script>
+<script type="module" src="settings.js"></script>
+<script type="module" src="page-manager.js"></script>
+<script type="module" src="site-builder.js"></script>
+<script type="module" src="checklists.js"></script>
+<script type="module" src="dynamic-pages.js"></script>
+<script type="module" src="recycle-bin.js"></script>
+<script type="module" src="theme-manager.js"></script>
+<script type="module" src="data-recovery.js"></script>
+<script type="module" src="applications-admin.js?v=20260821-final24r3"></script>
+<script type="module" src="users-admin.js?v=20260819-final11"></script>
+<script type="module" src="payments-admin.js?v=20260819-final11"></script>
+<script type="module" src="portal-builder.js?v=20260821-final24r3"></script>
+<script type="module" src="user-portal-cms.js?v=20260821-v30"></script>
+<script type="module" src="admin-v30.js?v=20260821-v30"></script>
+<script src="admin-pwa.js?v=20260821-v30"></script>
 </body>
 </html>

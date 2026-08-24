@@ -1,6 +1,6 @@
 TRUE FULL CMS
 One-time after upload:
-1) Deploy firestore.rules in Supabase.
+1) Deploy firestore.rules in Firebase.
 2) Admin > Full Website CMS > Import Services + Yojana + Divyang.
 3) Admin > Full Website CMS > Import Document Checklists.
 After import, Admin delete/update controls public items without hard-coded fallback.

@@ -1,10 +1,10 @@
 <!doctype html>
-<html class="member-shell-wait" lang="en">
-<head><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All Services - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260824-supabasefinal1">
+<link rel="stylesheet" href="assets/portal.css?v=20260821-final24r3">
 </head>
 <body>
 <div class="topbar"><div class="container">Online Digital Seva & Application Portal</div></div>
@@ -17,13 +17,13 @@
 <footer class="footer"><div class="container">Khobragade Computer Service Centre</div></footer>
 <div id="actionModal" class="modal"><div class="modal-card"><button id="closeActionModal" class="btn btn-soft" style="float:right">✕</button><h2 id="modalTitle">Service</h2><div id="actionsBox"></div></div></div>
 
-<!-- Portal chrome/auth is loaded separately. Even if Supabase fails, catalogue below still renders. -->
+<!-- Portal chrome/auth is loaded separately. Even if Firebase fails, catalogue below still renders. -->
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260824-supabasefinal1';
+import './assets/portal.js?v=20260821-final24r3';
 
-import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260824-supabasefinal1';
+import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-final24r3';
 
 const els={
   q:document.getElementById('q'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
@@ -45,7 +45,7 @@ function render(){
   els.grid.innerHTML=filtered.length?filtered.map(x=>{const s=x.availabilityStatus||'Available',disabled=s!=='Available';return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(x.category||'Digital Service')}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
 }
 
-// Guaranteed first render from the bundled catalogue; no Supabase permission is needed for this.
+// Guaranteed first render from the bundled catalogue; no Firebase permission is needed for this.
 render();
 els.q.addEventListener('input',render);els.status.addEventListener('change',render);els.close.addEventListener('click',()=>els.modal.classList.remove('show'));
 
@@ -77,7 +77,7 @@ els.grid.addEventListener('click',async e=>{
     const ms=svc._master||MASTER_SERVICES.find(m=>m.id===svc.masterServiceId||norm(m.name)===norm(svc.name));
     if(ms)acts=ms.actions.map((a,i)=>({id:actionId(ms.id,a[0]),serviceId:svc.id,name:a[0],serviceCharge:Number(a[1]||0),officialFee:0,description:`${ms.name} - ${a[0]} service/assistance request.`,requiredDocuments:a[3]||[],availabilityStatus:a[2]||'Available',available:(a[2]||'Available')==='Available',order:(i+1)*10}));
   }
-  els.actions.innerHTML=acts.length?acts.map(a=>{const st=a.availabilityStatus||((a.available!==false)?'Available':'Unavailable');return `<article class="card" style="margin-top:12px"><span class="status ${statusClass(st)}">${esc(st)}</span><h3>${esc(a.name)}</h3><p>${esc(a.description||'')}</p><div class="price">${money(a.serviceCharge||0)} <small>${a.commissionApplied?'Final Charge':'Service Charge'}</small></div>${a.commissionApplied?`<p class="notice" style="margin-top:8px"><b>Commission User:</b> Original ${money(a.originalServiceCharge||0)} − Commission ${money(a.commissionAmount||0)} = <b>${money(a.serviceCharge||0)}</b></p>`:''}${Number(a.officialFee||0)>0?`<p>Official Fee: ${money(a.officialFee)}</p>`:''}<ol class="doc-list">${(a.requiredDocuments||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ol><div class="actions"><a class="btn btn-primary ${st!=='Available'?'disabled':''}" ${st==='Available'?`href="apply.html?service=${encodeURIComponent(svc.id)}&action=${encodeURIComponent(a.id)}" target="${svc.target==='_blank'?'_blank':'_self'}" ${svc.target==='_blank'?'rel="noopener"':''}`:'style="pointer-events:none;opacity:.5"'}>Apply Now</a></div></article>`}).join(''):'<div class="notice">Is service ke actions available nahi hain.</div>';
+  els.actions.innerHTML=acts.length?acts.map(a=>{const st=a.availabilityStatus||((a.available!==false)?'Available':'Unavailable');return `<article class="card" style="margin-top:12px"><span class="status ${statusClass(st)}">${esc(st)}</span><h3>${esc(a.name)}</h3><p>${esc(a.description||'')}</p><div class="price">${money(a.serviceCharge||0)} <small>Service Charge</small></div>${Number(a.officialFee||0)>0?`<p>Official Fee: ${money(a.officialFee)}</p>`:''}<ol class="doc-list">${(a.requiredDocuments||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ol><div class="actions"><a class="btn btn-primary ${st!=='Available'?'disabled':''}" ${st==='Available'?`href="apply.html?service=${encodeURIComponent(svc.id)}&action=${encodeURIComponent(a.id)}" target="${svc.target==='_blank'?'_blank':'_self'}" ${svc.target==='_blank'?'rel="noopener"':''}`:'style="pointer-events:none;opacity:.5"'}>Apply Now</a></div></article>`}).join(''):'<div class="notice">Is service ke actions available nahi hain.</div>';
   els.modal.classList.add('show');
 });
 </script>

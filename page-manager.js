@@ -1,7 +1,7 @@
 import {moveToTrash} from './trash.js';
 
-import {db} from './supabase-app.js';
-import {doc,getDoc,setDoc,serverTimestamp} from './supabase-db.js';
+import {db} from './firebase-config.js';
+import {doc,getDoc,setDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id);
 const names={home:'Home',services:'Services',yojana:'Yojana',divyang:'Divyang',documents:'Documents',contact:'Contact'};
 const ref=k=>doc(db,'pageContent',k||$('pageKey').value);

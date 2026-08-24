@@ -1,5 +1,5 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./supabase-app.js";
+import { db } from "./firebase-config.js";
 import { DEFAULT_SERVICES, DEFAULT_SCHEMES, DEFAULT_DIVYANG } from "./catalog-data.js";
 import {
   collection,
@@ -10,7 +10,7 @@ import {
   deleteDoc,
   serverTimestamp,
   onSnapshot
-} from './supabase-db.js';
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
 const saveButton = $("saveService");
@@ -143,7 +143,7 @@ async function saveService() {
 
 async function loadDefaultCatalog() {
   const button = $("loadDefaultCatalog");
-  if (!confirm("Complete CSC + Yojana + Divyang catalog Supabase me add karna hai? Existing duplicate names skip honge.")) return;
+  if (!confirm("Complete CSC + Yojana + Divyang catalog Firebase me add karna hai? Existing duplicate names skip honge.")) return;
   const catalog = [...DEFAULT_SERVICES, ...DEFAULT_SCHEMES, ...DEFAULT_DIVYANG];
   const existing = new Set(allServices.map((x) => String(x.name || "").replace(/\s+/g," ").trim().toLocaleLowerCase()));
   let added = 0, skipped = 0;
@@ -155,7 +155,7 @@ async function loadDefaultCatalog() {
       await addDoc(collection(db,"services"), {...item,status:"Published",availabilityStatus:"Available",featured:false,createdAt:serverTimestamp()});
       existing.add(key); added++;
     }
-    await setDoc(doc(db,"settings","website"),{catalogMode:"database",updatedAt:serverTimestamp()},{merge:true});
+    await setDoc(doc(db,"settings","website"),{catalogMode:"firebase",updatedAt:serverTimestamp()},{merge:true});
     alert(`Catalog Ready: ${added} added, ${skipped} duplicates skipped. Editable mode ON.`);
   } catch(error) { console.error(error); alert(`Catalog Error: ${error.message}`); }
   finally { if (button) { button.disabled=false; button.textContent="⚡ Load Complete CSC + Yojana + Divyang Catalog"; } }

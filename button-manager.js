@@ -1,4 +1,4 @@
-import { db } from './supabase-app.js';
+import { db } from './firebase-config.js';
 import {
   collection,
   addDoc,
@@ -8,7 +8,7 @@ import {
   setDoc,
   onSnapshot,
   serverTimestamp
-} from './supabase-db.js';
+} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 
 const $ = id => document.getElementById(id);
 const esc = v => String(v ?? '')
