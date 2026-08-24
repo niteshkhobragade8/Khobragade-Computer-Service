@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All Services - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260823-shellready2">
+<link rel="stylesheet" href="assets/portal.css?v=20260824-supabasefinal1">
 </head>
 <body>
 <div class="topbar"><div class="container">Online Digital Seva & Application Portal</div></div>
@@ -17,13 +17,13 @@
 <footer class="footer"><div class="container">Khobragade Computer Service Centre</div></footer>
 <div id="actionModal" class="modal"><div class="modal-card"><button id="closeActionModal" class="btn btn-soft" style="float:right">✕</button><h2 id="modalTitle">Service</h2><div id="actionsBox"></div></div></div>
 
-<!-- Portal chrome/auth is loaded separately. Even if Firebase fails, catalogue below still renders. -->
+<!-- Portal chrome/auth is loaded separately. Even if Supabase fails, catalogue below still renders. -->
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260823-shellready2';
+import './assets/portal.js?v=20260824-supabasefinal1';
 
-import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-final24r3';
+import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260824-supabasefinal1';
 
 const els={
   q:document.getElementById('q'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
@@ -45,7 +45,7 @@ function render(){
   els.grid.innerHTML=filtered.length?filtered.map(x=>{const s=x.availabilityStatus||'Available',disabled=s!=='Available';return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(x.category||'Digital Service')}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
 }
 
-// Guaranteed first render from the bundled catalogue; no Firebase permission is needed for this.
+// Guaranteed first render from the bundled catalogue; no Supabase permission is needed for this.
 render();
 els.q.addEventListener('input',render);els.status.addEventListener('change',render);els.close.addEventListener('click',()=>els.modal.classList.remove('show'));
 

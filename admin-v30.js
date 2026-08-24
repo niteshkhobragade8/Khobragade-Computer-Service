@@ -1,5 +1,5 @@
-import {db} from './firebase-config.js';
-import {collection,onSnapshot,doc,updateDoc,serverTimestamp} from './supabase-firestore.js';
+import {db} from './supabase-app.js';
+import {collection,onSnapshot,doc,updateDoc,serverTimestamp} from './supabase-db.js';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function movePortalManagers(){

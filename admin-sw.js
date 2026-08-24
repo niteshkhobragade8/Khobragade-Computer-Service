@@ -1,4 +1,4 @@
-const CACHE='kcsc-admin-v31-cachefix';
+const CACHE='kcsc-admin-v40-supabasefinal';
 const ADMIN_NAV=new Set(['/dashboard.html','/login.html','/admin.html']);
 self.addEventListener('install',e=>{
   self.skipWaiting();

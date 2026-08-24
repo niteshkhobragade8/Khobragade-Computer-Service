@@ -1,17 +1,16 @@
 
-import { db, firebaseConfig } from './firebase-config.js';
-import { initializeApp, deleteApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
+import { db } from './supabase-app.js';
+import { adminCreateUser, adminDeleteUser } from './supabase-auth.js';
 import {
   collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot,
   query, where, serverTimestamp, writeBatch
-} from './supabase-firestore.js';
+} from './supabase-db.js';
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
 const date=v=>{try{return (v?.toDate?v.toDate():new Date(v)).toLocaleString('en-IN')}catch{return'—'}};
-const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
+const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 
 let initialized=false, unsubs=[];
 let users=[], apps=[], payments=[], screenshots=[], services=[], actions=[], rates=[], ledger=[];
@@ -110,13 +109,8 @@ async function saveCommissionUser(){
   try{
     if(!uid){
       if(password.length<6)return setMsg('commissionUserMessage','New user ke liye minimum 6-character password required.','danger');
-      const secondary=initializeApp(firebaseConfig,'commissionCreator_'+Date.now());
-      try{
-        const a=getAuth(secondary);
-        const cred=await createUserWithEmailAndPassword(a,alias(mobile),password);
-        uid=cred.user.uid;
-        await signOut(a);
-      }finally{await deleteApp(secondary).catch(()=>{})}
+      const cred=await adminCreateUser(alias(mobile),password,{fullName,mobile,email,isCommissionUser:true});
+      uid=cred.user.uid;
     }
     await setDoc(doc(db,'users',uid),{
       fullName,email,mobile,status:'Active',isCommissionUser:true,
@@ -186,13 +180,14 @@ $('commissionUsersList')?.addEventListener('click',async e=>{
   if(b.dataset.cuEdit){editingUid=id;$('commissionEditUid').value=id;$('commissionFullName').value=u.fullName||'';$('commissionMobile').value=u.mobile||'';$('commissionEmail').value=u.email||'';$('commissionCode').value=u.commissionCode||'';$('commissionDefaultType').value=u.defaultCommissionType||'fixed';$('commissionDefaultValue').value=u.defaultCommissionValue||0;$('commissionUserStatus').value=u.commissionStatus||'Active';$('commissionStartDate').value=u.commissionStartDate||'';$('commissionEndDate').value=u.commissionEndDate||'';$('commissionSaveUser').textContent='Update Commission User';return}
   if(b.dataset.cuToggle){await updateDoc(doc(db,'users',id),{commissionStatus:(u.commissionStatus||'Active')==='Active'?'Inactive':'Active',commissionUpdatedAt:serverTimestamp()});return}
   if(b.dataset.cuDelete){
-    if(!confirm('Is Commission User ka Firestore profile + commission rates + ledger delete karein? Firebase Authentication login ko Console se manually delete karna hoga.'))return;
+    if(!confirm('Is Commission User ka profile + commission rates + ledger + login permanently delete karein?'))return;
     const batch=writeBatch(db);
     rates.filter(r=>r.userId===id).forEach(r=>batch.delete(doc(db,'commissionRates',r.id)));
     ledger.filter(l=>l.userId===id).forEach(l=>batch.delete(doc(db,'commissionLedger',l.id)));
     batch.delete(doc(db,'users',id));
     await batch.commit();
-    setMsg('commissionUserMessage','✅ Commission User data deleted. Login permanently band karne ke liye Firebase Authentication me same user manually delete karein.','success');
+    await adminDeleteUser(id).catch(e=>console.warn('Auth user delete:',e.message));
+    setMsg('commissionUserMessage','✅ Commission User data + login deleted.','success');
   }
 });
 $('commissionApplicationsTable')?.addEventListener('click',async e=>{

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Payment Successful - KCSC Portal</title>
-<link rel="stylesheet" href="assets/portal.css?v=20260823-cachefix2">
+<link rel="stylesheet" href="assets/portal.css?v=20260824-supabasefinal1">
 <style>
 .result-wrap{min-height:100vh;display:grid;place-items:center;padding:28px 16px;background:linear-gradient(135deg,#f8fafc,#eef2ff)}
 .result-card{width:min(720px,100%);background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(15,23,42,.12);text-align:center}
@@ -40,9 +40,9 @@
 </main>
 <script type="module">
 import { DATA_API_URL } from '../supabase-config.js';
-import {auth,db} from './assets/portal-firebase.js';
-import {onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
-import {addDoc,collection,serverTimestamp,getDoc,doc} from '../supabase-firestore.js';
+import {auth,db} from './assets/portal-supabase.js';
+import {onAuthStateChanged} from '../supabase-auth.js';
+import {addDoc,collection,serverTimestamp,getDoc,doc} from '../supabase-db.js';
 const q=new URLSearchParams(location.search);
 const applicationId=q.get('applicationId')||''; const txnid=q.get('txnid')||''; const amount=q.get('amount')||'';
 document.getElementById('applicationId').textContent=applicationId||'—'; document.getElementById('txnid').textContent=txnid||'—'; document.getElementById('paymentProofAmount').value=amount;
@@ -50,7 +50,7 @@ const note=document.getElementById('statusNote'), proofBox=document.getElementBy
 function showProof(message){note.textContent=message||'Payment received, lekin status sync pending hai.';proofBox.classList.add('show')}
 (async()=>{
  if(!txnid){showProof('Transaction ID missing. Payment proof upload karein.');return;}
- if(q.get('payment')==='proof'){showProof('Payment received, lekin Firebase status update fail hua. Screenshot upload karein.');return;}
+ if(q.get('payment')==='proof'){showProof('Payment received, lekin database status update fail hua. Screenshot upload karein.');return;}
  try{const r=await fetch(DATA_API_URL+'/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});const j=await r.json().catch(()=>({}));if(r.ok&&j.paymentStatus==='Paid'){note.textContent='Payment verified ✅ Portal status Paid update ho gaya.';}else if(r.ok){showProof('Payment verification complete, lekin status '+(j.paymentStatus||'Pending')+' hai. Screenshot upload kar sakte hain.');}else{showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}}catch(e){showProof('Payment received, lekin status update fail hua. Screenshot upload karein.');}
 })();
 let signedUser=null; onAuthStateChanged(auth,u=>signedUser=u);
@@ -65,7 +65,7 @@ document.getElementById('uploadPaymentProof').addEventListener('click',async()=>
   let profile={};try{const ps=await getDoc(doc(db,'users',signedUser.uid));if(ps.exists())profile=ps.data()}catch(_){}
   await addDoc(collection(db,'paymentScreenshots'),{userId:signedUser.uid,userName:profile.fullName||'',mobile:profile.mobile||'',applicationId,txnid,amount:Number(document.getElementById('paymentProofAmount').value||0),screenshotUrl:uj.secure_url,cloudinaryPublicId:uj.public_id||'',reviewStatus:'Pending',createdAt:serverTimestamp()});
   msg.textContent='Screenshot submitted successfully ✅ Admin review karega.';btn.style.display='none';document.getElementById('paymentProofFile').disabled=true;
- }catch(e){console.error(e);msg.textContent='Screenshot image upload ho sakta hai, lekin proof record save nahi hua. Firestore quota reset ke baad dobara submit karein.';}finally{btn.disabled=false}
+ }catch(e){console.error(e);msg.textContent='Screenshot image upload ho sakta hai, lekin proof record save nahi hua. Please try again.';}finally{btn.disabled=false}
 });
 </script>
 </body>

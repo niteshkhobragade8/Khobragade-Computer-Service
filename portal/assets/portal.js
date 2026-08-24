@@ -1,10 +1,10 @@
 import { DATA_API_URL } from '../../supabase-config.js';
-import {auth,db} from './portal-firebase.js';
-import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
-import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit} from '../../supabase-firestore.js';
-import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260821-final24r3';
+import {auth,db} from './portal-supabase.js';
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from '../../supabase-auth.js';
+import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit,writeBatch} from '../../supabase-db.js';
+import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260824-supabasefinal1';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`;
+const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
 const statusClass=s=>String(s||'').toLowerCase().replace(/\s+/g,'-');
 const appId=()=>`KCSC-${new Date().getFullYear()}-${crypto.randomUUID().slice(0,8).toUpperCase()}`;
@@ -165,7 +165,7 @@ function masterServiceRows(){return MASTER_SERVICES.map(s=>({id:`svc_${s.id}`,na
 async function masterInstallState(){try{const snap=await getDoc(doc(db,'settings','masterCatalog'));return snap.exists()?snap.data():{}}catch(_){return {}}}
 async function services(){
  let allLive=[],readOk=false;
- try{const snap=await getDocs(collection(db,'services'));allLive=snap.docs.map(d=>({id:d.id,...d.data()}));readOk=true}catch(e){console.warn('Services Firestore read failed; using bundled catalogue.',e)}
+ try{const snap=await getDocs(collection(db,'services'));allLive=snap.docs.map(d=>({id:d.id,...d.data()}));readOk=true}catch(e){console.warn('Services database read failed; using bundled catalogue.',e)}
  serviceMasterMap.clear();
  const masterByName=new Map(MASTER_SERVICES.map(m=>[normServiceName(m.name),m]));
  for(const x of allLive){const m=masterByName.get(normServiceName(x.name));if(m){x.masterServiceId=x.masterServiceId||m.id;x._master=m;serviceMasterMap.set(x.id,m)}}
@@ -179,7 +179,7 @@ async function services(){
  return rows;
 }
 async function actions(serviceId){
- let live=[];try{const snap=await getDocs(query(collection(db,'serviceActions'),where('serviceId','==',serviceId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Actions Firestore read failed; using bundled catalogue.',e)}
+ let live=[];try{const snap=await getDocs(query(collection(db,'serviceActions'),where('serviceId','==',serviceId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Actions database read failed; using bundled catalogue.',e)}
  let svc=serviceMasterMap.get(serviceId)||MASTER_SERVICES.find(x=>`svc_${x.id}`===serviceId||x.id===serviceId);
  if(!svc&&live.length){const msid=live.find(x=>x.masterServiceId)?.masterServiceId;if(msid)svc=MASTER_SERVICES.find(x=>x.id===msid)}
  if(svc){
@@ -199,7 +199,7 @@ async function actions(serviceId){
  return Promise.all(sorted.map(a=>applyCommissionAction(a,currentProfile)))
 }
 async function fields(actionDocId){
- let live=[];try{const snap=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields Firestore read failed; using bundled catalogue.',e)}
+ let live=[];try{const snap=await getDocs(query(collection(db,'formFields'),where('actionId','==',actionDocId)));live=snap.docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.warn('Form fields database read failed; using bundled catalogue.',e)}
  if(live.length)return live.sort((a,b)=>Number(a.order||0)-Number(b.order||0));
  const mapped=actionMasterMap.get(actionDocId);if(mapped?.generic)return [
  {id:`fld_${actionDocId}_1`,actionId:actionDocId,label:'Full Name',type:'text',required:true,order:10,profileKey:'fullName'},
@@ -229,19 +229,20 @@ async function createApplication({service,action,formData,files:uploadList}){
  if(!auth.currentUser)throw new Error('Please login first.');
  const profileData=await profile(auth.currentUser.uid);
  const pricedAction=await applyCommissionAction(action,{id:auth.currentUser.uid,...profileData});
- const id=appId(),uploaded=[];
- for(const item of uploadList||[]){
-  if(item?.url){uploaded.push({label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'});continue}
-  if(!item?.file)continue;
+ const id=appId();
+ const uploaded=(await Promise.all((uploadList||[]).map(async item=>{
+  if(item?.url)return {label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'};
+  if(!item?.file)return null;
   const url=await uploadFile(item.file,`applications/${auth.currentUser.uid}/${id}/${Date.now()}-${item.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
-  uploaded.push({label:item.label,name:item.file.name,url,source:'application'})
- }
+  return {label:item.label,name:item.file.name,url,source:'application'};
+ }))).filter(Boolean);
  const originalAmount=Number(pricedAction.originalServiceCharge??action.serviceCharge??0);
  const commissionAmount=Number(pricedAction.commissionAmount||0);
  const amount=Number(pricedAction.serviceCharge||0);
  const isCommissionApplication=commissionProfileActive({id:auth.currentUser.uid,...profileData})&&commissionAmount>0;
  const appRef=doc(db,'applications',id);
- await setDoc(appRef,{
+ const batch=writeBatch(db);
+ batch.set(appRef,{
   applicationId:id,userId:auth.currentUser.uid,userName:profileData?.fullName||'',mobile:profileData?.mobile||'',email:profileData?.email||'',
   serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',
   originalAmount,commissionAmount,commissionType:pricedAction.commissionType||'',commissionValue:Number(pricedAction.commissionValue||0),
@@ -250,13 +251,14 @@ async function createApplication({service,action,formData,files:uploadList}){
   paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',formData,documents:uploaded,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
  });
  if(isCommissionApplication){
-  await setDoc(doc(db,'commissionLedger',id),{
+  batch.set(doc(db,'commissionLedger',id),{
    userId:auth.currentUser.uid,applicationDocId:id,applicationId:id,serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',
    originalCharge:originalAmount,commissionAmount,finalCharge:amount,status:amount>0?'Pending':'Paid',paymentStatus:amount>0?'Pending':'Paid',
    createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-  },{merge:true});
+  });
  }
- await setDoc(doc(db,'publicApplicationStatus',id),{applicationId:id,mobileLast4:(profileData?.mobile||'').slice(-4),serviceName:service.name||'',actionName:action.name||'',paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',updatedAt:serverTimestamp()});
+ batch.set(doc(db,'publicApplicationStatus',id),{applicationId:id,mobileLast4:(profileData?.mobile||'').slice(-4),serviceName:service.name||'',actionName:action.name||'',paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',updatedAt:serverTimestamp()});
+ await batch.commit();
  return {docId:id,applicationId:id,amount,originalAmount,commissionAmount}
 }
 async function payuSettings(){const s=await getDoc(doc(db,'settings','payu'));return s.exists()?s.data():{}}

@@ -1,8 +1,8 @@
-const CACHE='kcsc-commission-partner-v2-cachefix';
+const CACHE='kcsc-commission-partner-v4-supabasefinal';
 const ASSETS=[
  './commission-dashboard.html',
- './assets/portal.css?v=20260823-cachefix2',
- './assets/commission-dashboard.css?v=20260823-cachefix2'
+ './assets/portal.css?v=20260824-supabasefinal1',
+ './assets/commission-dashboard.css?v=20260824-supabasefinal1'
 ];
 self.addEventListener('install',e=>{
   self.skipWaiting();

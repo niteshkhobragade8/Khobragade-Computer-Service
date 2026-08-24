@@ -8,4 +8,4 @@ BUTTON MANAGER — EXISTING + NEW UPGRADE
 - Restore Original removes the override and restores the original button.
 - Existing action buttons keep their original JavaScript action. If moved, a proxy button triggers the original action.
 - New custom buttons keep full Button Manager behavior.
-- No Firestore rule change needed beyond existing customButtons rule.
+- No database rule change needed beyond existing customButtons rule.
