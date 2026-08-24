@@ -15,6 +15,140 @@
 <meta name="theme-color" content="#172554">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="admin-icon-192.png">
+
+<style id="kcsc-seven-page-layout-final">
+/*
+  ONLY these Admin pages:
+  Services, Actions, Forms, Service Charges,
+  All Charge, Website CMS, Portal Settings.
+
+  Reference layout: Dashboard / Commission Panel /
+  Applications / Users-Customers = full main-content width.
+*/
+
+/* Common: selected pages use the full available Admin content width */
+#servicesmanagerPage,
+#actionsmanagerPage,
+#formsmanagerPage,
+#servicechargesPage,
+#allchargePage,
+#userportalcmsPage,
+#settingsPage{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+}
+
+/* Anything moved into the manager mounts must become full width */
+#servicesmanagerPage #servicesmanagerMount > *,
+#actionsmanagerPage #actionsmanagerMount > *,
+#formsmanagerPage #formsmanagerMount > *,
+#servicechargesPage #servicechargesMount > *{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Remove the narrow left/right split ONLY inside the selected pages */
+#servicesmanagerPage .manager-layout,
+#actionsmanagerPage .manager-layout,
+#formsmanagerPage .manager-layout,
+#servicechargesPage .manager-layout,
+#userportalcmsPage .manager-layout{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:18px !important;
+  width:100% !important;
+  max-width:none !important;
+}
+
+/* Full-width form/list panels like Applications/Users */
+#servicesmanagerPage .manager-form,
+#servicesmanagerPage .manager-content,
+#actionsmanagerPage .manager-form,
+#actionsmanagerPage .manager-content,
+#formsmanagerPage .manager-form,
+#formsmanagerPage .manager-content,
+#servicechargesPage .manager-form,
+#servicechargesPage .manager-content,
+#allchargePage .manager-form,
+#allchargePage .manager-content,
+#userportalcmsPage .manager-form,
+#userportalcmsPage .manager-content,
+#settingsPage .settings-shell,
+#settingsPage .settings-group{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Existing records/cards should not be squeezed into 2 narrow columns */
+#servicesmanagerPage .content-grid,
+#actionsmanagerPage .content-grid,
+#formsmanagerPage .content-grid,
+#servicechargesPage .content-grid,
+#allchargePage .content-grid,
+#userportalcmsPage .content-grid{
+  grid-template-columns:minmax(0,1fr) !important;
+  width:100% !important;
+}
+
+/* Tables/search/dropdowns use full available width */
+#servicesmanagerPage .table-wrap,
+#actionsmanagerPage .table-wrap,
+#formsmanagerPage .table-wrap,
+#servicechargesPage .table-wrap,
+#allchargePage .table-wrap,
+#userportalcmsPage .table-wrap,
+#settingsPage .table-wrap,
+#servicesmanagerPage .toolbar,
+#actionsmanagerPage .toolbar,
+#formsmanagerPage .toolbar,
+#servicechargesPage .toolbar,
+#allchargePage .toolbar,
+#userportalcmsPage .toolbar,
+#settingsPage .toolbar{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Website CMS and Portal Settings: stack groups full width */
+#userportalcmsPage .manager-layout,
+#settingsPage .settings-shell{
+  grid-template-columns:minmax(0,1fr) !important;
+}
+
+/* Keep normal form controls usable; no IDs/functions changed */
+#servicesmanagerPage input,
+#servicesmanagerPage select,
+#servicesmanagerPage textarea,
+#actionsmanagerPage input,
+#actionsmanagerPage select,
+#actionsmanagerPage textarea,
+#formsmanagerPage input,
+#formsmanagerPage select,
+#formsmanagerPage textarea,
+#servicechargesPage input,
+#servicechargesPage select,
+#servicechargesPage textarea,
+#allchargePage input,
+#allchargePage select,
+#allchargePage textarea,
+#userportalcmsPage input,
+#userportalcmsPage select,
+#userportalcmsPage textarea,
+#settingsPage input,
+#settingsPage select,
+#settingsPage textarea{
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+</style>
+
 </head>
 <body>
 
