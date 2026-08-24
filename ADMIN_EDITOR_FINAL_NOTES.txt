@@ -5,4 +5,4 @@ ADMIN EDITOR FINAL
 4. Admin Theme: create/edit/update/apply/delete/reset.
 5. Recycle Bin: deleted Admin Menu/Admin Page/Admin Theme can be restored or permanently deleted.
 6. Core page delete is SAFE LOGICAL DELETE: code is not physically removed; it is hidden and moved to Recycle Bin so Restore works.
-7. Existing Supabase rules already allow settings and recycleBin for signed-in admin; no new database rule is required.
+7. Existing Firebase rules already allow settings and recycleBin for signed-in admin; no new Firestore rule is required.
