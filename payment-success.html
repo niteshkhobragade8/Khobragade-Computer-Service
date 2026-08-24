@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Payment Successful - KCSC Portal</title>
+<link rel="stylesheet" href="assets/portal.css?v=20260824-paymentsuccess2">
+<style>
+.result-wrap{min-height:100vh;display:grid;place-items:center;padding:28px 16px;background:linear-gradient(135deg,#f8fafc,#eef2ff)}
+.result-card{width:min(720px,100%);background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(15,23,42,.12);text-align:center}
+.result-icon{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:#dcfce7;font-size:38px}
+.result-card h1{margin:0 0 8px;font-size:32px;color:#0f172a}
+.result-card p{color:#64748b}
+.result-meta{margin:22px 0;text-align:left;background:#f8fafc;border-radius:16px;padding:18px}
+.result-meta div{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px dashed #dbe3ee}
+.result-meta div:last-child{border-bottom:0}
+.result-meta b{word-break:break-all;color:#0f172a}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.status-note{margin:16px 0 0;padding:12px 14px;border-radius:12px;background:#eff6ff;color:#1d4ed8;font-size:14px}
+.status-note.ok{background:#ecfdf5;color:#047857}
+.status-note.warn{background:#fff7ed;color:#c2410c}
+</style>
+</head>
+<body>
+<main class="result-wrap">
+  <section class="result-card">
+    <div class="result-icon">✅</div>
+    <span class="dashboard-kicker">PAYMENT RESPONSE RECEIVED</span>
+    <h1>Payment Successful</h1>
+    <p>PayU payment response receive ho gaya hai.</p>
+
+    <div class="result-meta">
+      <div><span>Application ID</span><b id="applicationId">—</b></div>
+      <div><span>Transaction ID</span><b id="txnid">—</b></div>
+    </div>
+
+    <div class="status-note" id="statusNote">Payment verify ho raha hai…</div>
+
+    <div class="result-actions">
+      <a class="btn btn-primary" href="my-applications.html">My Applications</a>
+      <a class="btn btn-soft" href="payments.html">Payment Status</a>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { DATA_API_URL } from '../supabase-config.js';
+
+const q = new URLSearchParams(location.search);
+const applicationId = q.get('applicationId') || '';
+const txnid = q.get('txnid') || '';
+const paymentHint = (q.get('payment') || '').toLowerCase();
+
+const appEl = document.getElementById('applicationId');
+const txnEl = document.getElementById('txnid');
+const note = document.getElementById('statusNote');
+
+appEl.textContent = applicationId || '—';
+txnEl.textContent = txnid || '—';
+
+function setNote(message, type=''){
+  note.textContent = message;
+  note.className = 'status-note' + (type ? ' ' + type : '');
+}
+
+(async()=>{
+  if(!txnid){
+    setNote('Transaction ID missing hai. Payment Status page check karein.','warn');
+    return;
+  }
+
+  try{
+    const r = await fetch(DATA_API_URL + '/reconcile-payment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({txnid,applicationId})
+    });
+
+    const j = await r.json().catch(()=>({}));
+
+    if(r.ok && j.paymentStatus === 'Paid'){
+      setNote('Payment verified ✅ Status Paid update ho gaya.','ok');
+      return;
+    }
+
+    if(r.ok){
+      setNote('Payment response receive hua hai. Current status: ' + (j.paymentStatus || 'Pending') + '.','warn');
+      return;
+    }
+
+    // TEST txn or PayU verification not yet available.
+    if(paymentHint === 'success'){
+      setNote('Payment response receive hua hai. Verification processing me hai.','warn');
+    }else{
+      setNote('Payment response receive hua hai. Payment Status page par latest status check karein.','warn');
+    }
+  }catch(e){
+    console.error('Payment reconcile error:', e);
+    setNote('Payment response receive hua hai. Payment Status page par latest status check karein.','warn');
+  }
+})();
+</script>
+</body>
+</html>

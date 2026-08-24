@@ -1,0 +1,123 @@
+<!doctype html><html><head><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apply - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260824-supabasefinal1"></head><body><main class="section"><div class="container" style="max-width:900px"><div id="loading" class="card">Loading application...</div><form id="applyForm" class="card" hidden><div class="application-form-head"><div><span class="dashboard-kicker">NEW APPLICATION</span><h2 id="applyTitle"></h2><p id="applyDesc"></p></div><label class="profile-autofill-switch"><input id="useProfile" type="checkbox" checked><span><b>Use Profile Details</b><small>Name, mobile, DOB, address etc. auto-fill</small></span></label></div><div id="profilePrefillNotice" class="notice profile-prefill-notice"></div><div id="priceBox" class="notice"></div><h3>Application Details</h3><div id="dynamicFields" class="profile-fields-grid"></div><h3>Required Documents</h3><div id="profilePhotoOption"></div><div id="documentFields"></div><label class="field"><span><input id="declaration" type="checkbox" required> Main confirm karta/karti hoon ki di gayi information sahi hai aur displayed Service/Assistance Charge samajh liya hai.</span></label><button class="btn btn-primary" style="width:100%">Submit & Continue to Payment</button><div id="applyMsg" class="msg"></div></form></div></main><script type="module">
+if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
+
+import './assets/portal.js?v=20260824-supabasefinal1';
+import{db}from'./assets/portal-supabase.js';
+import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'../supabase-db.js';
+
+await Portal.ready();
+if(!Portal.user){location.href='index.html?auth=login';throw new Error('login')}
+
+const loading=document.getElementById('loading'),applyForm=document.getElementById('applyForm'),applyTitle=document.getElementById('applyTitle'),applyDesc=document.getElementById('applyDesc'),priceBox=document.getElementById('priceBox'),dynamicFields=document.getElementById('dynamicFields'),profilePrefillNotice=document.getElementById('profilePrefillNotice'),useProfile=document.getElementById('useProfile'),profilePhotoOption=document.getElementById('profilePhotoOption'),documentFields=document.getElementById('documentFields'),applyMsg=document.getElementById('applyMsg');
+const profile=Portal.profile||{},sp=new URLSearchParams(location.search),sid=sp.get('service'),aid=sp.get('action'),resubmitId=sp.get('resubmit');
+const svcs=await Portal.services(),svc=svcs.find(x=>x.id===sid),acts=await Portal.actions(sid),act=acts.find(x=>x.id===aid);
+if(!svc||!act){loading.textContent='Invalid service/action.';throw new Error('invalid')}
+const st=act.availabilityStatus||((act.available!==false)?'Available':'Unavailable');
+if((svc.availabilityStatus||'Available')!=='Available'||st!=='Available'){loading.textContent='This service/action is currently not available.';throw new Error('unavailable')}
+
+let existingApp=null;
+if(resubmitId){
+  const snap=await getDoc(doc(db,'applications',resubmitId));
+  if(!snap.exists()||snap.data().userId!==Portal.user.uid||snap.data().status!=='Rejected'){
+    loading.textContent='This application cannot be resubmitted.';throw new Error('invalid resubmit')
+  }
+  existingApp={id:snap.id,...snap.data()};
+  document.querySelector('.dashboard-kicker').textContent='RESUBMIT APPLICATION';
+  const h=document.querySelector('.application-form-head h2');
+}
+
+const fs=await Portal.fields(aid);
+applyTitle.textContent=`${svc.name} — ${act.name}`;
+applyDesc.textContent=resubmitId
+  ? `Rejected application ko correct karke resubmit karein.${existingApp?.rejectionReason?` Reason: ${existingApp.rejectionReason}`:''}`
+  : (act.description||'');
+priceBox.innerHTML=`<b>${act.commissionApplied?'Final Service Charge':'Service / Assistance Charge'}:</b> ${Portal.money(act.serviceCharge||0)}${act.commissionApplied?`<br><b>Original Charge:</b> ${Portal.money(act.originalServiceCharge||0)}<br><b>Commission Benefit:</b> ${Portal.money(act.commissionAmount||0)}`:''}${Number(act.officialFee||0)>0?`<br><b>Official Fee:</b> ${Portal.money(act.officialFee)} (separate)`:''}${resubmitId?`<br><b>Payment:</b> ${Portal.esc(existingApp.paymentStatus||'Pending')} — dobara payment tabhi lagega jab status Paid na ho.`:''}`;
+
+function fieldValue(f){
+  if(existingApp?.formData && Object.prototype.hasOwnProperty.call(existingApp.formData,f.label)) return existingApp.formData[f.label] ?? '';
+  return useProfile.checked?Portal.profileAutofill(f,profile):'';
+}
+function inputHtml(f){
+  const req=f.required?'required':'',v=fieldValue(f);
+  if(f.type==='select')return `<div class="field"><label>${Portal.esc(f.label)}</label><select name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" ${req}><option value="">Select</option>${(f.options||[]).map(o=>`<option ${String(o)===String(v)?'selected':''}>${Portal.esc(o)}</option>`).join('')}</select></div>`;
+  if(f.type==='textarea')return `<div class="field profile-field-wide"><label>${Portal.esc(f.label)}</label><textarea name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" ${req}>${Portal.esc(v)}</textarea></div>`;
+  return `<div class="field"><label>${Portal.esc(f.label)}</label><input name="${f.id}" data-autofill-key="${Portal.esc(Portal.inferProfileKey(f))}" type="${['date','number','email','tel'].includes(f.type)?f.type:'text'}" value="${Portal.esc(v)}" ${req}></div>`
+}
+function renderFields(){
+  dynamicFields.innerHTML=fs.map(inputHtml).join('')||'<p class="hint">No extra form fields configured.</p>';
+  const filled=fs.filter(f=>fieldValue(f)).length;
+  profilePrefillNotice.innerHTML=resubmitId
+    ? `✏️ <b>Rejected application edit mode.</b> ${filled} existing field(s) loaded.`
+    : (useProfile.checked?`✅ <b>${filled} profile field(s) auto-filled.</b> Application ke liye value change kar sakte hain; Profile tab tak change nahi hogi.`:'Profile auto-fill OFF hai.')
+}
+useProfile.addEventListener('change',()=>{if(!resubmitId)renderFields()});
+if(resubmitId){useProfile.checked=false;useProfile.closest('label').style.display='none'}
+renderFields();
+
+const NON_DOCUMENT=/^(mobile( number)?|phone( number)?|contact( number)?|name|full name|email|e-?mail|dob|date of birth|gender|address|village|city|taluka|tehsil|district|state|pin ?code|pincode|age|father'?s? name|mother'?s? name|husband'?s? name)$/i;
+const docs=(act.requiredDocuments||[]).filter(d=>!NON_DOCUMENT.test(String(d).trim()));
+const removed=(act.requiredDocuments||[]).length-docs.length;
+if(removed>0){
+  const n=document.createElement('div');n.className='notice';n.innerHTML=`ℹ️ Mobile/Name/Email jaise detail fields ko document upload se hata diya gaya hai.`;
+  documentFields.before(n);
+}
+const photoIndex=docs.findIndex(d=>/photo|photograph|passport photo/i.test(String(d)));
+const canUseProfilePhoto=photoIndex>=0&&profile.photoURL&&!resubmitId;
+let useProfilePhoto=Boolean(canUseProfilePhoto);
+if(canUseProfilePhoto){
+  profilePhotoOption.innerHTML=`<div class="profile-photo-apply"><img src="${Portal.esc(profile.photoURL)}" alt="Profile Photo"><label><input id="useProfilePhoto" type="checkbox" checked> <b>Use saved Profile Photo</b><small>Uncheck karke neeche nayi photo upload kar sakte hain.</small></label></div>`;
+  document.getElementById('useProfilePhoto').addEventListener('change',e=>{useProfilePhoto=e.target.checked;renderDocs()})
+}else if(photoIndex>=0&&!resubmitId){
+  profilePhotoOption.innerHTML='<div class="notice">Profile photo saved nahi hai. Photo document upload karein ya Profile me photo add karein.</div>'
+}
+
+function oldDoc(label){return (existingApp?.documents||[]).find(z=>String(z.label||'').toLowerCase()===String(label).toLowerCase())}
+function renderDocs(){
+  documentFields.innerHTML=docs.map((d,i)=>{
+    const profilePhotoUsed=i===photoIndex&&useProfilePhoto, old=oldDoc(d);
+    const required=!resubmitId&&!profilePhotoUsed;
+    return `<div class="field"><label>${Portal.esc(d)}${profilePhotoUsed?' — Profile Photo selected':''}</label>${old?`<div class="notice" style="margin:6px 0">Existing: <a target="_blank" rel="noopener" href="${Portal.esc(old.url)}">${Portal.esc(old.name||d)}</a> · new file choose karoge to replace hoga.</div>`:''}<input type="file" data-doc="${i}" accept="image/*,.pdf" ${profilePhotoUsed?'disabled':''} ${required?'required':''}></div>`
+  }).join('')||'<p class="hint">No mandatory documents configured.</p>'
+}
+renderDocs();loading.hidden=true;applyForm.hidden=false;
+
+applyForm.onsubmit=async e=>{
+  e.preventDefault();const msg=applyMsg;
+  try{
+    const fd=new FormData(applyForm),data={};fs.forEach(f=>data[f.label]=fd.get(f.id)||'');
+    const inputs=[...documentFields.querySelectorAll('input[type=file]')],newDocs=[];
+    for(let idx=0;idx<docs.length;idx++){
+      const label=docs[idx],file=inputs[idx]?.files?.[0];
+      if(idx===photoIndex&&useProfilePhoto&&profile.photoURL){newDocs.push({label,name:'Profile Photo',url:profile.photoURL,source:'profile'});continue}
+      if(file){
+        const appKey=existingApp?.applicationId||`draft-${Date.now()}`;
+        const url=await Portal.uploadFile(file,`applications/${Portal.user.uid}/${appKey}/resubmit-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
+        newDocs.push({label,name:file.name,url,source:resubmitId?'resubmit':'application',uploadedAt:new Date().toISOString()});
+      }
+    }
+    if(resubmitId){
+      const merged=[...(existingApp.documents||[])];
+      for(const nd of newDocs){
+        const i=merged.findIndex(z=>String(z.label||'').toLowerCase()===String(nd.label||'').toLowerCase());
+        if(i>=0)merged[i]=nd;else merged.push(nd);
+      }
+      const nextStatus=(existingApp.paymentStatus==='Paid'||Number(existingApp.amount||0)===0)?'Pending':'Pending Payment';
+      await updateDoc(doc(db,'applications',resubmitId),{
+        formData:data,documents:merged,status:nextStatus,rejectionReason:'',userMessage:'',resubmittedAt:serverTimestamp(),updatedAt:serverTimestamp()
+      });
+      await setDoc(doc(db,'publicApplicationStatus',existingApp.applicationId),{
+        applicationId:existingApp.applicationId,mobileLast4:String(existingApp.mobile||'').slice(-4),serviceName:existingApp.serviceName||'',actionName:existingApp.actionName||'',paymentStatus:existingApp.paymentStatus||'Pending',status:nextStatus,userMessage:'',updatedAt:serverTimestamp()
+      },{merge:true});
+      msg.textContent=`Application ${existingApp.applicationId} resubmitted successfully.`;msg.className='msg show ok';
+      setTimeout(()=>location.href='my-applications.html',700);return;
+    }
+    const uploads=docs.map((label,idx)=>{
+      if(idx===photoIndex&&useProfilePhoto&&profile.photoURL)return{label,name:'Profile Photo',url:profile.photoURL,source:'profile'};
+      const file=inputs[idx]?.files?.[0];return{label,file}
+    });
+    const app=await Portal.createApplication({service:svc,action:act,formData:data,files:uploads});
+    msg.textContent=`Application ${app.applicationId} created.`;msg.className='msg show ok';
+    if(app.amount>0)await Portal.startPayment(app);else location.href='my-applications.html'
+  }catch(err){msg.textContent=err.message;msg.className='msg show err'}
+};
+</script></body></html>

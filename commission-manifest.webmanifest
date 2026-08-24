@@ -1,0 +1,14 @@
+{
+  "name": "KCSC Commission Partner",
+  "short_name": "KCSC Partner",
+  "start_url": "./commission-dashboard.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#172554",
+  "description": "Khobragade Computer Service Centre Commission Partner Portal",
+  "icons": [
+    {"src": "assets/commission-icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "assets/commission-icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}

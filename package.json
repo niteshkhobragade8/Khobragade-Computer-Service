@@ -1,8 +1,8 @@
 {
   "name": "kcsc-payu-backend",
-  "version": "3.0.0",
+  "version": "5.0.0",
   "private": true,
-  "description": "Secure PayU backend for KCSC",
+  "description": "KCSC Supabase Auth + PayU backend - raw callback interception",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -13,7 +13,6 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "firebase-admin": "^13.4.0",
     "@supabase/supabase-js": "^2.57.0"
   }
 }

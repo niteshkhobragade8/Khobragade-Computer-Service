@@ -1,0 +1,45 @@
+<!doctype html>
+<html class="member-shell-wait" lang="hi">
+<head><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Account - KCSC Portal</title><link rel="stylesheet" href="assets/portal.css?v=20260824-supabasefinal1">
+</head>
+<body class="member-dashboard">
+<div class="topbar"><div class="container">Khobragade Computer Service Centre · User Portal</div></div>
+<header class="nav"><div class="container nav-inner"><a class="brand" href="account.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="member-head-tools"><span class="head-bell" title="Notifications">🔔</span><span id="navAuth"></span></div></div></header>
+<main class="section member-main"><div class="container account-grid">
+<aside class="account-menu member-menu">
+<div class="member-menu-title">MY ACCOUNT</div>
+<a class="active" href="account.html">🏠 Dashboard</a><a href="services.html">🧰 All Services</a><a href="services.html">➕ New Application</a><a href="my-applications.html">📋 My Applications</a><a href="payments.html">💳 Payments</a><a href="track.html">🔎 Track Application</a><a href="my-documents.html">📁 My Documents</a><a href="downloads.html">📥 Downloads</a><a href="notifications.html">🔔 Notifications</a><a href="profile.html">👤 Profile</a><a href="index.html#support">💬 Help / Support</a><button class="member-logout" onclick="Portal.logout()">↪ Logout</button>
+</aside>
+<section class="dashboard-content">
+<div class="dashboard-welcome"><div><span class="dashboard-kicker">USER DASHBOARD</span><h1 id="hello">Welcome</h1><p>Applications, payments aur service status ek hi jagah manage karein.</p></div><a class="btn btn-primary dashboard-new" href="services.html">+ New Application</a></div>
+<div id="needAlert" class="dashboard-alert" hidden><div><b>⚠️ Document Required</b><span id="needAlertText">Aapki application me document action required hai.</span></div><a href="my-applications.html">View Applications →</a></div>
+<div class="dashboard-service-search"><div><span class="dashboard-kicker">FIND A SERVICE</span><h2>Search Services</h2></div><form action="services.html"><input name="q" placeholder="Voter ID, PAN, UDID, Certificate..." aria-label="Search services"><button class="btn btn-primary">Search</button></form></div>
+<div class="dashboard-summary">
+<a class="dash-stat stat-total" href="my-applications.html"><span class="dash-icon">📄</span><div><small>Total Applications</small><strong id="total">0</strong></div></a>
+<a class="dash-stat stat-pending" href="my-applications.html"><span class="dash-icon">⏳</span><div><small>Pending / Processing</small><strong id="active">0</strong></div></a>
+<a class="dash-stat stat-complete" href="my-applications.html"><span class="dash-icon">✅</span><div><small>Completed</small><strong id="completed">0</strong></div></a>
+<a class="dash-stat stat-docs" href="my-applications.html"><span class="dash-icon">📎</span><div><small>Need Documents</small><strong id="need">0</strong></div></a>
+</div>
+<div class="dashboard-quick-grid">
+<a class="quick-action" href="services.html"><span>🧾</span><b>Apply for Service</b><small>New Apply, Correction, Download & more</small></a>
+<a class="quick-action" href="my-applications.html"><span>💳</span><b>Payment Status</b><small>Paid, Pending aur Failed payment dekhein</small></a>
+<a class="quick-action" href="my-applications.html"><span>📥</span><b>Slip / PDF</b><small>Completed application ki file download karein</small></a>
+<a class="quick-action" href="profile.html"><span>👤</span><b>My Profile</b><small>Photo, DOB, address aur common details update karein</small></a>
+</div>
+
+<div class="recent-panel"><div class="section-head dashboard-section-head"><div><span class="dashboard-kicker">NEW FROM ADMIN</span><h2>Latest Services & Updates</h2><p>Nayi service, KYC update aur important notice automatically yahan aayega.</p></div><a class="btn btn-soft" href="services.html">All Services →</a></div><div id="liveServicesGrid" class="live-grid"></div><div id="liveUpdatesGrid" class="live-updates compact-live"></div></div>
+<div class="recent-panel"><div class="section-head dashboard-section-head"><div><span class="dashboard-kicker">NOTICES</span><h2>Latest Notifications</h2><p>Admin se publish kiye gaye normal notices.</p></div><a class="btn btn-soft" href="notifications.html">All Notifications →</a></div><div id="adminNotificationsGrid" class="admin-notif-grid" data-admin-notifications></div></div>
+<div class="recent-panel"><div class="section-head dashboard-section-head"><div><span class="dashboard-kicker">YOUTUBE</span><h2>Latest Videos</h2><p>Admin se publish kiye gaye latest videos.</p></div></div><div id="liveYoutubeGrid" class="live-video-grid"></div></div>
+<div class="recent-panel"><div class="section-head dashboard-section-head"><div><span class="dashboard-kicker">LATEST ACTIVITY</span><h2>Recent Applications</h2><p>Aapki latest applications aur unka current status.</p></div><a class="btn btn-soft" href="my-applications.html">View All →</a></div><div id="recent" class="recent-app-grid"></div></div>
+</section></div></main>
+<footer class="member-footer"><div class="container">© 2026 Khobragade Computer Service Centre · Secure User Portal</div></footer>
+<script type="module">
+if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
+
+import './assets/portal.js?v=20260824-supabasefinal1';
+
+document.addEventListener('portal-auth',async e=>{if(!e.detail.user){location.href='index.html?auth=login';return}const p=e.detail.profile||{};if(Portal.commissionProfileActive(p)){location.replace('commission-dashboard.html');return}hello.textContent='Welcome, '+(p.fullName||'User');const a=await Portal.myApplications();const activeRows=a.filter(x=>['Pending','Processing','Need Documents','On Hold','Pending Payment'].includes(x.status));const needRows=a.filter(x=>x.status==='Need Documents');const rejectedRows=a.filter(x=>x.status==='Rejected');total.textContent=a.length;active.textContent=activeRows.length;completed.textContent=a.filter(x=>x.status==='Completed').length;need.textContent=needRows.length;if(needRows.length||rejectedRows.length){needAlert.hidden=false;needAlertText.textContent=[needRows.length?`${needRows.length} application me documents required`:'' ,rejectedRows.length?`${rejectedRows.length} application rejected — resubmit available`:'' ].filter(Boolean).join(' · ')}recent.innerHTML=a.slice(0,6).map(x=>`<article class="recent-app-card"><div class="recent-app-top"><span class="status ${Portal.statusClass(x.status||'Pending')}">${Portal.esc(x.status||'Pending')}</span><span class="payment-pill">${Portal.esc(x.paymentStatus||'Pending')}</span></div><h3>${Portal.esc(x.serviceName||'Service')}</h3><p>${Portal.esc(x.actionName||'')}</p><div class="recent-app-meta"><b>${Portal.esc(x.applicationId||x.id||'')}</b><strong>${Portal.money(x.amount||0)}</strong></div></article>`).join('')||`<div class="dashboard-empty"><span>🗂️</span><h3>Abhi koi application nahi hai</h3><p>Apni pehli service application start karein.</p><a class="btn btn-primary" href="services.html">+ New Application</a></div>`},{once:true});
+</script>
+</body></html>

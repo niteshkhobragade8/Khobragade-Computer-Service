@@ -1,8 +1,8 @@
 
+const http = require('http');
 const express = require('express');
 const crypto = require('crypto');
 const cors = require('cors');
-const admin = require('firebase-admin');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
@@ -12,12 +12,34 @@ app.use(cors({ origin: [
 ]}));
 app.use(express.json({limit:'15mb'}));
 app.use(express.urlencoded({ extended: true, limit:'15mb' }));
+// PAYU DIAGNOSTIC LOGGER v4.6
+// Logs exact method/host/path for every request without exposing secrets.
+app.use((req,res,next)=>{
+  const body=req.body||{};
+  const txnid=String(body.txnid||req.query?.txnid||body.txnId||body.transactionId||'');
+  console.log('HTTP-IN', {
+    method:req.method,
+    host:req.get('host')||'',
+    path:req.originalUrl||req.url||'',
+    txnid:txnid||'',
+    hasPayUFields:!!(body.status||body.mihpayid||body.hash||body.udf1||body.udf2)
+  });
+  next();
+});
+
+// Normalize duplicate slashes in callback paths.
+app.use((req,res,next)=>{
+  if(req.url && req.url.startsWith('//')) req.url=req.url.replace(/^\/+/,'/');
+  next();
+});
+
 
 const PAYU_KEY = process.env.PAYU_KEY;
 const PAYU_SALT = process.env.PAYU_SALT;
 const PAYU_MODE = (process.env.PAYU_MODE || 'production').toLowerCase();
 const WEBSITE_URL = process.env.WEBSITE_URL || 'https://9637832490.online';
 const BACKEND_URL = process.env.BACKEND_URL || '';
+const BACKEND_BASE = String(BACKEND_URL || '').trim().replace(/\/+$/,'');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'niteshkhobragade8@gmail.com').toLowerCase();
@@ -28,23 +50,14 @@ function supabase(){
   if(!sb) sb=createClient(SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
   return sb;
 }
-function initFirebaseAdmin(){
-  if(admin.apps.length) return;
-  const raw=process.env.FIREBASE_SERVICE_ACCOUNT;
-  if(!raw) throw new Error('FIREBASE_SERVICE_ACCOUNT not configured (kept only for Firebase Authentication)');
-  let serviceAccount;
-  try{serviceAccount=JSON.parse(raw)}catch(_){throw new Error('FIREBASE_SERVICE_ACCOUNT is not valid JSON')}
-  admin.initializeApp({credential:admin.credential.cert(serviceAccount)});
-}
 async function authContext(req, required=false){
   const h=String(req.headers.authorization||'');
   const m=h.match(/^Bearer\s+(.+)$/i);
-  if(!m){ if(required) throw Object.assign(new Error('Login required'),{status:401}); return null; }
-  initFirebaseAdmin();
-  try{
-    const d=await admin.auth().verifyIdToken(m[1],true);
-    return {uid:d.uid,email:String(d.email||'').toLowerCase(),admin:String(d.email||'').toLowerCase()===ADMIN_EMAIL};
-  }catch(_){throw Object.assign(new Error('Invalid or expired login'),{status:401})}
+  if(!m){if(required)throw Object.assign(new Error('Login required'),{status:401});return null}
+  const {data,error}=await supabase().auth.getUser(m[1]);
+  if(error||!data?.user)throw Object.assign(new Error('Invalid or expired login'),{status:401});
+  const user=data.user;
+  return {uid:user.id,email:String(user.email||'').toLowerCase(),admin:String(user.email||'').toLowerCase()===ADMIN_EMAIL,user};
 }
 const now=()=>new Date().toISOString();
 const table=()=>supabase().from('kcsc_documents');
@@ -131,7 +144,7 @@ async function authorizeWrite(collection,id,data,ctx,op){
   return false;
 }
 
-// Generic secure document API used by the Firestore-compatible frontend.
+// Generic secure document API used by the document compatibility frontend.
 app.post('/supabase/query',async(req,res)=>{
   try{
     const {collection,id}=req.body||{};
@@ -188,60 +201,91 @@ app.post('/supabase/import',async(req,res)=>{
   }catch(e){console.error('supabase/import',e);return res.status(e.status||500).json({error:e.message})}
 });
 
-function mobileAlias(mobile){return `m${String(mobile||'').replace(/\D/g,'')}@login.kcsc.local`}
+function mobileAlias(mobile){return `m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`}
 
-// Password reset flow: Firebase Authentication remains, request data is now Supabase.
+app.post('/auth/register',async(req,res)=>{
+  try{
+    const email=String(req.body?.email||'').trim().toLowerCase(),password=String(req.body?.password||'');
+    if(!/^m\d{10}@login\.9637832490\.online$/.test(email)||password.length<6)return res.status(400).json({error:'Valid mobile login and minimum 6-character password required'});
+    if(email===ADMIN_EMAIL)return res.status(403).json({error:'Admin account cannot be created here'});
+    const {data,error}=await supabase().auth.admin.createUser({email,password,email_confirm:true,user_metadata:req.body?.metadata||{}});
+    if(error)throw error;
+    return res.json({ok:true,user:{id:data.user.id,email:data.user.email}});
+  }catch(e){console.error('auth/register',e);return res.status(400).json({error:e.message})}
+});
+app.post('/auth/admin-create-user',async(req,res)=>{
+  try{
+    const ctx=await authContext(req,true);if(!ctx.admin)return res.status(403).json({error:'Admin required'});
+    const email=String(req.body?.email||'').trim().toLowerCase(),password=String(req.body?.password||'');
+    if(!/^m\d{10}@login\.9637832490\.online$/.test(email)||password.length<6)return res.status(400).json({error:'Valid commission mobile login and password required'});
+    const {data,error}=await supabase().auth.admin.createUser({email,password,email_confirm:true,user_metadata:req.body?.metadata||{}});
+    if(error)throw error;
+    return res.json({ok:true,user:{id:data.user.id,email:data.user.email}});
+  }catch(e){console.error('auth/admin-create-user',e);return res.status(e.status||400).json({error:e.message})}
+});
+app.post('/auth/admin-delete-user',async(req,res)=>{
+  try{
+    const ctx=await authContext(req,true);if(!ctx.admin)return res.status(403).json({error:'Admin required'});
+    const uid=String(req.body?.uid||'');if(!uid)return res.status(400).json({error:'User ID required'});
+    const {error}=await supabase().auth.admin.deleteUser(uid);if(error)throw error;
+    return res.json({ok:true});
+  }catch(e){console.error('auth/admin-delete-user',e);return res.status(e.status||500).json({error:e.message})}
+});
+
+// Password reset flow: Supabase Auth + Supabase document store.
+async function findAuthUserByEmail(email){
+  let page=1;
+  while(page<=20){
+    const {data,error}=await supabase().auth.admin.listUsers({page,perPage:200});
+    if(error)throw error;
+    const found=(data?.users||[]).find(u=>String(u.email||'').toLowerCase()===String(email||'').toLowerCase());
+    if(found)return found;
+    if((data?.users||[]).length<200)break;
+    page++;
+  }
+  return null;
+}
 app.post('/password-reset-request',async(req,res)=>{
   try{
     const mobile=String(req.body?.mobile||'').replace(/\D/g,'');
-    if(mobile.length!==10) return res.status(400).json({error:'Valid 10-digit mobile number required'});
-    initFirebaseAdmin();
-    let user;
-    try{user=await admin.auth().getUserByEmail(mobileAlias(mobile))}
-    catch(_){return res.json({ok:true,message:'Agar account registered hai to reset request Admin ko bhej di gayi hai.'})}
-    const profile=await rowGet('users',user.uid);
-    if(!profile) return res.json({ok:true,message:'Agar account registered hai to reset request Admin ko bhej di gayi hai.'});
-    const old=(await rowsGet('passwordResetRequests')).find(r=>r.data?.uid===user.uid&&r.data?.status==='Pending');
-    const payload={uid:user.uid,mobile,fullName:profile.data?.fullName||'User',email:profile.data?.email||'',
-      accountType:profile.data?.isCommissionUser===true?'Commission':'Normal',status:'Pending',updatedAt:now()};
-    if(old) await rowSet('passwordResetRequests',old.id,payload,true);
-    else await rowSet('passwordResetRequests',crypto.randomUUID(),{...payload,createdAt:now()},false);
+    if(mobile.length!==10)return res.status(400).json({error:'Valid 10-digit mobile number required'});
+    const authUser=await findAuthUserByEmail(mobileAlias(mobile));
+    if(!authUser)return res.json({ok:true,message:'Agar account registered hai to reset request Admin ko bhej di gayi hai.'});
+    const profile=await rowGet('users',authUser.id);
+    // Generic response prevents account enumeration.
+    if(!profile)return res.json({ok:true,message:'Agar account registered hai to reset request Admin ko bhej di gayi hai.'});
+    const rows=await rowsGet('passwordResetRequests');
+    const old=rows.find(r=>r.data?.uid===profile.id&&r.data?.status==='Pending');
+    const payload={uid:authUser.id,mobile,fullName:profile.data?.fullName||'User',email:profile.data?.email||'',accountType:profile.data?.isCommissionUser===true?'Commission':'Normal',status:'Pending',updatedAt:now()};
+    if(old)await rowSet('passwordResetRequests',old.id,payload,true);else await rowSet('passwordResetRequests',crypto.randomUUID(),{...payload,createdAt:now()},false);
     return res.json({ok:true,message:old?'Reset request already pending hai. Admin temporary password set karega.':'Password reset request Admin Dashboard me bhej di gayi hai.'});
   }catch(e){console.error('password-reset-request',e);return res.status(500).json({error:e.message})}
 });
 app.get('/admin/password-reset-requests',async(req,res)=>{
-  try{
-    const ctx=await authContext(req,true); if(!ctx.admin) return res.status(403).json({error:'Admin required'});
-    const rows=await rowsGet('passwordResetRequests');
-    const requests=rows.map(r=>({id:r.id,...r.data})).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
-    return res.json({ok:true,requests});
-  }catch(e){return res.status(e.status||500).json({error:e.message})}
+  try{const ctx=await authContext(req,true);if(!ctx.admin)return res.status(403).json({error:'Admin required'});const rows=await rowsGet('passwordResetRequests');const requests=rows.map(r=>({id:r.id,...r.data})).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));return res.json({ok:true,requests})}
+  catch(e){return res.status(e.status||500).json({error:e.message})}
 });
 app.post('/admin/reset-user-password',async(req,res)=>{
   try{
-    const ctx=await authContext(req,true); if(!ctx.admin) return res.status(403).json({error:'Admin required'});
+    const ctx=await authContext(req,true);if(!ctx.admin)return res.status(403).json({error:'Admin required'});
     const requestId=String(req.body?.requestId||''),password=String(req.body?.temporaryPassword||'');
-    if(password.length<6) return res.status(400).json({error:'Temporary password minimum 6 characters required'});
-    const rr=await rowGet('passwordResetRequests',requestId); if(!rr) return res.status(404).json({error:'Reset request not found'});
-    initFirebaseAdmin(); await admin.auth().updateUser(rr.data.uid,{password});
+    if(password.length<6)return res.status(400).json({error:'Temporary password minimum 6 characters required'});
+    const rr=await rowGet('passwordResetRequests',requestId);if(!rr)return res.status(404).json({error:'Reset request not found'});
+    const {error}=await supabase().auth.admin.updateUserById(rr.data.uid,{password});if(error)throw error;
     await rowSet('users',rr.data.uid,{mustChangePassword:true,passwordResetAt:now(),updatedAt:now()},true);
     await rowSet('passwordResetRequests',requestId,{status:'Completed',completedAt:now(),updatedAt:now()},true);
     return res.json({ok:true});
   }catch(e){return res.status(e.status||500).json({error:e.message})}
 });
 app.post('/admin/delete-password-reset-request',async(req,res)=>{
-  try{
-    const ctx=await authContext(req,true); if(!ctx.admin) return res.status(403).json({error:'Admin required'});
-    await rowDelete('passwordResetRequests',String(req.body?.requestId||'')); return res.json({ok:true});
-  }catch(e){return res.status(e.status||500).json({error:e.message})}
+  try{const ctx=await authContext(req,true);if(!ctx.admin)return res.status(403).json({error:'Admin required'});await rowDelete('passwordResetRequests',String(req.body?.requestId||''));return res.json({ok:true})}
+  catch(e){return res.status(e.status||500).json({error:e.message})}
 });
 app.post('/change-own-password',async(req,res)=>{
   try{
-    const ctx=await authContext(req,true),password=String(req.body?.newPassword||'');
-    if(password.length<6) return res.status(400).json({error:'New password minimum 6 characters required'});
-    initFirebaseAdmin(); await admin.auth().updateUser(ctx.uid,{password});
-    await rowSet('users',ctx.uid,{mustChangePassword:false,passwordChangedAt:now(),updatedAt:now()},true);
-    return res.json({ok:true});
+    const ctx=await authContext(req,true),password=String(req.body?.newPassword||'');if(password.length<6)return res.status(400).json({error:'New password minimum 6 characters required'});
+    const {error}=await supabase().auth.admin.updateUserById(ctx.uid,{password});if(error)throw error;
+    await rowSet('users',ctx.uid,{mustChangePassword:false,passwordChangedAt:now(),updatedAt:now()},true);return res.json({ok:true});
   }catch(e){return res.status(e.status||500).json({error:e.message})}
 });
 
@@ -265,11 +309,27 @@ function calcCommission(charge,type,value){
 }
 function rateId(uid,aid){return `${uid}__${aid}`.replace(/[^a-zA-Z0-9_-]/g,'_')}
 
-app.get('/',(req,res)=>res.json({ok:true,service:'KCSC PayU + Supabase Backend',version:'3.0.0'}));
+app.all('/',(req,res)=>{
+  const kind=String(req.query?.payu_return||'').toLowerCase();
+  const body=req.body||{};
+  const looksPayU=!!(
+    body.txnid || body.status || body.mihpayid || body.hash ||
+    body.udf1 || body.udf2 || body.productinfo
+  );
+
+  if(kind==='success' || (looksPayU && kind!=='failure')){
+    return handlePaymentReturn(req,res,'success');
+  }
+  if(kind==='failure'){
+    return handlePaymentReturn(req,res,'failure');
+  }
+
+  return res.json({ok:true,service:'KCSC Supabase Auth + PayU Backend',version:'5.0.0'});
+});
 
 app.post('/create-payment',async(req,res)=>{
  try{
-  if(!PAYU_KEY||!PAYU_SALT||!BACKEND_URL) return res.status(500).json({error:'PayU/Supabase backend environment not configured'});
+  if(!PAYU_KEY||!PAYU_SALT||!BACKEND_BASE) return res.status(500).json({error:'PayU/Supabase backend environment not configured'});
   const ctx=await authContext(req,true);
   const appId=String(req.body?.applicationDocId||'');
   const appRow=await rowGet('applications',appId);
@@ -320,9 +380,13 @@ app.post('/create-payment',async(req,res)=>{
   },false);
   await rowSet('applications',appId,{paymentTransactionId:txnid,updatedAt:now()},true);
 
+  const surl=`${BACKEND_BASE}/payment-success`;
+  const furl=`${BACKEND_BASE}/payment-failure`;
+  console.log('PAYU-CREATE', {txnid,applicationDocId:appId,surl,furl,amount});
+
   return res.json({paymentUrl:payuEndpoints().payment,params:{
     key:PAYU_KEY,txnid,amount,productinfo:pinfo,firstname,email,phone,udf1,udf2,
-    surl:`${BACKEND_URL}/payment-success`,furl:`${BACKEND_URL}/payment-failure`,hash
+    surl,furl,hash
   }});
  }catch(e){console.error('create-payment',e);return res.status(e.status||500).json({error:e.message||'Unable to create payment'})}
 });
@@ -370,20 +434,277 @@ app.post('/reconcile-payment',async(req,res)=>{
   return res.json({ok:true,...result});
  }catch(e){console.error('reconcile-payment',e);return res.status(500).json({error:'Payment status sync failed: '+e.message})}
 });
-app.post('/payment-success',async(req,res)=>{
- try{
-  if(!verifyResponseHash(req.body||{}))return res.status(400).send('Invalid PayU payment response');
-  const r=await updatePaymentState(req.body||{},'success');
-  return res.redirect(303,`${WEBSITE_URL}/portal/payment-success.html?${new URLSearchParams({applicationId:r.applicationId,txnid:r.txnid,payment:r.paid?'success':'review'})}`);
- }catch(e){console.error('payment-success',e);return res.status(500).send('Payment received, but status update failed. Please contact support with transaction ID.')}
+
+async function processPaymentReturnData(data,kind){
+  data=data||{};
+  const txnid=String(data.txnid||data.txnId||data.transactionId||'').trim();
+  let applicationId=String(data.udf1||data.applicationId||'').trim();
+  let paid=false;
+  let paymentStatus='Pending';
+
+  try{
+    if(txnid){
+      const pay=await rowGet('payments',txnid);
+      if(pay) applicationId=String(pay.data?.applicationId||applicationId||'');
+
+      // Primary verification is always server-to-server PayU Verify API.
+      try{
+        const v=await verifyWithPayU(txnid);
+        const d=v.detail||{};
+        if(Object.keys(d).length){
+          const safeData={
+            txnid,
+            udf1:applicationId||pay?.data?.applicationId||'',
+            udf2:pay?.data?.applicationDocId||data.udf2||'',
+            amount:d.amt??d.amount??d.transaction_amount??pay?.data?.amount??data.amount??0,
+            status:d.status||d.transaction_status||d.unmappedstatus||d.unmapped_status||'',
+            mihpayid:d.mihpayid||d.mihpayId||'',
+            bank_ref_num:d.bank_ref_num||d.bank_ref_no||''
+          };
+          const r=await updatePaymentState(safeData,kind==='success'?'success':'failure');
+          applicationId=r.applicationId||applicationId;
+          paid=!!r.paid;
+          paymentStatus=r.paymentStatus||paymentStatus;
+        }else if(data.hash && verifyResponseHash(data)){
+          const r=await updatePaymentState(data,kind==='success'?'success':'failure');
+          applicationId=r.applicationId||applicationId;
+          paid=!!r.paid;
+          paymentStatus=r.paymentStatus||paymentStatus;
+        }
+      }catch(e){
+        console.error(`PayU ${kind} verify warning`,e.message);
+        if(data.hash && verifyResponseHash(data)){
+          try{
+            const r=await updatePaymentState(data,kind==='success'?'success':'failure');
+            applicationId=r.applicationId||applicationId;
+            paid=!!r.paid;
+            paymentStatus=r.paymentStatus||paymentStatus;
+          }catch(inner){
+            console.error(`PayU ${kind} signed fallback warning`,inner.message);
+          }
+        }
+      }
+    }
+  }catch(e){
+    console.error(`payment-${kind} processing error`,e);
+  }
+
+  return {applicationId,txnid,paid,paymentStatus};
+}
+
+function paymentRedirectUrl(result,kind){
+  const {applicationId='',txnid='',paid=false}=result||{};
+  if(kind==='failure'){
+    return `${WEBSITE_URL}/portal/payment-failure.html?${new URLSearchParams({applicationId,txnid})}`;
+  }
+  return `${WEBSITE_URL}/portal/payment-success.html?${new URLSearchParams({
+    applicationId,txnid,payment:paid?'success':'review'
+  })}`;
+}
+
+async function handlePaymentReturn(req,res,kind){
+  const data={...(req.query||{}),...(req.body||{})};
+  const result=await processPaymentReturnData(data,kind);
+  return res.redirect(303,paymentRedirectUrl(result,kind));
+}
+
+// PAYU CANONICAL CALLBACK ROUTES v4.6
+// Registered once at server startup (NOT inside middleware).
+app.all('/payment-success', (req,res) => {
+  console.log('PAYU-REAL-SUCCESS', {
+    method:req.method,
+    path:req.originalUrl,
+    txnid:String((req.body||{}).txnid || (req.query||{}).txnid || '')
+  });
+  return handlePaymentReturn(req,res,'success');
 });
-app.post('/payment-failure',async(req,res)=>{
- try{
-  const d=req.body||{};let r={applicationId:d.udf1||'',txnid:d.txnid||''};
-  try{r=await updatePaymentState(d,'failure')}catch(e){console.error('failure update warning',e.message)}
-  return res.redirect(303,`${WEBSITE_URL}/portal/payment-failure.html?${new URLSearchParams({applicationId:r.applicationId||'',txnid:r.txnid||''})}`);
- }catch(_){return res.redirect(303,`${WEBSITE_URL}/portal/payment-failure.html`)}
+app.all('/payment-success/', (req,res) => handlePaymentReturn(req,res,'success'));
+
+app.all('/payment-failure', (req,res) => {
+  console.log('PAYU-REAL-FAILURE', {
+    method:req.method,
+    path:req.originalUrl,
+    txnid:String((req.body||{}).txnid || (req.query||{}).txnid || '')
+  });
+  return handlePaymentReturn(req,res,'failure');
+});
+app.all('/payment-failure/', (req,res) => handlePaymentReturn(req,res,'failure'));
+
+// Explicit canonical + common PayU callback aliases.
+const SUCCESS_PATHS=[
+  '/payment_success','/payment_success/',
+  '/paymentsuccess','/paymentsuccess/','/payu/success','/payu/success/',
+  '/payu/payment-success','/payu/payment-success/','/success','/success/'
+];
+const FAILURE_PATHS=[
+  '/payment_failure','/payment_failure/',
+  '/paymentfailure','/paymentfailure/','/payu/failure','/payu/failure/',
+  '/payu/payment-failure','/payu/payment-failure/','/failure','/failure/'
+];
+
+app.all(SUCCESS_PATHS,(req,res)=>handlePaymentReturn(req,res,'success'));
+app.all(FAILURE_PATHS,(req,res)=>handlePaymentReturn(req,res,'failure'));
+
+// Final callback safety-net: any PayU-like success/failure path is handled,
+// so Express can never return its default "Not Found" for a payment return.
+app.use((req,res,next)=>{
+  const p=String(req.path||'').toLowerCase().replace(/[_\s]+/g,'-');
+  const looksPayment=p.includes('payment')||p.includes('payu')||p.includes('txn');
+  if(looksPayment && (p.includes('success')||p.endsWith('/success'))){
+    return handlePaymentReturn(req,res,'success');
+  }
+  if(looksPayment && (p.includes('failure')||p.includes('failed')||p.endsWith('/failure'))){
+    return handlePaymentReturn(req,res,'failure');
+  }
+  next();
 });
 
+
+// ABSOLUTE PAYU RETURN SAFETY-NET v4.3
+// Some PayU/browser flows can return to an unexpected callback path.
+// If the request itself clearly contains PayU transaction fields, handle it
+// as a payment return instead of allowing Express to answer "Not Found".
+app.use((req,res,next)=>{
+  try{
+    const data={...(req.query||{}),...(req.body||{})};
+    const ref=String(req.get('referer')||req.get('referrer')||'').toLowerCase();
+    const path=String(req.path||'').toLowerCase();
+
+    const hasTxn=!!String(data.txnid||data.txnId||data.transactionId||'').trim();
+    const hasPayUFields=hasTxn && (
+      data.status!==undefined ||
+      data.mihpayid!==undefined ||
+      data.hash!==undefined ||
+      data.udf1!==undefined ||
+      data.udf2!==undefined ||
+      data.productinfo!==undefined ||
+      data.key!==undefined
+    );
+    const fromPayU=ref.includes('payu.in') || ref.includes('secure.payu') || ref.includes('test.payu');
+
+    if(hasPayUFields || (hasTxn && fromPayU)){
+      const rawStatus=String(data.status||data.unmappedstatus||'').toLowerCase();
+      const looksFailure=
+        rawStatus.includes('fail') ||
+        rawStatus.includes('cancel') ||
+        rawStatus.includes('bounced') ||
+        path.includes('fail');
+
+      console.log('PAYU-CATCHALL', {
+        method:req.method,
+        path:req.originalUrl,
+        txnid:String(data.txnid||data.txnId||data.transactionId||''),
+        status:rawStatus||'unknown'
+      });
+
+      return handlePaymentReturn(req,res,looksFailure?'failure':'success');
+    }
+  }catch(e){
+    console.error('PAYU-CATCHALL error',e);
+  }
+  next();
+});
+
+// Last-resort page for unmatched callback-looking URLs.
+// Never show Express "Not Found" for anything that even looks like a PayU return.
+app.use((req,res,next)=>{
+  const path=String(req.path||'').toLowerCase();
+  const ref=String(req.get('referer')||req.get('referrer')||'').toLowerCase();
+  const callbackLooking=
+    path.includes('payment') ||
+    path.includes('payu') ||
+    path.includes('txn') ||
+    ref.includes('payu.in');
+
+  if(callbackLooking){
+    console.log('PAYU-LAST-RESORT', {method:req.method,path:req.originalUrl,referrer:ref});
+    const kind=(path.includes('fail')||path.includes('cancel'))?'failure':'success';
+    return handlePaymentReturn(req,res,kind);
+  }
+  next();
+});
+
+
 const PORT=process.env.PORT||3000;
-app.listen(PORT,()=>console.log(`KCSC Supabase Backend v3 running on ${PORT}`));
+
+function parseRawPayuBody(raw,contentType){
+  const s=String(raw||'');
+  if(!s)return {};
+  if(String(contentType||'').toLowerCase().includes('application/json')){
+    try{return JSON.parse(s)}catch(_){return {}}
+  }
+  try{return Object.fromEntries(new URLSearchParams(s))}catch(_){return {}}
+}
+
+// IMPORTANT:
+// PayU callback is intercepted at Node HTTP level BEFORE Express routing.
+// Therefore /payment-success and /payment-failure cannot become Express "Not Found".
+const httpServer=http.createServer((req,res)=>{
+  let parsed;
+  try{parsed=new URL(req.url||'/',`http://${req.headers.host||'localhost'}`)}
+  catch(_){parsed=new URL('http://localhost/')}
+
+  const path=String(parsed.pathname||'/').replace(/\/+$/,'')||'/';
+  const low=path.toLowerCase();
+  const isSuccess=low==='/payment-success';
+  const isFailure=low==='/payment-failure';
+
+  if(isSuccess||isFailure){
+    const kind=isFailure?'failure':'success';
+    const chunks=[];
+    let total=0;
+
+    req.on('data',chunk=>{
+      total+=chunk.length;
+      if(total<=1024*1024)chunks.push(chunk);
+    });
+
+    req.on('end',async()=>{
+      try{
+        const raw=Buffer.concat(chunks).toString('utf8');
+        const body=parseRawPayuBody(raw,req.headers['content-type']);
+        const query=Object.fromEntries(parsed.searchParams);
+        const data={...query,...body};
+
+        console.log('PAYU-RAW-CALLBACK',{
+          method:req.method,
+          path:req.url,
+          txnid:String(data.txnid||''),
+          status:String(data.status||'')
+        });
+
+        const result=await processPaymentReturnData(data,kind);
+        const location=paymentRedirectUrl(result,kind);
+
+        res.statusCode=303;
+        res.setHeader('Location',location);
+        res.setHeader('Cache-Control','no-store');
+        res.setHeader('Content-Type','text/plain; charset=utf-8');
+        return res.end('Payment received. Redirecting...');
+      }catch(e){
+        console.error('PAYU-RAW-CALLBACK error',e);
+        const location=paymentRedirectUrl({
+          applicationId:'',
+          txnid:'',
+          paid:false
+        },kind);
+        res.statusCode=303;
+        res.setHeader('Location',location);
+        res.setHeader('Cache-Control','no-store');
+        return res.end('Redirecting...');
+      }
+    });
+
+    req.on('error',e=>{
+      console.error('PAYU-RAW request error',e);
+      res.statusCode=303;
+      res.setHeader('Location',`${WEBSITE_URL}/portal/payment-${kind==='failure'?'failure':'success'}.html`);
+      res.end();
+    });
+    return;
+  }
+
+  return app(req,res);
+});
+
+httpServer.listen(PORT,()=>console.log(`KCSC Supabase Backend v5.0 running on ${PORT}`));

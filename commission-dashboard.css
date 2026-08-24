@@ -1,0 +1,49 @@
+
+.commission-dashboard-page .dashboard-content{max-width:none}
+.commission-install-app-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #c7d2fe;background:linear-gradient(135deg,#eff6ff,#fdf2f8);color:#1e3a8a;border-radius:11px;padding:8px 11px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 4px 14px rgba(37,99,235,.10)}
+.commission-install-app-btn:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(37,99,235,.16)}
+.commission-install-app-btn:disabled{opacity:.55;cursor:default;transform:none}
+.commission-install-app-btn[hidden]{display:none!important}
+.commission-hero{display:flex;justify-content:space-between;gap:22px;align-items:center;padding:28px;border-radius:24px;background:linear-gradient(135deg,#172554 0%,#1d4ed8 52%,#db2777 100%);color:#fff;box-shadow:0 18px 45px rgba(30,64,175,.18);margin-bottom:18px;overflow:hidden;position:relative}
+.commission-hero:after{content:"";position:absolute;right:-60px;top:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.10)}
+.commission-eyebrow{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.12em;background:rgba(255,255,255,.14);padding:6px 9px;border-radius:999px;margin-bottom:8px}
+.commission-hero h1{margin:0 0 7px;font-size:30px;line-height:1.1}
+.commission-hero p{margin:0;color:#e0e7ff;max-width:720px}
+.commission-partner-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.commission-partner-meta span{font-size:12px;font-weight:700;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);padding:6px 9px;border-radius:999px}
+.commission-primary-action{position:relative;z-index:2;text-decoration:none;background:#fff;color:#1d4ed8;border-radius:13px;padding:12px 16px;font-weight:900;white-space:nowrap}
+.commission-stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.commission-stat-card{display:flex;gap:12px;align-items:center;text-decoration:none;background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;color:#0f172a;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+.commission-stat-card>span{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;font-size:20px}
+.commission-stat-card small{display:block;color:#64748b;font-weight:700;font-size:12px}
+.commission-stat-card strong{display:block;font-size:23px;margin-top:3px}
+.tone-blue>span{background:#dbeafe}.tone-green>span{background:#dcfce7}.tone-pink>span{background:#fce7f3}.tone-orange>span{background:#ffedd5}.tone-violet>span{background:#ede9fe}.tone-dark>span{background:#e2e8f0}
+.commission-shortcuts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.commission-shortcuts a{text-decoration:none;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:15px;color:#0f172a;transition:.18s ease}
+.commission-shortcuts a:hover{transform:translateY(-2px);border-color:#93c5fd;box-shadow:0 10px 24px rgba(37,99,235,.08)}
+.commission-shortcuts span{font-size:22px}.commission-shortcuts b{display:block;margin:7px 0 3px}.commission-shortcuts small{display:block;color:#64748b;line-height:1.35}
+.commission-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 8px 24px rgba(15,23,42,.04)}
+.commission-panel-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
+.commission-panel-head span{font-size:10px;font-weight:900;letter-spacing:.12em;color:#2563eb}.commission-panel-head h2{margin:3px 0;font-size:19px}.commission-panel-head p{margin:0;color:#64748b;font-size:13px}.commission-panel-head>a{font-weight:800;text-decoration:none;color:#2563eb;font-size:13px}
+.commission-list{display:grid;gap:10px}
+.commission-row{border:1px solid #e2e8f0;border-radius:15px;padding:14px;background:#fbfdff}
+.commission-row-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.commission-row-main h3{margin:7px 0 2px;font-size:16px}.commission-row-main p{margin:0;color:#64748b;font-size:13px}
+.commission-money-flow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.commission-money-flow span{background:#f8fafc;border:1px solid #e2e8f0;border-radius:999px;padding:7px 10px;font-size:12px}.commission-money-flow .benefit{background:#ecfdf5;border-color:#bbf7d0;color:#047857}.commission-money-flow .final{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.commission-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}.commission-mini-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px dashed #e2e8f0}.commission-mini-row:last-child{border-bottom:0}.commission-mini-row b,.commission-mini-row strong{display:block}.commission-mini-row small{display:block;color:#64748b;margin-top:2px;font-size:11px}.commission-ledger-amount{text-align:right;color:#047857}
+.commission-empty{padding:20px;text-align:center;border:1px dashed #cbd5e1;border-radius:14px;color:#64748b;background:#f8fafc}
+@media(max-width:1050px){.commission-shortcuts{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.commission-stats-grid{grid-template-columns:repeat(2,1fr)}.commission-two-col{grid-template-columns:1fr}.commission-hero{align-items:flex-start}.commission-primary-action{display:none}}
+@media(max-width:600px){.commission-hero{padding:20px}.commission-hero h1{font-size:25px}.commission-stats-grid{grid-template-columns:1fr 1fr}.commission-shortcuts{grid-template-columns:1fr 1fr}.commission-install-app-btn span{display:none}.commission-install-app-btn{padding:8px 9px}.commission-row-main{display:block}.commission-row-main>b{display:block;margin-top:8px}}
+
+
+/* Commission dashboard shell: shared member sidebar + top header */
+.commission-dashboard-page .member-pro-shell{min-height:100vh}
+.commission-dashboard-page .member-pro-sidebar{display:flex!important}
+.commission-dashboard-page .member-pro-main{min-width:0}
+.commission-dashboard-page .member-pro-head-actions{display:flex;align-items:center;gap:8px}
+.commission-dashboard-page #commissionInstallAppBtn{order:1}
+.commission-dashboard-page .member-pro-icon-btn{order:2}
+.commission-dashboard-page .member-pro-user{order:3}
+@media(max-width:900px){
+ .commission-dashboard-page .member-pro-sidebar{display:flex!important}
+}
