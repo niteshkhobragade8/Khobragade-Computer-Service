@@ -1,14 +1,22 @@
-ROLLBACK LAST BROKEN ADMIN LAYOUT
+KCSC ADMIN LAYOUT FINAL FIX
 
 Replace ONLY:
-1. dashboard.html
-2. dashboard.css
+1) dashboard.html
+2) dashboard.css
 
-This restores the exact previous Admin state from:
-KCSC ADMIN LAYOUT RESTORE + SCREENSHOT CLEANUP FINAL
+FIXED:
+- Removes the broken application-style wrapper patch that squeezed Forms and disturbed manager pages.
+- Restores the valid pre-layout HTML structure.
+- Services / Actions / Forms / Service Charges / All Charge / Website CMS / Portal Settings IDs and mounts preserved.
+- CSS cache version changed so Chrome loads corrected layout immediately.
 
-Purpose:
-- Undo the last broken Applications-style HTML restructuring.
-- Restore the previous working layout state immediately.
+NOT CHANGED:
+- JavaScript
+- Supabase/backend
+- PayU working flow
+- Commission logic
+- User/Admin logic
+- Delete/update/dropdown functions
+- Existing database data
 
-No JS, PayU, Supabase, Commission, Login, Delete, Services/Actions/Forms data logic, Charges, Website CMS, or Portal Settings logic changed.
+After upload open dashboard and press Ctrl+F5 once.
