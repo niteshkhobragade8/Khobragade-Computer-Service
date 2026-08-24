@@ -25,7 +25,7 @@ Open: /portal/index.html
 - Registration: Full Name required, Email optional, Mobile required, Password, Confirm Password
 - Login: Mobile + Password
 - My Account / My Applications / Profile / Track Application
-- Service actions and price live from database
+- Service actions and price live from Firestore
 - Available / Unavailable / Coming Soon behavior
 - Application form fields live from Admin Service Actions & Forms
 - Document upload
@@ -35,22 +35,22 @@ Open: /portal/index.html
 - Completed slip/PDF/final file download
 
 IMPORTANT USER AUTH DESIGN
-Supabase does not natively provide mobile-number + password authentication.
-This build securely maps the entered mobile to an internal synthetic Supabase email alias and uses Supabase Email/Password Auth. The user still sees only Mobile + Password. Password is never stored in database.
+Firebase does not natively provide mobile-number + password authentication.
+This build securely maps the entered mobile to an internal synthetic Firebase email alias and uses Firebase Email/Password Auth. The user still sees only Mobile + Password. Password is never stored in Firestore.
 
 SECURITY BEFORE USER TESTING
-1. In Supabase Authentication, enable Email/Password provider.
+1. In Firebase Authentication, enable Email/Password provider.
 2. Find the UID of your existing Admin login account.
-3. In database create collection: admins
+3. In Firestore create collection: admins
 4. Create document with document ID = ADMIN_UID (fields can be {role:"admin"}).
 5. Publish firestore-APPLICATION-PORTAL.rules
 6. Publish storage-APPLICATION-PORTAL.rules
 This is required because public customer accounts are now present; ordinary signed-in customers must NOT get Admin write permissions.
 
 PAYU
-PayU Hosted Checkout is prepared but Merchant Salt/Secret is NOT placed in website JS or database.
+PayU Hosted Checkout is prepared but Merchant Salt/Secret is NOT placed in website JS or Firestore.
 - functions/index.js contains secure backend endpoints.
-- Set Supabase Functions secrets PAYU_KEY and PAYU_SALT.
+- Set Firebase Functions secrets PAYU_KEY and PAYU_SALT.
 - Deploy functions.
 - Admin > Payments / PayU:
   Environment: test first

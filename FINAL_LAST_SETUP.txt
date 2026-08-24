@@ -5,9 +5,9 @@ VERIFIED MASTER CATALOGUE
 - 138 services
 - 168 predefined actions
 - Bundled catalogue fallback is built into User > All Services.
-- All Services is not dependent on database installer to render the master catalogue.
-- Admin > Service Actions & Form Builder > Install / Sync Complete Master Catalogue writes the catalogue to database so prices/status/actions/form fields can be managed from Admin.
-- After a successful full sync, database becomes the managed source and Admin deletions/hide/status changes are respected.
+- All Services is not dependent on Firestore installer to render the master catalogue.
+- Admin > Service Actions & Form Builder > Install / Sync Complete Master Catalogue writes the catalogue to Firestore so prices/status/actions/form fields can be managed from Admin.
+- After a successful full sync, Firestore becomes the managed source and Admin deletions/hide/status changes are respected.
 
 USER FLOW
 Register/Login > Profile + Photo > Services > Action > Profile Auto-fill > Documents > Submit > PayU > Application ID > My Applications > Need Documents / Processing / Completed > Slip/PDF Download.
@@ -16,10 +16,10 @@ ADMIN FLOW
 Admin Login > Services/Actions/Charges/Forms > Applications > Payment/Status > Need Documents > Slip/Final File Upload > Completed.
 
 IMPORTANT FIREBASE SETUP
-1. Publish firestore.rules from this project in Supabase database Rules.
-2. Publish storage.rules from this project in Supabase Storage Rules.
+1. Publish firestore.rules from this project in Firebase Firestore Rules.
+2. Publish storage.rules from this project in Firebase Storage Rules.
 3. Existing Admin login email remains: niteshkhobragade8@gmail.com.
-4. For real PayU payments, deploy the functions/ folder and configure Supabase secrets PAYU_KEY and PAYU_SALT, then configure PayU URLs in Admin Payment Settings. Secret/Salt must never be placed in public JavaScript.
+4. For real PayU payments, deploy the functions/ folder and configure Firebase secrets PAYU_KEY and PAYU_SALT, then configure PayU URLs in Admin Payment Settings. Secret/Salt must never be placed in public JavaScript.
 
 CACHE FIX
 All portal critical CSS/JS references use build-version query strings so the previous cached All Services code is not reused after deployment.

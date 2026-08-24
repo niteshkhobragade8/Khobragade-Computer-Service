@@ -1,4 +1,4 @@
-import { db, auth } from "./supabase-app.js";
+import { db, auth } from "./firebase-config.js";
 import {
   collection,
   getDocs,
@@ -8,11 +8,11 @@ import {
   limit,
   doc,
   getDoc
-} from './supabase-db.js';
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 import {
   onAuthStateChanged,
   signOut
-} from './supabase-auth.js';
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
 const $ = (id) => document.getElementById(id);
 const logoutBtn = $("logoutBtn");
@@ -74,13 +74,7 @@ function renderMiniList(containerId, items, emptyText) {
 function watchCollectionCount(elementId, collectionName) {
   const unsubscribe = onSnapshot(
     collection(db, collectionName),
-    (snapshot) => {
-      if (collectionName === "users" && elementId === "totalUsers") {
-        setText(elementId, snapshot.docs.filter((item) => item.data()?.isCommissionUser !== true).length);
-        return;
-      }
-      setText(elementId, snapshot.size);
-    },
+    (snapshot) => setText(elementId, snapshot.size),
     (error) => {
       console.error(`${collectionName} count error:`, error);
       setText(elementId, "—");
@@ -139,7 +133,6 @@ function watchVisitorSummary() {
 }
 
 async function loadDashboard() {
-  if(dashboardUnsubscribers.length)return;
   Object.entries(collectionMap).forEach(([elementId, collectionName]) => {
     watchCollectionCount(elementId, collectionName);
   });

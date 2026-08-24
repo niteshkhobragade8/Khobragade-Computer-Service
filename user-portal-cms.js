@@ -1,5 +1,5 @@
-import {db} from './supabase-app.js';
-import {doc,setDoc,onSnapshot,serverTimestamp} from './supabase-db.js';
+import {db} from './firebase-config.js';
+import {doc,setDoc,onSnapshot,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const DEF_FIELDS=[
  {key:'fullName',label:'Full Name',type:'text',required:true,visible:true,order:10},{key:'email',label:'Email',type:'email',required:false,visible:true,order:20},{key:'mobile',label:'Mobile Number',type:'tel',required:true,visible:true,order:30,locked:true},{key:'dob',label:'Date of Birth',type:'date',required:false,visible:true,order:40},{key:'gender',label:'Gender',type:'select',options:['Male','Female','Other'],required:false,visible:true,order:50},{key:'address',label:'Full Address',type:'textarea',required:false,visible:true,order:60},{key:'villageCity',label:'Village / City',type:'text',required:false,visible:true,order:70},{key:'taluka',label:'Taluka',type:'text',required:false,visible:true,order:80},{key:'district',label:'District',type:'text',required:false,visible:true,order:90},{key:'state',label:'State',type:'text',required:false,visible:true,order:100},{key:'pinCode',label:'PIN Code',type:'text',required:false,visible:true,order:110}

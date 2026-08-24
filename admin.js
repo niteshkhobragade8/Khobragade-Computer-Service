@@ -1,5 +1,5 @@
-import { auth } from "./supabase-app.js";
-import { signInWithEmailAndPassword } from './supabase-auth.js';
+import { auth } from "./firebase-config.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
 const loginBtn = document.getElementById("loginBtn");
 const message = document.getElementById("message");

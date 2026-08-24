@@ -15,7 +15,7 @@ FINAL FIXES INCLUDED
    - Published/Draft + Priority + image support
 6. User notification bell counts application alerts plus targeted Admin notifications.
 7. Application Admin: complete dynamic form data visible, documents preview/download, Print Full Form, Download Full Form PDF.
-8. Existing payment/PayU, Supabase, profile/autofill, resubmit, documents, dark mode/language and live service/update sync retained.
+8. Existing payment/PayU, Firebase, profile/autofill, resubmit, documents, dark mode/language and live service/update sync retained.
 9. Master catalogue verified: 138 services / 168 actions.
 
 STATIC VERIFICATION
@@ -26,5 +26,5 @@ STATIC VERIFICATION
 - ZIP integrity: verify after archive creation
 
 IMPORTANT
-- Keep existing Render PayU backend environment, Supabase service account, PayU Key/Salt and DNS unchanged.
-- database rules already allow public reads for services/serviceActions/formFields/notifications/youtube and admin writes.
+- Keep existing Render PayU backend environment, Firebase service account, PayU Key/Salt and DNS unchanged.
+- Firestore rules already allow public reads for services/serviceActions/formFields/notifications/youtube and admin writes.

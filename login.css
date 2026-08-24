@@ -288,9 +288,3 @@ font-size:13px;
 }
 
 }
-
-.login-password-actions{display:flex;justify-content:flex-end;margin:-4px 0 12px}
-.forgot-password-btn{border:0;background:transparent;color:#2563eb;font-weight:800;font-size:13px;cursor:pointer;padding:4px 0}
-.forgot-password-btn:hover{text-decoration:underline}
-.forgot-password-btn:disabled{opacity:.55;cursor:not-allowed}
-.admin-reset-box{margin-top:14px;padding:14px;border:1px solid #bfdbfe;border-radius:12px;background:#f8fbff}.admin-reset-box[hidden]{display:none!important}

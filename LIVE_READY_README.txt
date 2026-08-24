@@ -10,8 +10,8 @@ Live-ready cleanup added:
 - Payments now shows payment status, amount, transaction ID and Pay Now when pending
 - Dashboard alert includes rejected/resubmit cases
 - Cache version bumped to 20260821-live22
-- database rules from V21 preserved
+- Firestore rules from V21 preserved
 
-DO NOT put PayU Salt or Supabase service-account JSON in this GitHub website repository.
+DO NOT put PayU Salt or Firebase service-account JSON in this GitHub website repository.
 Render backend remains separate.
 After upload: hard refresh once, login, check Dashboard/Profile/My Documents/Payments/Notifications.

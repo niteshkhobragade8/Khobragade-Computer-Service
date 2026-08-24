@@ -1,10 +1,10 @@
-import { db } from "./supabase-app.js";
+import { db } from "./firebase-config.js";
 import {
   doc,
   getDoc,
   setDoc,
   serverTimestamp
-} from './supabase-db.js';
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const settingsRef = doc(db, "settings", "website");
 const $ = (id) => document.getElementById(id);
@@ -66,7 +66,7 @@ async function loadSettings() {
     const data = snapshot.data();
     fieldIds.forEach((id) => setValue(id, data[id]));
     setValue("logoUrlCms", data.logoUrl);
-    setStatus("Settings loaded from Supabase.", "success");
+    setStatus("Settings loaded from Firebase.", "success");
   } catch (error) {
     console.error(error);
     setStatus(`Settings load error: ${error.message}`, "error");
@@ -108,7 +108,7 @@ async function saveWebsiteSettings() {
 }
 
 function resetSettingsForm() {
-  if (!confirm("Form ko default values par reset karna hai? Supabase data tab tak delete nahi hoga jab tak Save nahi karoge.")) return;
+  if (!confirm("Form ko default values par reset karna hai? Firebase data tab tak delete nahi hoga jab tak Save nahi karoge.")) return;
   fieldIds.forEach((id) => setValue(id, ""));
   setValue("siteName", "Khobragade Computer Service Centre");
   setValue("contactNumber", "9637832490");

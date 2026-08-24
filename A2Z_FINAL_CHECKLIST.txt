@@ -7,6 +7,6 @@ Safe Delete/Recycling supported by module delete flows; Notification Delete All 
 Government Updates Home display and Popup Notifications remain enabled.
 Categories recovery from existing Services.
 Images recovery from Settings logo/banner URLs.
-Dashboard counters remain live database listeners.
+Dashboard counters remain live Firestore listeners.
 CNAME/domain preserved.
-Historical data already permanently deleted from database cannot be recreated unless another source still contains it.
+Historical data already permanently deleted from Firestore cannot be recreated unless another source still contains it.

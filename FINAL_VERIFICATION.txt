@@ -5,9 +5,9 @@ PASS: 168 master actions
 PASS: every master service has at least one action
 PASS: portal All Services has bundled fallback
 PASS: portal service/action live-to-master mapping
-PASS: installer completion state and chunked database batch writes
+PASS: installer completion state and chunked Firestore batch writes
 PASS: Admin login uses existing authorized email
-PASS: database Admin rule uses authorized email
+PASS: Firestore Admin rule uses authorized email
 PASS: Storage Admin rule uses authorized email
 PASS: PayU admin reconcile uses authorized email (no /admins collection dependency)
 PASS: all JavaScript syntax checks

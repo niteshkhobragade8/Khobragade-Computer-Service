@@ -1,6 +1,6 @@
 KCSC V24 FINAL A-TO-Z SERVICE FIX
 
-- Admin Services / Actions / Forms now auto-syncs missing bundled master services/actions/form fields into database without overwriting existing custom prices.
+- Admin Services / Actions / Forms now auto-syncs missing bundled master services/actions/form fields into Firestore without overwriting existing custom prices.
 - Added A TO Z Full Control table for every service/action: Edit Service, Delete Service, Edit Action, Delete Action, Update Charge, Charge ₹0, Availability.
 - Existing and new services are handled in one place.
 - All in One Online Forms application loading race fixed using Portal.ready() auth promise and explicit DOM references.

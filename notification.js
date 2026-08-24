@@ -1,5 +1,5 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./supabase-app.js";
+import { db } from "./firebase-config.js";
 import {
   collection,
   addDoc,
@@ -8,7 +8,7 @@ import {
   serverTimestamp,
   onSnapshot,
   writeBatch
-} from './supabase-db.js';
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const CLOUD_NAME = "jkia38fa";
 const UPLOAD_PRESET = "khobragade_csc";
