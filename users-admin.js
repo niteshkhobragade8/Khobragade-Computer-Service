@@ -17,21 +17,42 @@ async function commitDeletes(refs){
 }
 async function deleteUserPortalData(u,button){
  if(!confirm(`Delete ${u.fullName||u.mobile||'this user'} permanently?\n\nThis will delete the Supabase login, customer profile, related applications, payment records and public status.`))return;
- const original=button.textContent;button.disabled=true;button.textContent='Deleting...';
+
+ // Instant Admin UI removal — database cleanup continues immediately in background.
+ const oldUsers=[...users],oldApps=[...apps];
+ users=users.filter(x=>x.id!==u.id);
+ apps=apps.filter(a=>a.userId!==u.id&&a.mobile!==u.mobile);
+ render();
+
  try{
-  const [appSnap,paySnap,statusSnap]=await Promise.all([
+  const [appSnap,paySnap]=await Promise.all([
    getDocs(query(collection(db,'applications'),where('userId','==',u.id))),
-   getDocs(query(collection(db,'payments'),where('userId','==',u.id))),
-   getDocs(collection(db,'publicApplicationStatus'))
+   getDocs(query(collection(db,'payments'),where('userId','==',u.id)))
   ]);
   const relatedApps=appSnap.docs;
-  const appIds=new Set(relatedApps.map(d=>d.id));
   const relatedPays=paySnap.docs;
-  const relatedStatuses=statusSnap.docs.filter(d=>appIds.has(d.id)||appIds.has(d.data()?.applicationId));
-  await commitDeletes([...relatedPays.map(d=>d.ref),...relatedStatuses.map(d=>d.ref),...relatedApps.map(d=>d.ref),doc(db,'users',u.id)]);
-  await adminDeleteUser(u.id).catch(err=>console.warn('Auth delete:',err.message));
-  alert('User + login deleted successfully.');
- }catch(e){console.error('User delete error',e);alert('Delete failed: '+(e?.message||'Unknown database error'));button.disabled=false;button.textContent=original;}
+
+  // publicApplicationStatus document ID is the public applicationId.
+  // Delete it directly; do NOT scan the whole status collection.
+  const statusRefs=relatedApps
+    .map(d=>d.data()?.applicationId)
+    .filter(Boolean)
+    .map(applicationId=>doc(db,'publicApplicationStatus',String(applicationId)));
+
+  await Promise.all([
+    commitDeletes([
+      ...relatedPays.map(d=>d.ref),
+      ...statusRefs,
+      ...relatedApps.map(d=>d.ref),
+      doc(db,'users',u.id)
+    ]),
+    adminDeleteUser(u.id).catch(err=>console.warn('Auth delete:',err.message))
+  ]);
+ }catch(e){
+  console.error('User delete error',e);
+  users=oldUsers;apps=oldApps;render();
+  alert('Delete failed: '+(e?.message||'Unknown database error'));
+ }
 }
 $('usersTable')?.addEventListener('click',async e=>{
  const del=e.target.closest('[data-delete-user]');if(del){const u=users.find(x=>x.id===del.dataset.deleteUser);if(u)await deleteUserPortalData(u,del);return;}
