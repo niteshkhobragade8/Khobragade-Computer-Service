@@ -93,15 +93,8 @@ loginForm.addEventListener("submit", async (e) => {
                 msg = "Too many attempts. Try later.";
                 break;
 
-            case "auth/user-not-found":
-            case "auth/wrong-password":
-                msg = "Incorrect email or password";
-                break;
-            case "auth/user-disabled":
-                msg = "This account is disabled";
-                break;
             default:
-                msg = error.message === "This account is not an administrator." ? error.message : "Login failed. Please check your details and try again.";
+                msg = error.message;
 
         }
 
