@@ -1,17 +1,18 @@
-EXACT ROUTE FIX ONLY
+ADMIN / USER SESSION ISOLATION EXACT FIX
 
-Canonical URLs:
-Admin Dashboard:
-https://9637832490.online/dashboard.html
+Replace ONLY:
+supabase-client.js
 
-User / Commission Portal:
-https://9637832490.online/portal/index.html
+Fix:
+- Admin pages use separate Supabase auth storage.
+- /portal/ User + Commission pages use separate Supabase auth storage.
+- Public pages have separate auth storage.
+- User registration/login can no longer replace/logout the Admin browser session.
 
-Changed:
-- admin.html now opens dashboard.html instead of login.html.
+No database, PayU, application, commission or UI logic changed.
 
-Preserved:
-- dashboard.html auth guard still redirects unauthenticated Admin to login.html.
-- Admin successful login still opens dashboard.html.
-- User/Commission portal stays portal/index.html.
-- No Supabase data, PayU, Forms, Commission, Services or backend logic changed.
+After upload:
+1. Open Admin /dashboard.html and login once again.
+2. In another tab open /portal/index.html.
+3. Register/login a Normal User.
+4. Return to Admin tab: Admin should remain logged in.
