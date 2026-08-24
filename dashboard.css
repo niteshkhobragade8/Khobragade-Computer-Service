@@ -544,3 +544,53 @@ html.admin-shell-ready body{visibility:visible!important}
 .password-reset-dialog{border:0;padding:0;border-radius:18px;max-width:560px;width:calc(100% - 28px);box-shadow:0 24px 70px rgba(15,23,42,.25)}
 .password-reset-dialog::backdrop{background:rgba(15,23,42,.55)}
 .password-reset-dialog-card{padding:22px;background:#fff}
+
+
+/* =========================================================
+   KCSC: Applications-page layout pattern for selected managers
+   Only these pages are affected.
+   ========================================================= */
+.application-style-page{
+  width:100%;
+}
+.application-style-page .application-style-content{
+  width:100%;
+  max-width:none;
+  display:block;
+  margin-top:18px;
+}
+.application-style-page .manager-layout,
+.application-style-page .settings-shell{
+  display:block!important;
+  grid-template-columns:none!important;
+  width:100%!important;
+}
+.application-style-page .manager-form,
+.application-style-page .manager-content,
+.application-style-page .compact-manager,
+.application-style-page .portal-cms-shell,
+.application-style-page .settings-group,
+.application-style-page [id$="Mount"]{
+  width:100%!important;
+  max-width:none!important;
+}
+.application-style-page .manager-form{
+  margin-bottom:18px;
+}
+.application-style-page .toolbar,
+.application-style-page .box-heading,
+.application-style-page .page-intro{
+  width:100%;
+}
+.application-style-page .table-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+.application-style-page .admin-table{
+  width:100%;
+}
+.application-style-page .cards-grid,
+.application-style-page .service-action-grid,
+.application-style-page .website-pages-grid{
+  width:100%;
+}
