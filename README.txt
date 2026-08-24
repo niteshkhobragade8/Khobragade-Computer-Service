@@ -1,17 +1,17 @@
-MIGRATION PAGE AUTH FIX ONLY
+EXACT ROUTE FIX ONLY
 
-Replace ONLY:
-supabase-migrate.html
+Canonical URLs:
+Admin Dashboard:
+https://9637832490.online/dashboard.html
 
-Why:
-- database Rules are already correct.
-- Old migration page created a second Supabase app without Admin Auth session.
-- Public collections copied, but protected users collection failed.
-- Fixed page uses the existing authenticated default Supabase app.
+User / Commission Portal:
+https://9637832490.online/portal/index.html
 
-After replacing:
-1. Admin login karo.
-2. Open /supabase-migrate.html
-3. Start Safe Migration again.
-4. Already copied documents will safely upsert/overwrite same IDs in Supabase.
-5. Supabase original data remains untouched.
+Changed:
+- admin.html now opens dashboard.html instead of login.html.
+
+Preserved:
+- dashboard.html auth guard still redirects unauthenticated Admin to login.html.
+- Admin successful login still opens dashboard.html.
+- User/Commission portal stays portal/index.html.
+- No Supabase data, PayU, Forms, Commission, Services or backend logic changed.
