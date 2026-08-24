@@ -1,5 +1,5 @@
-import { db } from './firebase-config.js';
-import { collection, doc, getDocs, onSnapshot, orderBy, query, where, limit, updateDoc, serverTimestamp } from './supabase-firestore.js';
+import { db } from './supabase-app.js';
+import { collection, doc, getDocs, onSnapshot, orderBy, query, where, limit, updateDoc, serverTimestamp } from './supabase-db.js';
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -18,7 +18,7 @@ function render(){
 }
 $('paymentProofSearch')?.addEventListener('input',render);
 const q=query(collection(db,'paymentScreenshots'),orderBy('createdAt','desc'));
-onSnapshot(q,s=>{proofs=s.docs.map(d=>({id:d.id,...d.data()}));render()},e=>{console.error(e);const list=$('paymentProofList');if(list)list.innerHTML='<div class="empty-state">Payment screenshots load nahi ho pa rahe. Firestore quota/rules check karein.</div>'});
+onSnapshot(q,s=>{proofs=s.docs.map(d=>({id:d.id,...d.data()}));render()},e=>{console.error(e);const list=$('paymentProofList');if(list)list.innerHTML='<div class="empty-state">Payment screenshots load nahi ho pa rahe. database quota/rules check karein.</div>'});
 
 async function findApplication(proof){
  if(proof.applicationDocId){return doc(db,'applications',proof.applicationDocId)}
@@ -39,6 +39,6 @@ $('paymentProofList')?.addEventListener('click',async e=>{
   if(proof.txnid){try{await updateDoc(doc(db,'payments',proof.txnid),{status:'Paid',paymentStatus:'Paid',updatedAt:serverTimestamp()})}catch(err){console.warn('Payment record update skipped:',err)}}
   await updateDoc(doc(db,'paymentScreenshots',id),{reviewStatus:'Approved',reviewedAt:serverTimestamp()});
   alert('Payment proof approved. Matching application/payment Paid update kiya gaya.');
- }catch(err){console.error(err);alert('Approve/Reject failed. Firestore quota ya permissions check karein.');}
+ }catch(err){console.error(err);alert('Approve/Reject failed. database quota ya permissions check karein.');}
  finally{btn.disabled=false;}
 });

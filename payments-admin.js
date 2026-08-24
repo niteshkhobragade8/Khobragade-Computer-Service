@@ -1,5 +1,5 @@
-import {db} from './firebase-config.js';
-import {collection,onSnapshot,doc,getDoc,setDoc,serverTimestamp,deleteDoc} from './supabase-firestore.js';
+import {db} from './supabase-app.js';
+import {collection,onSnapshot,doc,getDoc,setDoc,serverTimestamp,deleteDoc} from './supabase-db.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const date=v=>{try{return (v?.toDate?v.toDate():new Date(v)).toLocaleString('en-IN')}catch{return'—'}};
 let rows=[];

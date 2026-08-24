@@ -1,5 +1,5 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
 
 import {
   collection,
@@ -8,7 +8,7 @@ import {
   setDoc,
   serverTimestamp,
   onSnapshot
-} from './supabase-firestore.js';
+} from './supabase-db.js';
 
 
 /* =========================================
@@ -790,7 +790,7 @@ const unsubscribe =
     (error) => {
 
       console.error(
-        "Images Firestore Error:",
+        "Images database Error:",
         error
       );
 

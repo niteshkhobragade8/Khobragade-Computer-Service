@@ -1,15 +1,15 @@
 Computer Service Centre V25 Final Fixes
 
 - Applications: permanent Delete option added; public tracking record cleaned too.
-- Users / Customers: Disable/Enable preserved; secure Delete User added via Firebase Admin Cloud Function. Deletes user Firestore profile, applications, payment records, public application status, and Firebase Authentication account so login cannot be used again.
+- Users / Customers: Disable/Enable preserved; secure Delete User added via Supabase Admin Cloud Function. Deletes user database profile, applications, payment records, public application status, and Supabase Authentication account so login cannot be used again.
 - Payments / Transactions: permanent Delete option added for Admin.
-- Firestore rules: Admin delete allowed for applications/payments; user profile delete remains backend-only.
+- database rules: Admin delete allowed for applications/payments; user profile delete remains backend-only.
 - Visitors: one-time V25 reset runs after Admin auth and sets Total Visitors to 0 + clears old visitorDaily history; manual reset button also available in Analytics.
 - Install Admin App: moved from large dashboard card to small professional topbar button beside notification bell.
-- Login/Register: Firebase raw errors mapped to professional customer messages.
+- Login/Register: Supabase raw errors mapped to professional customer messages.
 - Login left computer graphic: responsive visibility polish added without changing existing text.
 - Existing V30 Services / Actions / Forms / Service Charges / User Sidebar CMS / User Pages CMS / Website CMS / Admin CMS preserved.
 - Service Charges: user payment view reads latest active action charge; PayU backend syncs application amount to latest Admin charge before creating transaction.
-- Existing PayU/Firebase/profile/autofill/documents/notifications/YouTube/dark mode/languages preserved.
+- Existing PayU/Supabase/profile/autofill/documents/notifications/YouTube/dark mode/languages preserved.
 
 Deployment note: deploy functions/index.js and firestore.rules together with static website files for secure user deletion and Admin delete permissions.

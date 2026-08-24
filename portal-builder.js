@@ -1,6 +1,6 @@
-import {db} from './firebase-config.js';
-import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,setDoc,serverTimestamp,writeBatch} from './supabase-firestore.js';
-import {MASTER_SERVICES,MASTER_CATALOG_VERSION,actionId,fieldsFor} from './master-catalog.js?v=20260821-final24r3';
+import {db} from './supabase-app.js';
+import {collection,getDocs,onSnapshot,addDoc,updateDoc,deleteDoc,doc,setDoc,serverTimestamp,writeBatch} from './supabase-db.js';
+import {MASTER_SERVICES,MASTER_CATALOG_VERSION,actionId,fieldsFor} from './master-catalog.js?v=20260824-supabasefinal1';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let services=[],actions=[],fields=[],editAction=null,editField=null,editServiceId=null;

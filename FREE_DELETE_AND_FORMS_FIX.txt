@@ -2,8 +2,8 @@ FINAL FIX - 22 Aug 2026
 
 1) Users / Customers Delete User
 - Cloud Function/fetch dependency removed from Admin Dashboard.
-- Delete User now removes Firestore user profile + related applications + payments + public application status.
-- Firebase Authentication account must be deleted manually from Firebase Console -> Authentication -> Users if it still exists.
+- Delete User now removes database user profile + related applications + payments + public application status.
+- Supabase Authentication account must be deleted manually from Supabase Console -> Authentication -> Users if it still exists.
 - No Blaze plan is required for this Admin Dashboard delete flow.
 - Updated firestore.rules must be deployed once for admin user-document deletion permission.
 - Deploy rules only: firebase deploy --only firestore:rules

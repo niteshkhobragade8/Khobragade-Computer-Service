@@ -5,10 +5,10 @@ Khobragade Computer Service Centre - CMS Final Build
 - Public EN / Hindi / Marathi language selector.
 - Admin theme colors, menu color, default mode/language, logo and hero banner settings.
 - Admin Website Pages manager preserved.
-- Existing default catalog can be imported into Firebase from Services, making those records editable/deleteable.
+- Existing default catalog can be imported into Supabase from Services, making those records editable/deleteable.
 - Services support Hindi and Marathi name/description fields.
 - YouTube manager feeds homepage.
 - Image manager includes logo/banner placement categories.
-- Firestore pageContent rules fixed inside database rules.
+- database pageContent rules fixed inside database rules.
 - CNAME/domain preserved: 9637832490.online.
-Note: Deploy firestore.rules separately in Firebase Console/CLI if pageContent writes were previously denied.
+Note: Deploy firestore.rules separately in Supabase Console/CLI if pageContent writes were previously denied.

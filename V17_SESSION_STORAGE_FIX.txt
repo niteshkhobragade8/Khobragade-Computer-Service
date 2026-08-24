@@ -1,22 +1,22 @@
 KCSC V17 - Admin/User Session + Upload Fix
 
 FIXED:
-1) Admin and User logins now use separate Firebase Auth app instances.
-   - Admin uses default Firebase app/auth.
-   - User Portal uses named Firebase app: kcscUserPortal.
+1) Admin and User logins now use separate Supabase Auth app instances.
+   - Admin uses default Supabase app/auth.
+   - User Portal uses named Supabase app: kcscUserPortal.
    - Logging in/out as User no longer logs Admin out.
    - Logging in/out as Admin no longer logs User out.
 
-2) User Portal no longer calls Firebase Storage.
+2) User Portal no longer calls Supabase Storage.
    - Profile photo, application documents and re-uploaded documents use Cloudinary directly.
-   - This removes Firebase Storage CORS/upgrade errors visible in Chrome console.
+   - This removes Supabase Storage CORS/upgrade errors visible in Chrome console.
 
-3) Portal profile/reupload Firestore calls now use the same User Portal Firebase instance.
+3) Portal profile/reupload database calls now use the same User Portal Supabase instance.
 
 VERIFIED:
 - All project JavaScript syntax: PASS
 - All inline module scripts syntax: PASS
 - Portal imports of default firebase-config.js: 0
-- Portal Firebase Storage imports: 0
+- Portal Supabase Storage imports: 0
 
-Firestore rules from this project remain applicable.
+database rules from this project remain applicable.

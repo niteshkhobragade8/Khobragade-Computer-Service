@@ -1,5 +1,5 @@
 import { DATA_API_URL } from './supabase-config.js';
-import { auth } from './firebase-config.js';
+import { auth } from './supabase-app.js';
 const API=DATA_API_URL;const $=id=>document.getElementById(id);const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');let requests=[],selectedRequest=null;
 function msg(t,type='info'){const e=$('passwordResetAdminMessage');if(e){e.textContent=t;e.className='settings-message '+type}}
 function when(v){try{const d=v?new Date(v):null;return d&&!Number.isNaN(d.getTime())?d.toLocaleString('en-IN'):'—'}catch(_){return'—'}}

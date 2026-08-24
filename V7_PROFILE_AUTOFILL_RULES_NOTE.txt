@@ -1,6 +1,6 @@
 V7 PROFILE + AUTO-FILL TEST RULE NOTE
 
-If your current Firestore users rule only allows fullName/email updates, profile extra fields will be blocked.
+If your current database users rule only allows fullName/email updates, profile extra fields will be blocked.
 For TEST portal, users/{uid} owner update must allow: fullName,email,dob,gender,address,villageCity,taluka,district,state,pinCode,photoURL,extraProfile,updatedAt.
 
 Before LIVE launch, use admin-role based final rules (admins/{uid}) so customer logins cannot edit Services/Settings. Do not use generic allow write: if signedIn() for admin CMS collections after customer login goes live.

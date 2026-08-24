@@ -1,0 +1,30 @@
+KCSC SUPABASE FINAL LAUNCH SETUP
+
+This launch version has NO Firebase runtime dependency.
+Database: Supabase
+Auth: Supabase Auth
+Realtime: Supabase Realtime
+File uploads: Cloudinary
+Secure PayU/Admin operations: NEW Render backend
+
+BEFORE WEBSITE UPLOAD:
+1) Run KCSC_SUPABASE_FINAL_RLS.sql in the NEW KCSC Supabase project.
+2) Supabase -> Project Settings -> API:
+   copy Project URL and Publishable/Anon key.
+3) Open supabase-config.js and fill ONLY:
+   SUPABASE_URL
+   SUPABASE_ANON_KEY
+   DATA_API_URL is already https://kcc-supabase-backend.onrender.com
+4) Supabase -> Authentication -> Users -> Add User:
+   Email: niteshkhobragade8@gmail.com
+   Password: choose your Admin password
+   Auto Confirm / Confirm email: ON
+5) Supabase -> Authentication -> URL Configuration:
+   Site URL: https://9637832490.online
+   Add Redirect URL: https://9637832490.online/login.html
+6) Upload the website files to the website GitHub repository.
+
+IMPORTANT:
+Existing migrated old user profiles can remain as backup/history, but Firebase-era passwords cannot be used.
+Normal users register fresh. Commission users are created by Admin from Commission Panel.
+Existing old Firebase + old Render backup should remain untouched until launch is verified.

@@ -1,5 +1,5 @@
-import { db } from "./firebase-config.js";
-import { collection, doc, setDoc, onSnapshot, serverTimestamp } from './supabase-firestore.js';
+import { db } from "./supabase-app.js";
+import { collection, doc, setDoc, onSnapshot, serverTimestamp } from './supabase-db.js';
 
 const $ = (id) => document.getElementById(id);
 let rows = [];

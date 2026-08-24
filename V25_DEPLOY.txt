@@ -1,12 +1,12 @@
-V25 deployment (does NOT deploy Firebase Hosting / does NOT change domain or DNS)
+V25 deployment (does NOT deploy Supabase Hosting / does NOT change domain or DNS)
 
-1. Install Firebase CLI and login if not already done.
+1. Install Supabase CLI and login if not already done.
 2. From this project folder run:
    firebase deploy --only functions,firestore:rules
 
 This deploys:
 - secure deletePortalUser Cloud Function
-- updated Firestore Admin delete permissions for Applications and Payments
+- updated database Admin delete permissions for Applications and Payments
 
 Static website/dashboard files should be uploaded to the same GitHub Pages project as usual.
 The one-time visitor reset runs after Admin logs into the updated dashboard; it resets Total Visitors to 0 and clears old visitorDaily history once for V25.

@@ -1,4 +1,4 @@
-import { db } from './firebase-config.js';
+import { db } from './supabase-app.js';
 
 import {
   collection,
@@ -8,7 +8,7 @@ import {
   deleteDoc,
   onSnapshot,
   serverTimestamp
-} from './supabase-firestore.js';
+} from './supabase-db.js';
 
 
 const $ = id => document.getElementById(id);
@@ -120,7 +120,7 @@ function clean(value) {
     typeof value === 'object'
   ) {
 
-    // Firestore Timestamp ko as-is rakho
+    // database Timestamp ko as-is rakho
     if (
       typeof value.toDate === 'function'
     ) {
@@ -363,7 +363,7 @@ async function restore(id) {
 
   /*
     Original ID ke saath
-    original Firestore collection me
+    original database collection me
     document restore hoga.
   */
 

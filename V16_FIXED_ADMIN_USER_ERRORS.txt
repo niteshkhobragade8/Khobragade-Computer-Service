@@ -5,12 +5,12 @@ V16 FIX SUMMARY
    This error was causing login page JS to stop and same-page behavior.
 
 2. Admin Dashboard permission error fixed:
-   dashboard.js no longer reads blocked Firestore admins/{uid} document.
+   dashboard.js no longer reads blocked database admins/{uid} document.
    Admin access now uses the same authorized admin email as firestore.rules.
 
 3. Existing V15/V14 service, application and payment flow preserved.
 
 Verification performed:
 - All .js files: node --check PASS
-- No dashboard admins/{uid} Firestore read remains
+- No dashboard admins/{uid} database read remains
 - ZIP integrity verified after packaging

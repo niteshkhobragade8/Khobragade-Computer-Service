@@ -1,11 +1,12 @@
-import { auth, db } from "./firebase-config.js";
+import { auth, db } from "./supabase-app.js";
 
 import {
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
+    updatePassword,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+} from './supabase-auth.js';
 
 const loginForm = document.getElementById("loginForm");
 const email = document.getElementById("email");
@@ -14,6 +15,11 @@ const loginBtn = document.getElementById("loginBtn");
 const loginMessage = document.getElementById("loginMessage");
 const togglePassword = document.getElementById("togglePassword");
 const forgotAdminPassword = document.getElementById("forgotAdminPassword");
+const adminResetBox = document.getElementById("adminResetBox");
+const newAdminPassword = document.getElementById("newAdminPassword");
+const saveAdminNewPassword = document.getElementById("saveAdminNewPassword");
+const toggleNewAdminPassword = document.getElementById("toggleNewAdminPassword");
+const resetMode = new URLSearchParams(location.search).get("reset") === "1";
 
 function showMessage(message, color = "red") {
     loginMessage.innerText = message;
@@ -53,6 +59,29 @@ forgotAdminPassword?.addEventListener("click", async () => {
     } finally {
         forgotAdminPassword.disabled = false;
     }
+});
+
+
+if (resetMode && adminResetBox) {
+    adminResetBox.hidden = false;
+    showMessage("Reset link verified. New password set karein.", "green");
+}
+toggleNewAdminPassword?.addEventListener("click", () => {
+    const show = newAdminPassword.type === "password";
+    newAdminPassword.type = show ? "text" : "password";
+    toggleNewAdminPassword.innerText = show ? "🙈" : "👁";
+});
+saveAdminNewPassword?.addEventListener("click", async () => {
+    const value = newAdminPassword.value;
+    if (value.length < 6) return showMessage("New password minimum 6 characters hona chahiye.");
+    if (!auth.currentUser) return showMessage("Reset session load nahi hua. Reset email link dobara open karein.");
+    saveAdminNewPassword.disabled = true;
+    try {
+        await updatePassword(auth.currentUser, value);
+        showMessage("Password changed successfully. Dashboard open ho raha hai...", "green");
+        setTimeout(() => location.replace("dashboard.html"), 700);
+    } catch (e) { showMessage(e.message || "Password reset failed."); }
+    finally { saveAdminNewPassword.disabled = false; }
 });
 
 loginForm.addEventListener("submit", async (e) => {
@@ -141,6 +170,7 @@ loginForm.addEventListener("submit", async (e) => {
 
 onAuthStateChanged(auth, async (user) => {
     if (!user) return;
+    if (resetMode) return;
     const ADMIN_EMAIL = "niteshkhobragade8@gmail.com";
     if ((user.email || "").toLowerCase() === ADMIN_EMAIL) {
         localStorage.setItem("activePage", "dashboard");

@@ -1,5 +1,6 @@
-import {db} from './firebase-config.js';
-import {collection,onSnapshot,doc,updateDoc,deleteDoc,getDocs,serverTimestamp,writeBatch} from './supabase-firestore.js';
+import {db} from './supabase-app.js';
+import {collection,onSnapshot,doc,updateDoc,deleteDoc,getDocs,serverTimestamp,writeBatch,query,where} from './supabase-db.js';
+import {adminDeleteUser} from './supabase-auth.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let users=[],apps=[];
 const date=v=>{try{return(v?.toDate?v.toDate():new Date(v)).toLocaleDateString('en-IN')}catch{return'—'}};
@@ -15,21 +16,22 @@ async function commitDeletes(refs){
  for(let i=0;i<refs.length;i+=400){const batch=writeBatch(db);refs.slice(i,i+400).forEach(ref=>batch.delete(ref));await batch.commit();}
 }
 async function deleteUserPortalData(u,button){
- if(!confirm(`Delete ${u.fullName||u.mobile||'this user'} from Admin Dashboard?\n\nThis will delete the Firestore customer profile, related applications, payment records and public application status.\n\nFirebase Authentication login must be deleted separately from Firebase Console if it still exists.`))return;
+ if(!confirm(`Delete ${u.fullName||u.mobile||'this user'} permanently?\n\nThis will delete the Supabase login, customer profile, related applications, payment records and public status.`))return;
  const original=button.textContent;button.disabled=true;button.textContent='Deleting...';
  try{
   const [appSnap,paySnap,statusSnap]=await Promise.all([
-   getDocs(collection(db,'applications')),
-   getDocs(collection(db,'payments')),
+   getDocs(query(collection(db,'applications'),where('userId','==',u.id))),
+   getDocs(query(collection(db,'payments'),where('userId','==',u.id))),
    getDocs(collection(db,'publicApplicationStatus'))
   ]);
-  const relatedApps=appSnap.docs.filter(d=>{const x=d.data();return x.userId===u.id || (!!u.mobile&&x.mobile===u.mobile) || (!!u.email&&x.email===u.email)});
+  const relatedApps=appSnap.docs;
   const appIds=new Set(relatedApps.map(d=>d.id));
-  const relatedPays=paySnap.docs.filter(d=>{const x=d.data();return x.userId===u.id || appIds.has(x.applicationId) || (!!u.mobile&&x.mobile===u.mobile) || (!!u.email&&x.email===u.email)});
-  const relatedStatuses=statusSnap.docs.filter(d=>appIds.has(d.id) || appIds.has(d.data()?.applicationId));
+  const relatedPays=paySnap.docs;
+  const relatedStatuses=statusSnap.docs.filter(d=>appIds.has(d.id)||appIds.has(d.data()?.applicationId));
   await commitDeletes([...relatedPays.map(d=>d.ref),...relatedStatuses.map(d=>d.ref),...relatedApps.map(d=>d.ref),doc(db,'users',u.id)]);
-  alert('User portal data deleted successfully. If the Firebase Authentication account still exists, delete it manually from Firebase Console → Authentication → Users.');
- }catch(e){console.error('User delete error',e);alert('Delete failed: '+(e?.message||'Unknown Firestore error')+'\n\nMake sure updated Firestore Rules are deployed.');button.disabled=false;button.textContent=original;}
+  await adminDeleteUser(u.id).catch(err=>console.warn('Auth delete:',err.message));
+  alert('User + login deleted successfully.');
+ }catch(e){console.error('User delete error',e);alert('Delete failed: '+(e?.message||'Unknown database error'));button.disabled=false;button.textContent=original;}
 }
 $('usersTable')?.addEventListener('click',async e=>{
  const del=e.target.closest('[data-delete-user]');if(del){const u=users.find(x=>x.id===del.dataset.deleteUser);if(u)await deleteUserPortalData(u,del);return;}

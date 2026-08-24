@@ -1,7 +1,7 @@
 KCSC APPLICATIONS + PAYMENTS COMPLETE V8
 
 WHAT IS COMPLETE
-- User Register/Login (mobile number mapped securely to Firebase Auth email alias)
+- User Register/Login (mobile number mapped securely to Supabase Auth email alias)
 - Professional Home + User Dashboard + compact sidebar
 - Profile photo + full profile + application auto-fill
 - Complete master service catalogue installer with Maha ID and Passport Size Photo
@@ -20,10 +20,10 @@ WHAT IS COMPLETE
 FIRST-TIME TEST SETUP
 1. Deploy this build to a TEST repo/domain. Do not replace live domain yet.
 2. Publish firestore.rules and storage.rules from this ZIP.
-3. Ensure your admin Firebase Auth UID has a Firestore document: admins/{UID}.
+3. Ensure your admin Supabase Auth UID has a database document: admins/{UID}.
 4. Admin Dashboard -> Service Actions & Form Builder -> click Install / Sync Complete Master Catalogue once.
 5. Edit service/action charges and availability as desired.
-6. Firebase Functions:
+6. Supabase Functions:
    cd functions
    npm install
    firebase functions:secrets:set PAYU_KEY
@@ -38,7 +38,7 @@ FIRST-TIME TEST SETUP
 9. Keep Environment=test until full test payment passes.
 
 IMPORTANT PAYU SECURITY
-- PAYU_SALT is backend secret only. Never put Salt/Secret in HTML, JS, Firestore or GitHub.
+- PAYU_SALT is backend secret only. Never put Salt/Secret in HTML, JS, database or GitHub.
 - Customer payment is treated as Paid only after server-side PayU Verify Payment reconciliation.
 - Payment records intentionally cannot be deleted by client/admin UI.
 

@@ -9,4 +9,4 @@ KCSC FILE 30 - FINAL COMPLETE
 - Website CMS retained + User Sidebar Menu full controls + User Pages CMS
 - Admin Dashboard CMS retained
 - Mobile installable Admin PWA included (dashboard.html)
-- Existing PayU/Firebase/portal structure preserved
+- Existing PayU/Supabase/portal structure preserved
