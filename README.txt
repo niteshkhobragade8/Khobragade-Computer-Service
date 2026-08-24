@@ -1,21 +1,12 @@
-KCSC COMMISSION INVALID DATE + GITHUB PAYMENT PAGE RETRY FIX
+KCSC COMMISSION FAST DELETE
 
 Replace only:
-1. commission-admin.js
-2. portal/assets/portal.js
+commission-admin.js
 
-Fix 1:
-- Commission Payments date now supports:
-  Supabase ISO dates
-  Firestore {seconds,nanoseconds}
-  {_seconds,_nanoseconds}
-- Invalid date shows — instead of "Invalid Date".
+Fix:
+- Commission Payment delete disappears from UI immediately.
+- Commission Ledger delete disappears from UI immediately.
+- Supabase delete runs immediately after UI removal.
+- If database delete fails, the row is restored and an error is shown.
 
-Fix 2:
-- Before opening portal/payment.html after application submit,
-  the portal checks that GitHub Pages is actually returning the HTML page.
-- If GitHub Pages temporarily returns its Unicorn/error page,
-  it retries up to 4 times before navigating.
-- Existing payment/PayU logic is untouched.
-
-No backend, PayU keys, commission calculation, database data, or Admin design changed.
+No PayU/backend, commission calculation, Admin design, or Supabase data schema changed.

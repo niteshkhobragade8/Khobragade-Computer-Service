@@ -9,24 +9,7 @@ import {
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-const date=v=>{
- try{
-  if(!v)return'—';
-  let d;
-  if(v?.toDate)d=v.toDate();
-  else if(typeof v==='string'||typeof v==='number')d=new Date(v);
-  else if(typeof v==='object'){
-   const sec=Number(v.seconds??v._seconds??v.sec??NaN);
-   const nano=Number(v.nanoseconds??v._nanoseconds??0);
-   if(Number.isFinite(sec))d=new Date(sec*1000+Math.floor(nano/1e6));
-   else if(v.iso)d=new Date(v.iso);
-   else if(v.date)d=new Date(v.date);
-   else if(v.value)d=new Date(v.value);
-  }
-  if(!d||Number.isNaN(d.getTime()))return'—';
-  return d.toLocaleString('en-IN');
- }catch{return'—'}
-};
+const date=v=>{try{return (v?.toDate?v.toDate():new Date(v)).toLocaleString('en-IN')}catch{return'—'}};
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 
 let initialized=false, unsubs=[];
@@ -228,7 +211,26 @@ $('commissionApplicationsTable')?.addEventListener('click',async e=>{
 });
 $('commissionPaymentsTable')?.addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;const id=b.dataset.cpSave||b.dataset.cpDelete;if(!id)return;
-  if(b.dataset.cpDelete){if(confirm('Payment record delete karein?'))await deleteDoc(doc(db,'payments',id));return}
+
+  if(b.dataset.cpDelete){
+    if(!confirm('Payment record delete karein?'))return;
+
+    // Instant UI removal. Supabase delete happens immediately after.
+    const oldPayments=[...payments];
+    payments=payments.filter(x=>x.id!==id);
+    renderPayments();
+
+    try{
+      await deleteDoc(doc(db,'payments',id));
+    }catch(err){
+      console.error('Commission payment delete failed:',err);
+      payments=oldPayments;
+      renderPayments();
+      alert('Payment delete failed: '+(err?.message||'Unknown error'));
+    }
+    return;
+  }
+
   const status=document.querySelector(`[data-cp-status="${CSS.escape(id)}"]`)?.value||'Pending';
   await updateDoc(doc(db,'payments',id),{status,updatedAt:serverTimestamp()});
 });
@@ -260,7 +262,7 @@ $('commissionServicesTable')?.addEventListener('click',async e=>{
     b.disabled=false;
   }
 });
-$('commissionLedgerTable')?.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.ledgerSave||b.dataset.ledgerDelete;if(!id)return;if(b.dataset.ledgerDelete){if(confirm('Ledger entry delete karein?'))await deleteDoc(doc(db,'commissionLedger',id));return}const s=document.querySelector(`[data-ledger-status="${CSS.escape(id)}"]`)?.value||'Pending';await updateDoc(doc(db,'commissionLedger',id),{status:s,updatedAt:serverTimestamp()})});
+$('commissionLedgerTable')?.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.ledgerSave||b.dataset.ledgerDelete;if(!id)return;if(b.dataset.ledgerDelete){if(!confirm('Ledger entry delete karein?'))return;const oldLedger=[...ledger];ledger=ledger.filter(x=>x.id!==id);renderLedger();try{await deleteDoc(doc(db,'commissionLedger',id))}catch(err){console.error('Ledger delete failed:',err);ledger=oldLedger;renderLedger();alert('Ledger delete failed: '+(err?.message||'Unknown error'))}return}const s=document.querySelector(`[data-ledger-status="${CSS.escape(id)}"]`)?.value||'Pending';await updateDoc(doc(db,'commissionLedger',id),{status:s,updatedAt:serverTimestamp()})});
 
 function subscribe(){
   if(initialized)return; initialized=true;
