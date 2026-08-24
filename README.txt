@@ -1,18 +1,17 @@
-ADMIN / USER SESSION ISOLATION EXACT FIX
+ADMIN APPLICATION REALTIME + USER REGISTRATION SUCCESS FIX
 
-Replace ONLY:
-supabase-client.js
+Replace only:
+1. supabase-db.js
+2. portal/assets/portal.js
+3. portal/index.html
 
-Fix:
-- Admin pages use separate Supabase auth storage.
-- /portal/ User + Commission pages use separate Supabase auth storage.
-- Public pages have separate auth storage.
-- User registration/login can no longer replace/logout the Admin browser session.
+Fixes:
+- Applications refresh automatically without manual browser refresh.
+- Supabase Realtime remains primary; 2.5 second fallback only for applications.
+- Returning/focusing Admin tab triggers immediate Applications refresh.
+- Registration no longer auto-logs in.
+- After registration: "Registration successful. Please login."
+- Login tab opens and registered mobile is pre-filled.
+- Admin/User session isolation remains unchanged.
 
-No database, PayU, application, commission or UI logic changed.
-
-After upload:
-1. Open Admin /dashboard.html and login once again.
-2. In another tab open /portal/index.html.
-3. Register/login a Normal User.
-4. Return to Admin tab: Admin should remain logged in.
+No PayU, Commission, Services, Forms, Charges or existing Supabase data changed.

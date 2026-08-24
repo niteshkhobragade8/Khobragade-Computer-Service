@@ -139,16 +139,33 @@ function ensureCollectionRealtime(name){
     for(const entry of SUBSCRIBERS.get(name)||[])emitEntry(entry);
   }).subscribe();
   CHANNELS.set(name,channel);
-  const pollMs=STATIC_COLLECTIONS.has(name)?120000:8000;
-  const timer=setInterval(()=>{
+  const pollMs=STATIC_COLLECTIONS.has(name)?120000:(name==='applications'?2500:6000);
+  const refreshNow=()=>{
     if(document.visibilityState==='hidden')return;
     for(const entry of SUBSCRIBERS.get(name)||[])emitEntry(entry);
-  },pollMs);
+  };
+  const timer=setInterval(refreshNow,pollMs);
   POLLERS.set(name,timer);
+
+  // Re-check instantly when Admin/User returns to the tab.
+  // This makes application changes appear without manual browser refresh,
+  // even if a Realtime websocket event was missed.
+  if(name==='applications'){
+    const vis=()=>{if(document.visibilityState==='visible')refreshNow()};
+    const focus=()=>refreshNow();
+    document.addEventListener('visibilitychange',vis);
+    window.addEventListener('focus',focus);
+    CHANNELS.get(name).__kcscCleanup=()=>{
+      document.removeEventListener('visibilitychange',vis);
+      window.removeEventListener('focus',focus);
+    };
+  }
 }
 function releaseCollectionRealtime(name){
   if((SUBSCRIBERS.get(name)?.size||0)>0)return;
-  const ch=CHANNELS.get(name);if(ch)supabase.removeChannel(ch).catch(()=>{});
+  const ch=CHANNELS.get(name);
+  try{ch?.__kcscCleanup?.()}catch(_){}
+  if(ch)supabase.removeChannel(ch).catch(()=>{});
   CHANNELS.delete(name);
   const timer=POLLERS.get(name);if(timer)clearInterval(timer);POLLERS.delete(name);
   SUBSCRIBERS.delete(name);

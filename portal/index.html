@@ -43,7 +43,7 @@
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
-import './assets/portal.js?v=20260824-supabasefinal1';
+import './assets/portal.js?v=20260824-reg-realtime1';
 
 const loginTab=document.getElementById('loginTab'),registerTab=document.getElementById('registerTab'),loginForm=document.getElementById('loginForm'),registerForm=document.getElementById('registerForm');function tab(which){const reg=which==='register';registerForm.hidden=!reg;loginForm.hidden=reg;registerTab.classList.toggle('active',reg);loginTab.classList.toggle('active',!reg)}loginTab.onclick=()=>tab('login');registerTab.onclick=()=>tab('register');if(new URLSearchParams(location.search).get('auth')==='register')tab('register');
 
@@ -66,5 +66,5 @@ sendResetRequest.onclick=async()=>{
   forgotMsg.textContent=err.message;forgotMsg.className='msg show err';
  }finally{sendResetRequest.disabled=false}
 };
-loginForm.onsubmit=async e=>{e.preventDefault();try{const result=await Portal.login(loginMobile.value,loginPassword.value);window.scrollTo(0,0);location.replace(result?.destination||'account.html')}catch(err){const m=document.getElementById('loginMsg');m.textContent=err.message;m.className='msg show err'}};registerForm.onsubmit=async e=>{e.preventDefault();try{await Portal.register({fullName:regName.value,email:regEmail.value,mobile:regMobile.value,password:regPassword.value,confirmPassword:regConfirm.value});window.scrollTo(0,0);location.replace('account.html')}catch(err){const m=document.getElementById('regMsg');m.textContent=err.message;m.className='msg show err'}};
+loginForm.onsubmit=async e=>{e.preventDefault();try{const result=await Portal.login(loginMobile.value,loginPassword.value);window.scrollTo(0,0);location.replace(result?.destination||'account.html')}catch(err){const m=document.getElementById('loginMsg');m.textContent=err.message;m.className='msg show err'}};registerForm.onsubmit=async e=>{e.preventDefault();const m=document.getElementById('regMsg');try{const result=await Portal.register({fullName:regName.value,email:regEmail.value,mobile:regMobile.value,password:regPassword.value,confirmPassword:regConfirm.value});const mobile=result?.mobile||regMobile.value;registerForm.reset();tab('login');loginMobile.value=mobile;m.textContent='Registration successful. Please login.';m.className='msg show ok';const lm=document.getElementById('loginMsg');lm.textContent='Registration successful. Please login.';lm.className='msg show ok';window.scrollTo(0,0)}catch(err){m.textContent=err.message;m.className='msg show err'}};
 </script></body></html>
