@@ -544,3 +544,111 @@ html.admin-shell-ready body{visibility:visible!important}
 .password-reset-dialog{border:0;padding:0;border-radius:18px;max-width:560px;width:calc(100% - 28px);box-shadow:0 24px 70px rgba(15,23,42,.25)}
 .password-reset-dialog::backdrop{background:rgba(15,23,42,.55)}
 .password-reset-dialog-card{padding:22px;background:#fff}
+
+
+/* =========================================================
+   KCSC SELECTED ADMIN PAGES — FULL WIDTH REFERENCE LAYOUT
+   Reference checked: Dashboard / Commission Panel /
+   Applications / Users-Customers.
+   CSS ONLY. No HTML IDs or JavaScript logic changed.
+   ========================================================= */
+
+/* Services */
+#servicesmanagerPage #servicesmanagerMount,
+#servicesmanagerPage .manager-content,
+#servicesmanagerPage .manager-form{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+#servicesmanagerPage .manager-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%;
+}
+
+/* Actions */
+#actionsmanagerPage #actionsmanagerMount,
+#actionsmanagerPage .manager-content,
+#actionsmanagerPage .manager-form{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+#actionsmanagerPage .manager-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%;
+}
+
+/* Forms + Required Documents */
+#formsmanagerPage #formsmanagerMount,
+#formsmanagerPage .manager-content,
+#formsmanagerPage .manager-form{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+#formsmanagerPage .manager-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%;
+}
+
+/* Service Charges */
+#servicechargesPage #servicechargesMount,
+#servicechargesPage .manager-content,
+#servicechargesPage .manager-form{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+#servicechargesPage .manager-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%;
+}
+
+/* All Charge */
+#allchargePage .manager-content,
+#allchargePage .table-wrap{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* Website CMS */
+#userportalcmsPage .manager-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%;
+}
+#userportalcmsPage .manager-form,
+#userportalcmsPage .manager-content{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* Portal Settings */
+#settingsPage .settings-shell,
+#settingsPage .settings-group{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* Keep tables/cards within the normal full content width */
+#servicesmanagerPage .table-wrap,
+#actionsmanagerPage .table-wrap,
+#formsmanagerPage .table-wrap,
+#servicechargesPage .table-wrap,
+#allchargePage .table-wrap,
+#userportalcmsPage .table-wrap,
+#settingsPage .table-wrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+}

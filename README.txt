@@ -1,22 +1,43 @@
-KCSC ADMIN LAYOUT FINAL FIX
+KCSC ADMIN SELECTED PAGES LAYOUT — CSS ONLY
+
+I first checked the current layout structure of:
+- Dashboard
+- Commission Panel
+- Applications
+- Users / Customers
+
+The common safe pattern is: full available Admin content width, with cards/tables/forms not squeezed into a narrow left column.
 
 Replace ONLY:
-1) dashboard.html
-2) dashboard.css
+dashboard.css
 
-FIXED:
-- Removes the broken application-style wrapper patch that squeezed Forms and disturbed manager pages.
-- Restores the valid pre-layout HTML structure.
-- Services / Actions / Forms / Service Charges / All Charge / Website CMS / Portal Settings IDs and mounts preserved.
-- CSS cache version changed so Chrome loads corrected layout immediately.
+Target pages:
+- Services
+- Actions
+- Forms
+- Service Charges
+- All Charge
+- Website CMS
+- Portal Settings
 
-NOT CHANGED:
-- JavaScript
-- Supabase/backend
-- PayU working flow
-- Commission logic
-- User/Admin logic
-- Delete/update/dropdown functions
-- Existing database data
+What this patch does:
+- Changes only the selected pages' layout CSS.
+- Their .manager-layout becomes one full-width column.
+- Forms, existing records, cards and tables use full available width.
+- Required Documents section on Forms also becomes full width.
 
-After upload open dashboard and press Ctrl+F5 once.
+What this patch DOES NOT change:
+- dashboard.html
+- any JavaScript
+- dropdowns
+- Add/Edit/Update/Delete
+- existing records/data
+- Services -> Actions -> Forms linkage
+- charges
+- PayU/backend
+- Supabase/Auth
+- Admin/Commission/User logic
+- fast delete
+- any other Admin page
+
+After upload: Ctrl+F5 once.
