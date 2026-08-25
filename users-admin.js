@@ -1,9 +1,10 @@
 import {db} from './firebase-config.js';
 import {adminDeleteUser} from './supabase-auth.js';
-import {collection,onSnapshot,doc,updateDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {collection,onSnapshot,doc,updateDoc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let users=[],apps=[];
 const date=v=>{try{return(v?.toDate?v.toDate():new Date(v)).toLocaleDateString('en-IN')}catch{return'—'}};
+const isUuid=v=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(v||''));
 function render(){
  const q=($('userSearch')?.value||'').toLowerCase(),tb=$('usersTable');if(!tb)return;
  const rows=users.filter(u=>!q||[u.fullName,u.mobile,u.email].join(' ').toLowerCase().includes(q));
@@ -13,10 +14,13 @@ onSnapshot(collection(db,'users'),s=>{users=s.docs.map(d=>({id:d.id,...d.data()}
 onSnapshot(collection(db,'applications'),s=>{apps=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 $('userSearch')?.addEventListener('input',render);
 async function deleteUserCompletely(u,button){
- if(!confirm(`Permanently delete ${u.fullName||u.mobile||'this user'}?\n\nUser account, login access, applications, payments and related portal data will be deleted. This cannot be undone.`))return;
+ if(!confirm(`Permanently delete ${u.fullName||u.mobile||'this user'}?
+
+This cannot be undone.`))return;
  const original=button.textContent;button.disabled=true;button.textContent='Deleting...';
  try{
-  await adminDeleteUser(u.id);
+  if(isUuid(u.id)) await adminDeleteUser(u.id);
+  else await deleteDoc(doc(db,'users',u.id));
   alert('User permanently deleted.');
  }catch(e){console.error(e);alert(e.message||'User delete failed.');button.disabled=false;button.textContent=original;}
 }
