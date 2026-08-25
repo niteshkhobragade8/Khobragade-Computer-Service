@@ -208,8 +208,23 @@ app.post('/auth/register',async(req,res)=>{
     const email=String(req.body?.email||'').trim().toLowerCase(),password=String(req.body?.password||'');
     if(!/^m\d{10}@login\.9637832490\.online$/.test(email)||password.length<6)return res.status(400).json({error:'Valid mobile login and minimum 6-character password required'});
     if(email===ADMIN_EMAIL)return res.status(403).json({error:'Admin account cannot be created here'});
-    const {data,error}=await supabase().auth.admin.createUser({email,password,email_confirm:true,user_metadata:req.body?.metadata||{}});
-    if(error)throw error;
+    const client=supabase();
+    const {data,error}=await client.auth.admin.createUser({email,password,email_confirm:true,user_metadata:req.body?.metadata||{}});
+    if(error){
+      const msg=String(error.message||'').toLowerCase();
+      if(msg.includes('already registered')||msg.includes('already exists')){
+        const existing=await findAuthUserByEmail(email);
+        if(existing){
+          const profile=await rowGet('users',existing.id);
+          if(!profile){
+            const {data:updated,error:updateError}=await client.auth.admin.updateUserById(existing.id,{password,email_confirm:true,user_metadata:req.body?.metadata||{}});
+            if(updateError)throw updateError;
+            return res.json({ok:true,recovered:true,user:{id:updated.user.id,email:updated.user.email||email}});
+          }
+        }
+      }
+      throw error;
+    }
     return res.json({ok:true,user:{id:data.user.id,email:data.user.email}});
   }catch(e){console.error('auth/register',e);return res.status(400).json({error:e.message})}
 });
