@@ -1,9 +1,9 @@
-import {db,auth} from './firebase-config.js';
+import {db} from './firebase-config.js';
+import {adminDeleteUser} from './supabase-auth.js';
 import {collection,onSnapshot,doc,updateDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let users=[],apps=[];
 const date=v=>{try{return(v?.toDate?v.toDate():new Date(v)).toLocaleDateString('en-IN')}catch{return'—'}};
-const DELETE_USER_URL='https://us-central1-project-5969685501815639790.cloudfunctions.net/deletePortalUser';
 function render(){
  const q=($('userSearch')?.value||'').toLowerCase(),tb=$('usersTable');if(!tb)return;
  const rows=users.filter(u=>!q||[u.fullName,u.mobile,u.email].join(' ').toLowerCase().includes(q));
@@ -16,11 +16,9 @@ async function deleteUserCompletely(u,button){
  if(!confirm(`Permanently delete ${u.fullName||u.mobile||'this user'}?\n\nUser account, login access, applications, payments and related portal data will be deleted. This cannot be undone.`))return;
  const original=button.textContent;button.disabled=true;button.textContent='Deleting...';
  try{
-  const token=await auth.currentUser?.getIdToken();if(!token)throw new Error('Admin login required.');
-  const res=await fetch(DELETE_USER_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({uid:u.id})});
-  const data=await res.json().catch(()=>({}));if(!res.ok||!data.ok)throw new Error(data.message||'User delete failed.');
-  alert('User permanently deleted. Firebase Authentication login and related portal data were removed.');
- }catch(e){console.error(e);alert(e.message||'User delete failed. Firebase Functions deploy/check required.');button.disabled=false;button.textContent=original;}
+  await adminDeleteUser(u.id);
+  alert('User permanently deleted.');
+ }catch(e){console.error(e);alert(e.message||'User delete failed.');button.disabled=false;button.textContent=original;}
 }
 $('usersTable')?.addEventListener('click',async e=>{
  const del=e.target.closest('[data-delete-user]');if(del){const u=users.find(x=>x.id===del.dataset.deleteUser);if(u)await deleteUserCompletely(u,del);return;}
