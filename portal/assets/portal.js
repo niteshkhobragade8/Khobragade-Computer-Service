@@ -225,40 +225,34 @@ async function uploadFile(file,path){
  if(!res.ok||!j.secure_url)throw new Error(j.error?.message||'Document upload failed.');
  return j.secure_url;
 }
-async function createApplication({service,action,formData,files:uploadList}){
+async function createApplication({service,action,formData,files:uploadList,onCreated}){
  if(!auth.currentUser)throw new Error('Please login first.');
- const profileData=await profile(auth.currentUser.uid);
+ const profileData=currentProfile||await profile(auth.currentUser.uid);
  const pricedAction=await applyCommissionAction(action,{id:auth.currentUser.uid,...profileData});
  const id=appId();
- const uploaded=(await Promise.all((uploadList||[]).map(async item=>{
-  if(item?.url)return {label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'};
-  if(!item?.file)return null;
-  const url=await uploadFile(item.file,`applications/${auth.currentUser.uid}/${id}/${Date.now()}-${item.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);
-  return {label:item.label,name:item.file.name,url,source:'application'};
- }))).filter(Boolean);
  const originalAmount=Number(pricedAction.originalServiceCharge??action.serviceCharge??0);
  const commissionAmount=Number(pricedAction.commissionAmount||0);
  const amount=Number(pricedAction.serviceCharge||0);
  const isCommissionApplication=commissionProfileActive({id:auth.currentUser.uid,...profileData})&&commissionAmount>0;
  const appRef=doc(db,'applications',id);
- const batch=writeBatch(db);
- batch.set(appRef,{
+ const baseApp={
   applicationId:id,userId:auth.currentUser.uid,userName:profileData?.fullName||'',mobile:profileData?.mobile||'',email:profileData?.email||'',
   serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',
   originalAmount,commissionAmount,commissionType:pricedAction.commissionType||'',commissionValue:Number(pricedAction.commissionValue||0),
   commissionUserId:isCommissionApplication?auth.currentUser.uid:'',commissionCode:isCommissionApplication?(profileData?.commissionCode||''):'',
   isCommissionApplication,amount,officialFee:Number(action.officialFee||0),
-  paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',formData,documents:uploaded,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
- });
- if(isCommissionApplication){
-  batch.set(doc(db,'commissionLedger',id),{
-   userId:auth.currentUser.uid,applicationDocId:id,applicationId:id,serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',
-   originalCharge:originalAmount,commissionAmount,finalCharge:amount,status:amount>0?'Pending':'Paid',paymentStatus:amount>0?'Pending':'Paid',
-   createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-  });
- }
+  paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',formData,documents:[],
+  uploadStatus:(uploadList||[]).some(x=>x?.file)?'Uploading':'Complete',createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+ };
+ const batch=writeBatch(db);batch.set(appRef,baseApp);
+ if(isCommissionApplication)batch.set(doc(db,'commissionLedger',id),{userId:auth.currentUser.uid,applicationDocId:id,applicationId:id,serviceId:service.id,serviceName:service.name||'',actionId:action.id,actionName:action.name||'',originalCharge:originalAmount,commissionAmount,finalCharge:amount,status:amount>0?'Pending':'Paid',paymentStatus:amount>0?'Pending':'Paid',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
  batch.set(doc(db,'publicApplicationStatus',id),{applicationId:id,mobileLast4:(profileData?.mobile||'').slice(-4),serviceName:service.name||'',actionName:action.name||'',paymentStatus:amount>0?'Pending':'Paid',status:amount>0?'Pending Payment':'Pending',updatedAt:serverTimestamp()});
  await batch.commit();
+ try{onCreated?.({docId:id,applicationId:id,amount,originalAmount,commissionAmount})}catch(_){ }
+ try{
+  const uploaded=(await Promise.all((uploadList||[]).map(async item=>{if(item?.url)return {label:item.label||'Document',name:item.name||'Profile File',url:item.url,source:item.source||'profile'};if(!item?.file)return null;const url=await uploadFile(item.file,`applications/${auth.currentUser.uid}/${id}/${Date.now()}-${item.file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`);return {label:item.label,name:item.file.name,url,source:'application'};}))).filter(Boolean);
+  if(uploaded.length||(uploadList||[]).length)await updateDoc(appRef,{documents:uploaded,uploadStatus:'Complete',updatedAt:serverTimestamp()});
+ }catch(e){await updateDoc(appRef,{uploadStatus:'Failed',updatedAt:serverTimestamp()}).catch(()=>{});throw e}
  return {docId:id,applicationId:id,amount,originalAmount,commissionAmount}
 }
 async function payuSettings(){const s=await getDoc(doc(db,'settings','payu'));return s.exists()?s.data():{}}

@@ -1,6 +1,9 @@
 
 import { db } from './supabase-app.js';
 import { adminCreateUser, adminDeleteUser } from './supabase-auth.js';
+import { DATA_API_URL } from './supabase-config.js';
+// Wake Render while Admin is viewing Commission Panel so Create User does not pay the cold-start delay.
+fetch(DATA_API_URL+'/',{method:'GET',cache:'no-store'}).catch(()=>{});
 import {
   collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot,
   query, where, serverTimestamp, writeBatch
@@ -122,8 +125,14 @@ async function saveCommissionUser(){
   try{
     if(!uid){
       if(password.length<6)return setMsg('commissionUserMessage','New user ke liye minimum 6-character password required.','danger');
-      const cred=await adminCreateUser(alias(mobile),password,{fullName,mobile,email,isCommissionUser:true});
-      uid=cred.user.uid;
+      const tempId='pending_'+Date.now();
+      users.unshift({id:tempId,fullName,mobile,email,status:'Creating...',isCommissionUser:true,commissionStatus:'Active'});renderAll();
+      try{
+        const cred=await adminCreateUser(alias(mobile),password,{fullName,mobile,email,isCommissionUser:true});
+        uid=cred.user.uid;
+      }finally{
+        users=users.filter(x=>x.id!==tempId);renderAll();
+      }
     }
     await setDoc(doc(db,'users',uid),{
       fullName,email,mobile,status:'Active',isCommissionUser:true,

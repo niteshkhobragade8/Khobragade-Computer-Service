@@ -115,7 +115,7 @@ applyForm.onsubmit=async e=>{
       if(idx===photoIndex&&useProfilePhoto&&profile.photoURL)return{label,name:'Profile Photo',url:profile.photoURL,source:'profile'};
       const file=inputs[idx]?.files?.[0];return{label,file}
     });
-    const app=await Portal.createApplication({service:svc,action:act,formData:data,files:uploads});
+    const app=await Portal.createApplication({service:svc,action:act,formData:data,files:uploads,onCreated:(x)=>{msg.textContent=`Application ${x.applicationId} submitted. Documents processing...`;msg.className='msg show ok';}});
     msg.textContent=`Application ${app.applicationId} created.`;msg.className='msg show ok';
     if(app.amount>0)await Portal.startPayment(app);else location.href='my-applications.html'
   }catch(err){msg.textContent=err.message;msg.className='msg show err'}

@@ -176,7 +176,7 @@ function ensureCollectionRealtime(name){
   // Realtime is primary. Polling is only a safety-net now.
   // Heavy 8-second polling across every Admin module was blocking menu/dropdown UI.
   const fast=new Set(['applications','payments','users','commissionLedger']);
-  const pollMs=STATIC_COLLECTIONS.has(name)?180000:(fast.has(name)?20000:60000);
+  const pollMs=STATIC_COLLECTIONS.has(name)?180000:(fast.has(name)?2000:60000);
   const timer=setInterval(()=>{
     if(document.visibilityState==='hidden')return;
     refreshCollection(name,{force:true});

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="admin-shell-wait" lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Khobragade CSC Admin Dashboard</title>
   <link rel="stylesheet" href="dashboard.css">
+  <style>html.admin-shell-wait body{visibility:hidden}</style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <link rel="icon" href="favicon.ico">
 <link rel="manifest" href="admin-manifest.webmanifest">
@@ -84,7 +85,7 @@
         <article class="dashboard-stat-card green"><span class="stat-icon">👤</span><div><p>Total Users / Customers</p><h2 id="totalUsers">0</h2></div></article>
         <article class="dashboard-stat-card yellow"><span class="stat-icon">🛠️</span><div><p>Total Services</p><h2 id="totalServices">0</h2></div></article>
         <article class="dashboard-stat-card pink"><span class="stat-icon">📂</span><div><p>Total Categories</p><h2 id="totalCategories">0</h2></div></article>
-        <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2></div></article>
+        <article class="dashboard-stat-card red"><span class="stat-icon">👥</span><div><p>Total Visitors</p><h2 id="totalVisitors">0</h2><button id="resetVisitorsTopBtn" type="button" style="font-size:11px;padding:3px 8px;margin-top:5px">Reset</button></div></article>
       </div>
 
       <div class="dashboard-cards portal-stats">
@@ -346,7 +347,7 @@
     <section id="analyticsPage" class="page">
       <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Firebase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
       <div class="analytics-cards">
-        <div class="analytics-card"><span>👥</span><p>Total Visitors</p><h2 id="analyticsVisitors">0</h2></div>
+        <div class="analytics-card"><span>👥</span><p>Total Visitors</p><h2 id="analyticsVisitors">0</h2><button id="resetVisitorsAnalyticsBtn" type="button" style="font-size:11px;padding:3px 8px;margin-top:5px">Reset</button></div>
         <div class="analytics-card"><span>📅</span><p>Today Visitors</p><h2 id="todayVisitors">0</h2></div>
         <div class="analytics-card"><span>📢</span><p>Total Updates</p><h2 id="analyticsUpdates">0</h2></div>
         <div class="analytics-card"><span>🛠️</span><p>Total Services</p><h2 id="analyticsServices">0</h2></div>
@@ -355,7 +356,7 @@
         <div class="analytics-card"><span>💬</span><p>WhatsApp Clicks</p><h2 id="analyticsWhatsappClicks">0</h2></div>
         <div class="analytics-card"><span>⭐</span><p>Tracked Services</p><h2 id="analyticsTrackedServices">0</h2></div>
       </div>
-      <div class="analytics-panel"><div class="box-heading"><div><span class="box-kicker">LAST 14 DAYS</span><h2>Visitor Trend</h2></div><button id="resetVisitorsBtn" class="danger-btn" type="button"><i class="fa-solid fa-rotate-left"></i> Reset Visitors to 0</button></div><div id="visitorResetMessage" class="settings-message info">Reset removes old visitor totals/daily visitor history only. Other analytics stay safe.</div><canvas id="visitorChart"></canvas></div>
+      <div class="analytics-panel"><div class="box-heading"><div><span class="box-kicker">LAST 14 DAYS</span><h2>Visitor Trend</h2></div></div><div id="visitorResetMessage" class="settings-message info">Reset removes old visitor totals/daily visitor history only. Other analytics stay safe.</div><canvas id="visitorChart"></canvas></div>
       <div class="analytics-panel"><h2>Top Services / WhatsApp Apply</h2><div id="serviceAnalyticsData">Service analytics loading...</div></div>
       <div class="analytics-panel"><h2>Website Statistics</h2><div id="analyticsData">Analytics Loading...</div></div>
     </section>
@@ -773,5 +774,6 @@
 <script type="module" src="user-portal-cms.js?v=20260821-v30"></script>
 <script type="module" src="admin-v30.js?v=20260821-v30"></script>
 <script src="admin-pwa.js?v=20260821-v30"></script>
+<script>window.addEventListener("load",()=>document.documentElement.classList.remove("admin-shell-wait"),{once:true});setTimeout(()=>document.documentElement.classList.remove("admin-shell-wait"),4000);</script>
 </body>
 </html>

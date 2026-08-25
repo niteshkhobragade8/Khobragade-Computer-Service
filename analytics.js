@@ -16,8 +16,8 @@ import {
 const $ = (id) => document.getElementById(id);
 
 async function resetVisitorAnalytics({silent=false}={}) {
-  const msg=$("visitorResetMessage"),btn=$("resetVisitorsBtn");
-  if(btn)btn.disabled=true;
+  const msg=$("visitorResetMessage"),buttons=[$("resetVisitorsTopBtn"),$("resetVisitorsAnalyticsBtn")].filter(Boolean);
+  buttons.forEach(btn=>btn.disabled=true);
   try {
     const daily=await getDocs(collection(db,"visitorDaily"));
     const docs=daily.docs;
@@ -27,7 +27,7 @@ async function resetVisitorAnalytics({silent=false}={}) {
     if(msg){msg.textContent="✅ Total Visitors reset to 0. Old daily visitor history cleared.";msg.className="settings-message success";}
     await loadAnalytics();
   } catch(error){console.error("Visitor reset failed",error);if(msg&&!silent){msg.textContent="Visitor reset failed: "+error.message;msg.className="settings-message error";}throw error;}
-  finally{if(btn)btn.disabled=false;}
+  finally{buttons.forEach(btn=>btn.disabled=false);}
 }
 
 async function runRequestedVisitorResetOnce(){
@@ -166,7 +166,7 @@ window.reloadAnalytics = loadAnalytics;
 window.getAnalytics = loadAnalytics;
 window.resetAnalytics = () => loadAnalytics();
 window.resetVisitorAnalytics = resetVisitorAnalytics;
-$("resetVisitorsBtn")?.addEventListener("click",async()=>{if(!confirm("Reset Total Visitors to 0 and clear old daily visitor history?"))return;await resetVisitorAnalytics().catch(()=>{});});
+[$("resetVisitorsTopBtn"),$("resetVisitorsAnalyticsBtn")].filter(Boolean).forEach(btn=>btn.addEventListener("click",async()=>{if(!confirm("Reset Total Visitors to 0?"))return;await resetVisitorAnalytics().catch(()=>{});}));
 onAuthStateChanged(auth,user=>{if(user)runRequestedVisitorResetOnce();});
 
 window.addEventListener("DOMContentLoaded", loadAnalytics);
