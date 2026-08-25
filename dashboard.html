@@ -11,6 +11,7 @@
 <meta name="theme-color" content="#172554">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="admin-icon-192.png">
+  <link rel="stylesheet" href="commission-admin.css?v=20260825-v25restore">
 </head>
 <body>
 
@@ -28,13 +29,16 @@
 
     <ul id="sidebarMenu">
       <li class="active" data-page="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></li>
+      <li data-page="commissionpanel"><i class="fa-solid fa-percent"></i><span>Commission Panel</span></li>
       <li data-page="applications"><i class="fa-solid fa-file-circle-check"></i><span>Applications</span></li>
       <li data-page="users"><i class="fa-solid fa-users"></i><span>Users / Customers</span></li>
+      <li data-page="passwordreset"><i class="fa-solid fa-key"></i><span>Password Reset Requests</span></li>
       <li data-page="payments"><i class="fa-solid fa-indian-rupee-sign"></i><span>Payments / PayU</span></li>
       <li data-page="servicesmanager"><i class="fa-solid fa-layer-group"></i><span>Services</span></li>
       <li data-page="actionsmanager"><i class="fa-solid fa-bolt"></i><span>Actions</span></li>
       <li data-page="formsmanager"><i class="fa-solid fa-file-pen"></i><span>Forms</span></li>
       <li data-page="servicecharges"><i class="fa-solid fa-indian-rupee-sign"></i><span>Service Charges</span></li>
+      <li data-page="allcharge"><i class="fa-solid fa-list-check"></i><span>All Charge</span></li>
       <li data-page="userportalcms"><i class="fa-solid fa-window-maximize"></i><span>Website CMS</span></li>
       <li data-page="youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></li>
       <li data-page="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span></li>
@@ -105,6 +109,66 @@
           <div class="box-heading"><div><span class="box-kicker">WEBSITE</span><h2>Website CMS</h2></div><button class="text-button" type="button" onclick="openDashboardPage('userportalcms')">Manage</button></div>
           <div class="mini-feed"><div class="mini-feed-item"><div class="mini-feed-dot"></div><div><strong>New Website / User Portal</strong><p>Profile fields, auto-fill, user menu aur website portal controls yahan manage karein.</p></div></div></div>
         </article>
+      </div>
+    </section>
+
+    <section id="commissionpanelPage" class="page">
+      <div class="page-intro"><div><h2>💸 Commission Panel</h2><p>Selected commission users ke applications, payments aur service-wise discounted charges manage karein.</p></div></div>
+      <div class="commission-shell">
+        <aside class="commission-side">
+          <button class="active" data-commission-tab="applications">Applications</button>
+          <button data-commission-tab="users">Users</button>
+          <button data-commission-tab="payments">Payments / PayU</button>
+          <button data-commission-tab="services">Services</button>
+          <button data-commission-tab="ledger">Commission Ledger</button>
+        </aside>
+        <div class="commission-main">
+          <div class="commission-summary">
+            <article><small>Commission Users</small><b id="commissionUsersCount">0</b></article>
+            <article><small>Commission Applications</small><b id="commissionAppsCount">0</b></article>
+            <article><small>Total Commission Benefit</small><b id="commissionBenefitTotal">₹0</b></article>
+            <article><small>Paid Commission Orders</small><b id="commissionPaidCount">0</b></article>
+          </div>
+
+          <section class="commission-tab active" id="commissionApplicationsTab">
+            <div class="box-heading"><div><span class="box-kicker">APPLICATIONS</span><h2>Commission User Applications</h2></div><input id="commissionAppSearch" placeholder="Search application / user"></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead><tbody id="commissionApplicationsTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionUsersTab">
+            <div class="manager-layout">
+              <div class="manager-form">
+                <div class="form-title"><span>👤</span><div><h3>Create / Edit Commission User</h3><p>Commission User sirf Admin yahan se create karega. Existing normal users Commission Panel me use nahi honge.</p></div></div>
+                <input id="commissionEditUid" type="hidden">
+                <label>Full Name</label><input id="commissionFullName">
+                <div class="form-grid two"><div><label>Mobile</label><input id="commissionMobile" maxlength="10"></div><div><label>Email</label><input id="commissionEmail" type="email"></div></div>
+                <div class="form-grid two"><div><label>Login Password (new user)</label><div class="admin-password-wrap"><input id="commissionPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="commissionPassword">👁</button></div></div><div><label>Commission Code</label><input id="commissionCode" placeholder="AGENT001"></div></div>
+                <div class="form-grid three"><div><label>Default Type</label><select id="commissionDefaultType"><option value="fixed">₹ Fixed</option><option value="percent">% Percentage</option></select></div><div><label>Default Commission</label><input id="commissionDefaultValue" type="number" min="0" step="0.01" value="0"></div><div><label>Status</label><select id="commissionUserStatus"><option>Active</option><option>Inactive</option></select></div></div>
+                <div class="form-grid two"><div><label>Start Date</label><input id="commissionStartDate" type="date"></div><div><label>End Date (optional)</label><input id="commissionEndDate" type="date"></div></div>
+                <div class="settings-actions"><button id="commissionSaveUser" class="primary-btn" type="button">Save Commission User</button><button id="commissionClearUser" class="secondary-btn" type="button">Clear</button></div>
+                <div id="commissionUserMessage" class="settings-message info">Ready.</div>
+              </div>
+              <div class="manager-content"><div class="box-heading"><div><span class="box-kicker">USERS</span><h2>All Commission Users</h2></div><input id="commissionUserSearch" placeholder="Search user"></div><div id="commissionUsersList" class="content-grid"></div></div>
+            </div>
+          </section>
+
+          <section class="commission-tab" id="commissionPaymentsTab">
+            <div class="box-heading"><div><span class="box-kicker">PAYMENTS</span><h2>Commission Payments / PayU</h2></div></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Transaction</th><th>User</th><th>Application</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="commissionPaymentsTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionServicesTab">
+            <div class="box-heading"><div><span class="box-kicker">SERVICE COMMISSION</span><h2>Existing Service Charge Commission</h2><p class="field-help">Current Service Charge read-only rahega. Selected Commission User ke liye commission Set / Update / Delete karein. Current Charge → Commission → Final User Charge.</p></div></div>
+            <div class="toolbar"><select id="commissionServiceUser"><option value="">Select Commission User</option></select><input id="commissionServiceSearch" placeholder="Search service / action"><button id="commissionSaveRates" class="primary-btn" type="button">Save All Commission Changes</button></div>
+            <div id="commissionServiceMessage" class="settings-message info">Commission user select karein.</div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Service</th><th>Action</th><th>Current Charge</th><th>Type</th><th>Commission</th><th>Final Charge</th><th>Active</th><th>Action</th></tr></thead><tbody id="commissionServicesTable"></tbody></table></div>
+          </section>
+
+          <section class="commission-tab" id="commissionLedgerTab">
+            <div class="box-heading"><div><span class="box-kicker">HISTORY</span><h2>Commission Ledger</h2></div></div>
+            <div class="table-wrap"><table class="admin-table"><thead><tr><th>Application</th><th>User</th><th>Service</th><th>Original</th><th>Commission</th><th>Final</th><th>Status</th><th>Action</th></tr></thead><tbody id="commissionLedgerTable"></tbody></table></div>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -538,6 +602,12 @@
   </div>
 </section>
 
+    <section id="passwordresetPage" class="page">
+<div class="page-intro"><div><h2>🔑 Password Reset Requests</h2><p>Normal User aur Commission User ke Forgot Password requests. Verify karke temporary password set karein.</p></div><button id="refreshPasswordRequests" class="secondary-btn" type="button">Refresh</button></div>
+<div class="manager-content"><div class="table-wrap"><table class="admin-table"><thead><tr><th>User</th><th>Mobile</th><th>Account Type</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead><tbody id="passwordResetRequestsTable"><tr><td colspan="6">Loading...</td></tr></tbody></table></div><div id="passwordResetAdminMessage" class="settings-message info">Password reset requests ready.</div></div>
+<dialog id="passwordResetDialog" class="password-reset-dialog"><form method="dialog" class="password-reset-dialog-card"><div class="box-heading"><div><span class="box-kicker">ADMIN VERIFIED RESET</span><h2>Set Temporary Password</h2></div><button value="cancel" class="secondary-btn">✕</button></div><p id="passwordResetSelectedUser" class="field-help"></p><label>Temporary Password</label><div class="admin-password-wrap"><input id="temporaryPassword" type="password" minlength="6"><button type="button" class="admin-password-eye" data-admin-password-target="temporaryPassword">👁</button></div><p class="field-help">User temporary password se login karega aur next login par Change Password compulsory hoga.</p><div class="settings-actions"><button id="confirmTemporaryPassword" type="button" class="primary-btn">Reset Password</button><button value="cancel" class="secondary-btn">Cancel</button></div></form></dialog>
+</section>
+
 <section id="usersPage" class="page">
   <div class="page-intro"><div><h2>👥 Users / Customers</h2><p>Sabhi registered users/customers yahan aayenge, profile aur application summary ke saath.</p></div></div>
   <div class="manager-content"><div class="toolbar"><input id="userSearch" type="search" placeholder="🔍 Name / mobile / email"></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Applications</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead><tbody id="usersTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
@@ -586,6 +656,29 @@
 <section id="servicechargesPage" class="page">
   <div class="page-intro"><div><h2>💰 Service Charges</h2><p>Sabhi existing aur future service actions ke charges ko ek jagah Edit / Update / ₹0 karein.</p></div></div>
   <div id="servicechargesMount"></div>
+</section>
+
+    <section id="allchargePage" class="page">
+  <div class="page-intro"><div><h2>💵 All Charge</h2><p>Sabhi existing Services / Actions ke charges ek jagah Add / Edit / Update / Delete karein.</p></div></div>
+  <div class="manager-content">
+    <div class="box-heading"><div><span class="box-kicker">ALL SERVICE CHARGES</span><h2>Service-wise Charge Manager</h2><p class="field-help">Charge serviceActions ke existing record par save hota hai. Isliye change User Application / Payment me wahi live charge use karega.</p></div></div>
+    <div class="toolbar">
+      <select id="allChargeAddAction"><option value="">Select Service / Action</option></select>
+      <input id="allChargeAddAmount" type="number" min="0" step="0.01" placeholder="Charge ₹">
+      <button id="allChargeAddBtn" class="primary-btn" type="button"><i class="fa-solid fa-plus"></i> Add Charge</button>
+    </div>
+    <div class="toolbar">
+      <input id="allChargeSearch" type="search" placeholder="Search service / action">
+      <button id="allChargeSaveAll" class="primary-btn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save All Changes</button>
+    </div>
+    <div id="allChargeMessage" class="settings-message info">Charges loading...</div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>#</th><th>Service Name</th><th>Action</th><th>Current Charge ₹</th><th>Edit Charge ₹</th><th>Availability</th><th>Action</th></tr></thead>
+        <tbody id="allChargeTable"><tr><td colspan="7">Loading charges...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 </section>
 
 <section id="userportalcmsPage" class="page">
@@ -670,6 +763,9 @@
 <script type="module" src="recycle-bin.js"></script>
 <script type="module" src="theme-manager.js"></script>
 <script type="module" src="data-recovery.js"></script>
+<script type="module" src="commission-admin.js?v=20260825-v25restore"></script>
+<script type="module" src="password-reset-admin.js?v=20260825-v25restore"></script>
+<script type="module" src="all-charge.js?v=20260825-v25restore"></script>
 <script type="module" src="applications-admin.js?v=20260821-final24r3"></script>
 <script type="module" src="users-admin.js?v=20260819-final11"></script>
 <script type="module" src="payments-admin.js?v=20260819-final11"></script>

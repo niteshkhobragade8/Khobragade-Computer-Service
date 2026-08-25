@@ -3,13 +3,16 @@ import { doc, onSnapshot, setDoc, collection, addDoc, serverTimestamp } from 'ht
 const $=id=>document.getElementById(id); const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const FIXED=[
  ['dashboard','Dashboard','fa-solid fa-house',10],
+ ['commissionpanel','Commission Panel','fa-solid fa-percent',15],
  ['applications','Applications','fa-solid fa-file-circle-check',20],
  ['users','Users / Customers','fa-solid fa-users',30],
+ ['passwordreset','Password Reset Requests','fa-solid fa-key',35],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],
  ['servicesmanager','Services','fa-solid fa-layer-group',50],
  ['actionsmanager','Actions','fa-solid fa-bolt',60],
  ['formsmanager','Forms','fa-solid fa-file-pen',70],
  ['servicecharges','Service Charges','fa-solid fa-indian-rupee-sign',80],
+ ['allcharge','All Charge','fa-solid fa-list-check',85],
  ['userportalcms','Website CMS','fa-solid fa-window-maximize',90],
  ['youtube','YouTube','fa-brands fa-youtube',100],
  ['notifications','Notifications','fa-solid fa-bell',110],
@@ -19,11 +22,12 @@ const FIXED=[
  ['recyclebin','Recycle Bin','fa-solid fa-recycle',150],
  ['settings','Portal Settings','fa-solid fa-gear',160]
 ];
+const REQUIRED_RESTORED=new Set(['commissionpanel','passwordreset','allcharge']);
 const DEF_THEME={name:'Original Admin',green:'#00c853',yellow:'#ffd600',pink:'#ff4081',red:'#ff1744',blue:'#2979ff',text:'#111827',bg:'#f4f7fc',panel:'#ffffff',line:'#e5e7eb',side1:'#00c853',side2:'#ff1744',menuText:'#ffffff',radius:18,sidebarWidth:260};
 let state={menu:{},pageOverrides:{},theme:{...DEF_THEME},themes:[],customPages:[],customMenus:[]},editCustom=null,editTheme=null,editMenu=null;
 function message(t,type='info'){if($('aeMessage')){$('aeMessage').textContent=t;$('aeMessage').className='settings-message '+type}}
-function menuCfg(key){const d=FIXED.find(x=>x[0]===key);return {...{label:d?.[1]||key,icon:d?.[2]||'fa-solid fa-file',order:d?.[3]||999,visible:true},...(state.menu?.[key]||{})}}
-function fixedPageCfg(key){const d=FIXED.find(x=>x[0]===key), m=menuCfg(key), o=state.pageOverrides?.[key]||{};return {key,name:o.name||m.label||d?.[1]||key,heading:o.heading||'',order:Number(o.order??m.order??999),visible:o.visible!==false&&m.visible!==false,deleted:o.deleted===true}}
+function menuCfg(key){const d=FIXED.find(x=>x[0]===key);const c={...{label:d?.[1]||key,icon:d?.[2]||'fa-solid fa-file',order:d?.[3]||999,visible:true},...(state.menu?.[key]||{})};if(REQUIRED_RESTORED.has(key))c.visible=true;return c}
+function fixedPageCfg(key){const d=FIXED.find(x=>x[0]===key), m=menuCfg(key), o=state.pageOverrides?.[key]||{},required=REQUIRED_RESTORED.has(key);return {key,name:o.name||m.label||d?.[1]||key,heading:o.heading||'',order:Number(o.order??m.order??999),visible:required?true:(o.visible!==false&&m.visible!==false),deleted:required?false:(o.deleted===true)}}
 function applyTheme(t=DEF_THEME){const r=document.documentElement;r.style.setProperty('--green',t.green||DEF_THEME.green);r.style.setProperty('--yellow',t.yellow||DEF_THEME.yellow);r.style.setProperty('--pink',t.pink||DEF_THEME.pink);r.style.setProperty('--red',t.red||DEF_THEME.red);r.style.setProperty('--blue',t.blue||DEF_THEME.blue);r.style.setProperty('--black',t.text||DEF_THEME.text);r.style.setProperty('--bg',t.bg||DEF_THEME.bg);r.style.setProperty('--panel',t.panel||DEF_THEME.panel);r.style.setProperty('--line',t.line||DEF_THEME.line);r.style.setProperty('--radius',(Number(t.radius)||18)+'px');r.style.setProperty('--sidebar',(Number(t.sidebarWidth)||260)+'px');r.style.setProperty('--admin-page-bg',t.bg||DEF_THEME.bg);r.style.setProperty('--admin-side-1',t.side1||DEF_THEME.side1);r.style.setProperty('--admin-side-2',t.side2||DEF_THEME.side2);r.style.setProperty('--admin-menu-text',t.menuText||'#fff');document.body.classList.add('admin-editor-themed')}
 function ensureCustomPage(x){const key='custom_'+x.id;let sec=$(key+'Page');if(!sec){sec=document.createElement('section');sec.id=key+'Page';sec.className='page admin-custom-page';document.querySelector('.main-content')?.appendChild(sec)}sec.innerHTML=`<div class="page-intro"><div><h2>${esc(x.heading||x.name||'Admin Page')}</h2><p>Custom Admin Page</p></div></div><div class="dashboard-info-box"><div class="ae-custom-content">${esc(x.content||'')}</div></div>`}
 function ensureCustomMenu(x){let li=document.querySelector(`#sidebarMenu li[data-ae-menu="${CSS.escape(x.id)}"]`);if(!li){li=document.createElement('li');li.dataset.aeMenu=x.id;li.innerHTML='<i></i><span></span>';$('sidebarMenu')?.insertBefore(li,$('logoutBtn'))}li.dataset.page=x.target||'dashboard';li.style.display=x.visible===false?'none':'';li.dataset.aeOrder=String(Number(x.order)||900);li.querySelector('i').className=x.icon||'fa-solid fa-link';li.querySelector('span').textContent=x.name||'Menu'}

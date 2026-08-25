@@ -32,6 +32,18 @@ function rows(){
     .filter(a => !q || `${serviceName(a.serviceId)} ${a.name || ''}`.toLowerCase().includes(q))
     .sort((a,b) => serviceName(a.serviceId).localeCompare(serviceName(b.serviceId)) || Number(a.order||0)-Number(b.order||0));
 }
+function renderAddActionSelect(){
+  const select = $('allChargeAddAction');
+  if(!select) return;
+  const current = select.value;
+  const opts = [...actions]
+    .sort((a,b) => serviceName(a.serviceId).localeCompare(serviceName(b.serviceId)) || String(a.name||'').localeCompare(String(b.name||'')))
+    .map(a => `<option value="${esc(a.id)}">${esc(serviceName(a.serviceId))} — ${esc(a.name||'Action')} — ₹${currentCharge(a).toFixed(2)}</option>`)
+    .join('');
+  select.innerHTML = '<option value="">Select Service / Action</option>' + opts;
+  if(actions.some(a=>a.id===current)) select.value=current;
+}
+
 function pendingRowCount(){
   return new Set([...editedCharges.keys(), ...editedAvailability.keys()]).size;
 }
@@ -47,7 +59,7 @@ function render(){
   if(!body) return;
   const list = rows();
   if(!list.length){
-    body.innerHTML = '<tr><td colspan="6">No service/action charges found.</td></tr>';
+    body.innerHTML = '<tr><td colspan="7">No service/action charges found.</td></tr>';
     setMessage(actions.length ? 'Search me koi matching service/action nahi mila.' : 'Abhi koi service action nahi mila.', 'info');
     return;
   }
@@ -67,6 +79,10 @@ function render(){
           <option ${availabilityValue==='Unavailable'?'selected':''}>Unavailable</option>
           <option ${availabilityValue==='Coming Soon'?'selected':''}>Coming Soon</option>
         </select>
+      </td>
+      <td>
+        <button class="action-btn edit" type="button" data-all-update="${esc(a.id)}">Update</button>
+        <button class="action-btn delete" type="button" data-all-delete="${esc(a.id)}">Delete Charge</button>
       </td>
     </tr>`;
   }).join('');
@@ -98,6 +114,60 @@ $('allChargeTable')?.addEventListener('change', e => {
 });
 
 $('allChargeSearch')?.addEventListener('input', render);
+
+
+$('allChargeAddBtn')?.addEventListener('click', async () => {
+  const id = $('allChargeAddAction')?.value || '';
+  const amount = Math.max(0, Number($('allChargeAddAmount')?.value || 0));
+  const action = actions.find(a => a.id === id);
+  if(!action){ setMessage('Service / Action select karein.', 'warning'); return; }
+  const btn=$('allChargeAddBtn'); if(btn)btn.disabled=true;
+  try{
+    await updateDoc(doc(db,'serviceActions',id),{serviceCharge:amount,updatedAt:serverTimestamp()});
+    if($('allChargeAddAmount')) $('allChargeAddAmount').value='';
+    setMessage(`✅ ${serviceName(action.serviceId)} — ${action.name||'Action'} charge ₹${amount.toFixed(2)} saved.`, 'success');
+  }catch(err){
+    setMessage('❌ Charge add failed: '+err.message,'danger');
+  }finally{ if(btn)btn.disabled=false; }
+});
+
+$('allChargeTable')?.addEventListener('click', async e => {
+  const updateBtn=e.target.closest('[data-all-update]');
+  const deleteBtn=e.target.closest('[data-all-delete]');
+  const btn=updateBtn||deleteBtn;
+  if(!btn)return;
+  const id=updateBtn?.dataset.allUpdate||deleteBtn?.dataset.allDelete;
+  const action=actions.find(a=>a.id===id);
+  if(!action)return;
+
+  if(deleteBtn){
+    if(!confirm(`"${serviceName(action.serviceId)} — ${action.name||'Action'}" ka charge delete (₹0) karein? Service/Action delete nahi hoga.`))return;
+    deleteBtn.disabled=true;
+    try{
+      await updateDoc(doc(db,'serviceActions',id),{serviceCharge:0,updatedAt:serverTimestamp()});
+      editedCharges.delete(id);
+      setMessage('✅ Charge deleted (₹0). Service / Action safe hai.','success');
+    }catch(err){setMessage('❌ Delete charge failed: '+err.message,'danger')}
+    finally{deleteBtn.disabled=false}
+    return;
+  }
+
+  const input=document.querySelector(`[data-all-charge="${CSS.escape(id)}"]`);
+  const availability=document.querySelector(`[data-all-availability="${CSS.escape(id)}"]`);
+  const amount=Math.max(0,Number(input?.value||0));
+  updateBtn.disabled=true;
+  try{
+    await updateDoc(doc(db,'serviceActions',id),{
+      serviceCharge:amount,
+      availabilityStatus:availability?.value||currentAvailability(action),
+      available:(availability?.value||currentAvailability(action))==='Available',
+      updatedAt:serverTimestamp()
+    });
+    editedCharges.delete(id); editedAvailability.delete(id);
+    setMessage('✅ Charge updated. User application/payment me live value use hogi.','success');
+  }catch(err){setMessage('❌ Update failed: '+err.message,'danger')}
+  finally{updateBtn.disabled=false}
+});
 
 $('allChargeSaveAll')?.addEventListener('click', async () => {
   const ids = [...new Set([...editedCharges.keys(), ...editedAvailability.keys()])];
@@ -156,5 +226,6 @@ onSnapshot(collection(db,'serviceActions'), snap => {
   actions = snap.docs.map(d => ({id:d.id, ...d.data()}));
   for(const id of [...editedCharges.keys()]) if(!actions.some(a=>a.id===id)) editedCharges.delete(id);
   for(const id of [...editedAvailability.keys()]) if(!actions.some(a=>a.id===id)) editedAvailability.delete(id);
+  renderAddActionSelect();
   render();
 }, err => setMessage('Charges load error: '+err.message,'danger'));
