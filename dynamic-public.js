@@ -1,9 +1,9 @@
-import { db } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
 
 import {
   collection,
   onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "./supabase-compat.js";
 
 const $ = (id) => document.getElementById(id);
 

@@ -1,4 +1,4 @@
-import { db } from './firebase-config.js';
+import { db } from './supabase-app.js';
 
 import {
   collection,
@@ -8,7 +8,7 @@ import {
   deleteDoc,
   onSnapshot,
   serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+} from './supabase-compat.js';
 
 
 const $ = id => document.getElementById(id);
@@ -104,7 +104,7 @@ function getRestoreCollection(type) {
 
 
 /* =========================================
-   CLEAN FIRESTORE DATA
+   CLEAN DATABASE DATA
 ========================================= */
 
 function clean(value) {
@@ -120,7 +120,7 @@ function clean(value) {
     typeof value === 'object'
   ) {
 
-    // Firestore Timestamp ko as-is rakho
+    // Database timestamp ko as-is rakho
     if (
       typeof value.toDate === 'function'
     ) {
@@ -363,7 +363,7 @@ async function restore(id) {
 
   /*
     Original ID ke saath
-    original Firestore collection me
+    original database collection me
     document restore hoga.
   */
 
@@ -505,7 +505,7 @@ $('recycleList')
 
 
 /* =========================================
-   FIREBASE LIVE RECYCLE BIN
+   SUPABASE LIVE RECYCLE BIN
 ========================================= */
 
 onSnapshot(

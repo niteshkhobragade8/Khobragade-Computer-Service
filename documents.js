@@ -1,5 +1,6 @@
 import { moveToTrash } from './trash.js';
-import { db, storage } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
+import { uploadCloudFile } from './cloudinary-upload.js';
 import {
   collection,
   addDoc,
@@ -7,13 +8,7 @@ import {
   doc,
   serverTimestamp,
   onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
+} from "./supabase-compat.js";
 
 const $ = (id) => document.getElementById(id);
 const list = $("documentsList");
@@ -79,10 +74,8 @@ async function uploadDocument() {
     if (file) {
       if (file.size > 15 * 1024 * 1024) throw new Error("Document size 15 MB se kam rakho.");
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      storagePath = `website-documents/${Date.now()}-${safeName}`;
-      const storageRef = ref(storage, storagePath);
-      await uploadBytes(storageRef, file, { contentType: file.type || "application/octet-stream" });
-      url = await getDownloadURL(storageRef);
+      storagePath = `kcsc-website-documents/${Date.now()}-${safeName}`;
+      url = await uploadCloudFile(file, 'kcsc-website-documents');
     }
 
     await addDoc(collection(db, "documents"), { title, category, url, storagePath, fileName, fileSize, fileType, status: "Published", createdAt: serverTimestamp() });
@@ -93,7 +86,7 @@ async function uploadDocument() {
     alert("Document Added Successfully");
   } catch (error) {
     console.error(error);
-    alert(`Document Upload Error: ${error.message}\n\nAgar Firebase Storage enabled nahi hai to Document URL field use karo.`);
+    alert(`Document Upload Error: ${error.message}\n\nFile upload fail ho to Document URL field use karo.`);
   } finally {
     button.disabled = false;
     button.textContent = "Upload / Add Document";

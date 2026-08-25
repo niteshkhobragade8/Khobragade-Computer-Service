@@ -52,7 +52,7 @@
     </ul>
 
     <div class="sidebar-foot">
-      <span>Firebase CMS</span>
+      <span>Supabase CMS</span>
       <small id="adminIdentity">Administrator</small>
     </div>
   </aside>
@@ -345,7 +345,7 @@
     </section>
 
     <section id="analyticsPage" class="page">
-      <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Firebase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
+      <div class="page-intro"><div><h2>📊 Analytics</h2><p>Visitor chart and live content statistics from Supabase.</p></div><button class="secondary-btn" type="button" onclick="refreshAnalytics()">Refresh Analytics</button></div>
       <div class="analytics-cards">
         <div class="analytics-card"><span>👥</span><p>Total Visitors</p><h2 id="analyticsVisitors">0</h2><button id="resetVisitorsAnalyticsBtn" type="button" style="font-size:11px;padding:3px 8px;margin-top:5px">Reset</button></div>
         <div class="analytics-card"><span>📅</span><p>Today Visitors</p><h2 id="todayVisitors">0</h2></div>
@@ -383,7 +383,7 @@
     </section>
 
     <section id="imagesPage" class="page">
-      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Firebase Storage or add an external image URL.</p></div></div>
+      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload image or add an external image URL.</p></div></div>
       <div class="manager-form image-form horizontal-form">
         <input type="text" id="imageTitle" placeholder="Image Title">
         <select id="imageCategory"><option>Gallery</option><option>Header Logo</option><option>Home Banner</option><option>Services Banner</option><option>Yojana Banner</option><option>Divyang Banner</option><option>Documents Banner</option><option>Contact Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
@@ -547,7 +547,7 @@
       </div>
       <div class="dashboard-info-box" style="margin-top:22px">
         <div class="box-heading"><div><span class="box-kicker">ONE-TIME</span><h2>Make Existing Content Fully Editable</h2></div></div>
-        <p>Existing default catalog ko Firebase/Admin me import karke code fallback band karein.</p>
+        <p>Existing default catalog ko Supabase/Admin me import karke code fallback band karein.</p>
         <div class="settings-actions"><button id="importEditableCatalog" class="secondary-btn" type="button">⚡ Import Services + Yojana + Divyang</button><button id="importEditableChecklists" class="secondary-btn" type="button">📋 Import Document Checklists</button></div>
         <div id="migrationMessage" class="settings-message info">Import ek baar karna hai.</div>
       </div>
@@ -617,7 +617,7 @@
 <section id="paymentsPage" class="page">
   <div class="page-intro"><div><h2>💳 Payments / PayU</h2><p>Transactions read-only audit + secure PayU backend configuration.</p></div></div>
   <div class="dashboard-cards"><article class="dashboard-stat-card green"><span class="stat-icon">₹</span><div><p>Total Collection</p><h2 id="paymentTotalCollection">₹0</h2></div></article><article class="dashboard-stat-card blue"><span class="stat-icon">✅</span><div><p>Success</p><h2 id="paymentSuccessCount">0</h2></div></article><article class="dashboard-stat-card yellow"><span class="stat-icon">⏳</span><div><p>Pending</p><h2 id="paymentPendingCount">0</h2></div></article><article class="dashboard-stat-card red"><span class="stat-icon">❌</span><div><p>Failed</p><h2 id="paymentFailedCount">0</h2></div></article></div>
-  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>🔐</span><div><h3>PayU Integration</h3><p>Merchant Salt/Secret public JS ya Firestore me save nahi hoga.</p></div></div><label>Environment</label><select id="payuEnvironment"><option value="test">Test</option><option value="production">Production</option></select><label>Merchant Key (public identifier)</label><input id="payuMerchantKey" placeholder="PayU merchant key"><label>Secure Backend Payment URL</label><input id="payuBackendUrl" type="url" placeholder="https://your-backend.example.com/api/payu"><label>Success URL</label><input id="payuSuccessUrl" type="url"><label>Failure URL</label><input id="payuFailureUrl" type="url"><label>Portal Return URL</label><input id="payuPortalReturnUrl" type="url" placeholder="https://test-domain/portal/my-applications.html"><div class="settings-message info">Customer-facing merchant/display name PayU Dashboard se set hota hai. Personal account-holder name ko checkout branding me use na karein.</div><div class="settings-actions"><button id="savePayuSettings" class="primary-btn">Save PayU Settings</button></div><div id="payuMessage" class="settings-message info">Secret/Salt must remain backend-only.</div></div><div class="manager-content"><h3>Transaction Records</h3><p class="field-help">Admin can permanently delete an individual transaction record when required.</p><div class="table-wrap"><table class="admin-table"><thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th><th>Action</th></tr></thead><tbody id="paymentsTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div></div>
+  <div class="manager-layout"><div class="manager-form"><div class="form-title"><span>🔐</span><div><h3>PayU Integration</h3><p>Merchant Salt/Secret public JS ya database me save nahi hoga.</p></div></div><label>Environment</label><select id="payuEnvironment"><option value="test">Test</option><option value="production">Production</option></select><label>Merchant Key (public identifier)</label><input id="payuMerchantKey" placeholder="PayU merchant key"><label>Secure Backend Payment URL</label><input id="payuBackendUrl" type="url" placeholder="https://your-backend.example.com/api/payu"><label>Success URL</label><input id="payuSuccessUrl" type="url"><label>Failure URL</label><input id="payuFailureUrl" type="url"><label>Portal Return URL</label><input id="payuPortalReturnUrl" type="url" placeholder="https://test-domain/portal/my-applications.html"><div class="settings-message info">Customer-facing merchant/display name PayU Dashboard se set hota hai. Personal account-holder name ko checkout branding me use na karein.</div><div class="settings-actions"><button id="savePayuSettings" class="primary-btn">Save PayU Settings</button></div><div id="payuMessage" class="settings-message info">Secret/Salt must remain backend-only.</div></div><div class="manager-content"><h3>Transaction Records</h3><p class="field-help">Admin can permanently delete an individual transaction record when required.</p><div class="table-wrap"><table class="admin-table"><thead><tr><th>Payment ID</th><th>Application</th><th>Amount</th><th>Status</th><th>Reference</th><th>Date</th><th>Action</th></tr></thead><tbody id="paymentsTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div></div>
 </section>
 
 <section id="portalbuilderPage" class="page">
@@ -732,7 +732,7 @@
 <p class="field-help">Visitors header se English / हिंदी / मराठी aur Light / Dark change kar sakte hain.</p>
 </div>
 <div class="settings-group"><h3>🛠 Data Recovery & Sync</h3>
-<p class="field-help">Existing Services se Categories rebuild karein; Settings me saved logo/banner ko Images Manager me recover karein. Existing Firestore data duplicate nahi hoga.</p>
+<p class="field-help">Existing Services se Categories rebuild karein; Settings me saved logo/banner ko Images Manager me recover karein. Existing database data duplicate nahi hoga.</p>
 <div class="settings-actions"><button id="recoverCategories" class="secondary-btn" type="button">Recover Categories from Services</button><button id="recoverImages" class="secondary-btn" type="button">Recover Logo / Banner Images</button><button id="syncDashboardCounts" class="secondary-btn" type="button">Refresh Dashboard Counts</button></div>
 <div id="recoveryMessage" class="settings-message info">Recovery ready.</div></div>
 <div id="settingsMessage" class="settings-message info">Settings ready.</div>
@@ -742,7 +742,7 @@
   </main>
 </div>
 
-<script type="module" src="firebase-config.js"></script>
+<script type="module" src="supabase-app.js"></script>
 <script type="module" src="dashboard.js"></script>
 <script type="module" src="updates.js"></script>
 <script type="module" src="services.js?v=20260821-final24r3"></script>

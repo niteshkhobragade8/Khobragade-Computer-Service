@@ -1,5 +1,5 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
 
 import {
   collection,
@@ -9,7 +9,7 @@ import {
   serverTimestamp,
   onSnapshot,
   getDocs
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "./supabase-compat.js";
 
 
 const $ = (id) => document.getElementById(id);
@@ -740,7 +740,7 @@ searchInput
 
 
 /* =========================================
-   FIREBASE LIVE CATEGORIES
+   SUPABASE LIVE CATEGORIES
 ========================================= */
 
 const unsubscribe =

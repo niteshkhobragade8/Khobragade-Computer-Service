@@ -1,5 +1,5 @@
-import { db } from "./firebase-config.js";
-import { collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { db } from "./supabase-app.js";
+import { collection, onSnapshot, doc } from "./supabase-compat.js";
 
 const container = document.getElementById("liveServices");
 const search = document.getElementById("liveServiceSearch");

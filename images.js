@@ -1,5 +1,5 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
 
 import {
   collection,
@@ -8,7 +8,7 @@ import {
   setDoc,
   serverTimestamp,
   onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "./supabase-compat.js";
 
 
 /* =========================================
@@ -301,7 +301,7 @@ async function uploadImage() {
 
 
     /* =====================================
-       SAVE IMAGE IN FIRESTORE
+       SAVE IMAGE IN DATABASE
     ===================================== */
 
     await addDoc(
@@ -762,7 +762,7 @@ list
 
 
 /* =========================================
-   FIRESTORE LIVE IMAGE LIST
+   SUPABASE LIVE IMAGE LIST
 ========================================= */
 
 const unsubscribe =
@@ -790,7 +790,7 @@ const unsubscribe =
     (error) => {
 
       console.error(
-        "Images Firestore Error:",
+        "Images database Error:",
         error
       );
 

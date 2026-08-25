@@ -1,4 +1,4 @@
-import { db } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
 import {
   collection,
   onSnapshot,
@@ -7,7 +7,7 @@ import {
   setDoc,
   increment,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "./supabase-compat.js";
 
 const $ = (id) => document.getElementById(id);
 let publicServices = [];
@@ -168,7 +168,7 @@ async function trackVisitor() {
       setDoc(doc(db, "visitorDaily", today), { date: today, count: increment(1), updatedAt: serverTimestamp() }, { merge:true })
     ]);
   } catch (error) {
-    console.warn("Visitor tracking disabled by Firebase rules:", error.message);
+    console.warn("Visitor tracking error:", error.message);
   }
 }
 
