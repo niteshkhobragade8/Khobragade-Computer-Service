@@ -17,7 +17,7 @@
 <footer class="footer"><div class="container">Khobragade Computer Service Centre</div></footer>
 <div id="actionModal" class="modal"><div class="modal-card"><button id="closeActionModal" class="btn btn-soft" style="float:right">✕</button><h2 id="modalTitle">Service</h2><div id="actionsBox"></div></div></div>
 
-<!-- Portal chrome/auth is loaded separately. Even if Firebase fails, catalogue below still renders. -->
+<!-- Portal chrome/auth is loaded separately. Even if the data service is unavailable, catalogue below still renders. -->
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
@@ -45,7 +45,7 @@ function render(){
   els.grid.innerHTML=filtered.length?filtered.map(x=>{const s=x.availabilityStatus||'Available',disabled=s!=='Available';return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(x.category||'Digital Service')}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
 }
 
-// Guaranteed first render from the bundled catalogue; no Firebase permission is needed for this.
+// Guaranteed first render from the bundled catalogue; no remote database permission is needed for this.
 render();
 els.q.addEventListener('input',render);els.status.addEventListener('change',render);els.close.addEventListener('click',()=>els.modal.classList.remove('show'));
 

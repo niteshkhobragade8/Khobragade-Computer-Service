@@ -1,10 +1,10 @@
-import { auth, db } from "./firebase-config.js";
+import { auth, db } from "./supabase-app.js";
 
 import {
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+} from "./supabase-auth.js";
 
 const loginForm = document.getElementById("loginForm");
 const email = document.getElementById("email");

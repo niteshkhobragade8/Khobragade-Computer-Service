@@ -2,8 +2,8 @@
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
 import './assets/portal.js?v=20260825-totalfix1';
-import{db}from'./assets/portal-firebase.js';
-import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import{db}from'./assets/portal-supabase.js';
+import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'../supabase-compat.js';
 
 await Portal.ready();
 if(!Portal.user){location.href='index.html?auth=login';throw new Error('login')}

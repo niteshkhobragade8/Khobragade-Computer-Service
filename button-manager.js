@@ -1,4 +1,4 @@
-import { db } from './firebase-config.js';
+import { db } from './supabase-app.js';
 import {
   collection,
   addDoc,
@@ -8,7 +8,7 @@ import {
   setDoc,
   onSnapshot,
   serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+} from './supabase-compat.js';
 
 const $ = id => document.getElementById(id);
 const esc = v => String(v ?? '')
@@ -781,7 +781,7 @@ $('bmList')?.addEventListener('click', async e => {
 });
 
 /* =========================================================
-   FIRESTORE + LIVE RENDER
+   DATABASE + LIVE RENDER
 ========================================================= */
 onSnapshot(
   collection(db, 'customButtons'),

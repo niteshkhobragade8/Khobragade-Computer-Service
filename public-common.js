@@ -1,11 +1,11 @@
-import { db } from "./firebase-config.js";
+import { db } from "./supabase-app.js";
 import {
   doc,
   onSnapshot,
   setDoc,
   increment,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+} from "./supabase-compat.js";
 
 function normalizePhone(value) {
   return String(value || "").replace(/\D/g, "");
