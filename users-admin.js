@@ -3,7 +3,7 @@ const db=getDatabase();
 import {adminDeleteUser} from './supabase-auth.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let users=[],apps=[];
-const date=v=>{try{return(v?.toDate?v.toDate():new Date(v)).toLocaleDateString('en-IN')}catch{return'—'}};
+const date=v=>{try{let d;if(v?.toDate)d=v.toDate();else if(v?.seconds)d=new Date(Number(v.seconds)*1000);else if(v?._date)d=v._date?.toDate?v._date.toDate():new Date(v._date);else d=new Date(v);return d instanceof Date&&!Number.isNaN(d.getTime())?d.toLocaleDateString('en-IN'):'—'}catch{return'—'}};
 const isUuid=v=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(v||''));
 const isCommissionUser=u=>u?.isCommissionUser===true||String(u?.isCommissionUser||'').toLowerCase()==='true'||['commission','commission_user','commission user'].includes(String(u?.userType||u?.accountType||u?.role||'').toLowerCase());
 function render(){

@@ -13,14 +13,14 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  getDatabase as getSupabaseDatabase,
+  collection as supabaseCollection,
+  onSnapshot as supabaseOnSnapshot
+} from "./supabase-db.js";
 
+const supabaseDb = getSupabaseDatabase();
 
-import {getDatabase as getSupabaseDatabase,doc as supaDoc,getDoc as supaGetDoc} from './supabase-db.js';
-const supaDb=getSupabaseDatabase();
-let visitorResetBase=0;
-async function loadVisitorResetBase(){
-  try{const snap=await supaGetDoc(supaDoc(supaDb,'settings','visitorCounterReset'));visitorResetBase=snap.exists()?Number(snap.data()?.base||0):0;}catch(e){console.warn('Visitor reset baseline load failed',e);visitorResetBase=0;}
-}
 const $ = (id) => document.getElementById(id);
 const logoutBtn = $("logoutBtn");
 const topbarTitle = $("topbarTitle");
@@ -121,7 +121,7 @@ function watchVisitorSummary() {
   const today = new Date().toISOString().slice(0, 10);
   const unsubSite = onSnapshot(doc(db, "analytics", "site"), (snapshot) => {
     const data = snapshot.exists() ? snapshot.data() : {};
-    setText("totalVisitors", Math.max(0, Number(data.totalVisitors || 0)-visitorResetBase));
+    setText("totalVisitors", Number(data.totalVisitors || 0));
   }, (error) => {
     console.error("Visitor total error:", error);
     setText("totalVisitors", "—");
@@ -138,8 +138,33 @@ function watchVisitorSummary() {
   dashboardUnsubscribers.push(unsubSite, unsubToday);
 }
 
+function isCommissionUser(user) {
+  return user?.isCommissionUser === true ||
+    String(user?.isCommissionUser || "").toLowerCase() === "true" ||
+    ["commission", "commission_user", "commission user"].includes(
+      String(user?.userType || user?.accountType || user?.role || "").toLowerCase()
+    );
+}
+
+function watchNormalUserCount() {
+  const unsubscribe = supabaseOnSnapshot(
+    supabaseCollection(supabaseDb, "users"),
+    (snapshot) => {
+      const normalUsers = snapshot.docs
+        .map((item) => ({ id: item.id, ...item.data() }))
+        .filter((user) => !isCommissionUser(user));
+      setText("totalUsers", normalUsers.length);
+    },
+    (error) => {
+      console.error("users count error:", error);
+      setText("totalUsers", "—");
+    }
+  );
+  dashboardUnsubscribers.push(unsubscribe);
+}
+
 async function loadDashboard() {
-  await loadVisitorResetBase();
+  watchNormalUserCount();
   Object.entries(collectionMap).forEach(([elementId, collectionName]) => {
     watchCollectionCount(elementId, collectionName);
   });
