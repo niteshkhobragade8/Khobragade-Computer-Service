@@ -14,13 +14,19 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
+
+import {getDatabase as getSupabaseDatabase,doc as supaDoc,getDoc as supaGetDoc} from './supabase-db.js';
+const supaDb=getSupabaseDatabase();
+let visitorResetBase=0;
+async function loadVisitorResetBase(){
+  try{const snap=await supaGetDoc(supaDoc(supaDb,'settings','visitorCounterReset'));visitorResetBase=snap.exists()?Number(snap.data()?.base||0):0;}catch(e){console.warn('Visitor reset baseline load failed',e);visitorResetBase=0;}
+}
 const $ = (id) => document.getElementById(id);
 const logoutBtn = $("logoutBtn");
 const topbarTitle = $("topbarTitle");
 const adminIdentity = $("adminIdentity");
 
 const collectionMap = {
-  totalUsers: "users",
   totalServices: "services",
   totalCategories: "categories",
   totalNotifications: "notifications",
@@ -115,7 +121,7 @@ function watchVisitorSummary() {
   const today = new Date().toISOString().slice(0, 10);
   const unsubSite = onSnapshot(doc(db, "analytics", "site"), (snapshot) => {
     const data = snapshot.exists() ? snapshot.data() : {};
-    setText("totalVisitors", Number(data.totalVisitors || 0));
+    setText("totalVisitors", Math.max(0, Number(data.totalVisitors || 0)-visitorResetBase));
   }, (error) => {
     console.error("Visitor total error:", error);
     setText("totalVisitors", "—");
@@ -133,6 +139,7 @@ function watchVisitorSummary() {
 }
 
 async function loadDashboard() {
+  await loadVisitorResetBase();
   Object.entries(collectionMap).forEach(([elementId, collectionName]) => {
     watchCollectionCount(elementId, collectionName);
   });

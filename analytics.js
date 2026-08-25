@@ -13,26 +13,31 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
+import {getDatabase as getSupabaseDatabase,doc as supaDoc,getDoc as supaGetDoc,setDoc as supaSetDoc,serverTimestamp as supaServerTimestamp} from './supabase-db.js';
+const supaDb=getSupabaseDatabase();
+async function getVisitorResetBase(){
+  try{const snap=await supaGetDoc(supaDoc(supaDb,'settings','visitorCounterReset'));return snap.exists()?Number(snap.data()?.base||0):0;}catch(e){console.warn('Visitor reset baseline load failed',e);return 0;}
+}
+
 const $ = (id) => document.getElementById(id);
 
 async function resetVisitorAnalytics({silent=false}={}) {
   const msg=$("visitorResetMessage"),buttons=[$("resetVisitorsTopBtn"),$("resetVisitorsAnalyticsBtn")].filter(Boolean);
   buttons.forEach(btn=>btn.disabled=true);
   try {
-    const daily=await getDocs(collection(db,"visitorDaily"));
-    const docs=daily.docs;
-    for(let i=0;i<docs.length;i+=450){const batch=writeBatch(db);docs.slice(i,i+450).forEach(d=>batch.delete(d.ref));await batch.commit();}
-    await setDoc(doc(db,"analytics","site"),{totalVisitors:0,updatedAt:serverTimestamp()},{merge:true});
-    await setDoc(doc(db,"settings","maintenance"),{visitorResetVersion:"v25-final",visitorResetAt:serverTimestamp()},{merge:true});
-    if(msg){msg.textContent="✅ Total Visitors reset to 0. Old daily visitor history cleared.";msg.className="settings-message success";}
+    const siteSnap=await getDoc(doc(db,"analytics","site"));
+    const currentTotal=siteSnap.exists()?Number(siteSnap.data()?.totalVisitors||0):0;
+    await supaSetDoc(supaDoc(supaDb,'settings','visitorCounterReset'),{base:currentTotal,resetAt:supaServerTimestamp()},{merge:true});
+    setText("analyticsVisitors",0);
+    setText("totalVisitors",0);
+    if(msg){msg.textContent="✅ Total Visitors reset to 0.";msg.className="settings-message success";}
     await loadAnalytics();
+    if(window.refreshDashboard) await window.refreshDashboard();
   } catch(error){console.error("Visitor reset failed",error);if(msg&&!silent){msg.textContent="Visitor reset failed: "+error.message;msg.className="settings-message error";}throw error;}
   finally{buttons.forEach(btn=>btn.disabled=false);}
 }
 
-async function runRequestedVisitorResetOnce(){
-  try{const marker=await getDoc(doc(db,"settings","maintenance"));if(marker.exists()&&marker.data().visitorResetVersion==="v25-final")return;await resetVisitorAnalytics({silent:true});}catch(e){console.warn("One-time visitor reset pending until admin access is ready.",e);}
-}
+async function runRequestedVisitorResetOnce(){return;}
 
 function setText(id, value) {
   const el = $(id);
@@ -120,7 +125,8 @@ async function loadAnalytics() {
     ]);
 
     const site = siteSnap.exists() ? siteSnap.data() : {};
-    setText("analyticsVisitors", Number(site.totalVisitors || 0));
+    const resetBase=await getVisitorResetBase();
+    setText("analyticsVisitors", Math.max(0, Number(site.totalVisitors || 0)-resetBase));
     const todayKey = new Date().toISOString().slice(0, 10);
     const todayRow = dailySnap.docs.map((item) => item.data()).find((row) => row.date === todayKey);
     setText("todayVisitors", Number(todayRow?.count || 0));
