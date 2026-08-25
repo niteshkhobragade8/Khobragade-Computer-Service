@@ -64,7 +64,10 @@
         <h1 id="topbarTitle">Dashboard</h1>
       </div>
       <div class="top-right">
-        <button id="installAdminApp" class="admin-install-mini" type="button" title="Install Admin App"><i class="fa-solid fa-mobile-screen-button"></i><span>Install Admin App</span></button>
+        <div class="admin-top-actions">
+          <a class="admin-website-btn" href="https://9637832490.online/" title="Open Website"><i class="fa-solid fa-globe"></i><span>Website</span></a>
+          <button id="installAdminApp" class="admin-install-mini" type="button" title="Install Admin App"><i class="fa-solid fa-mobile-screen-button"></i><span>Install Admin App</span></button>
+        </div>
         <button id="notificationBell" class="icon-button" type="button" aria-label="Notifications">
           <i class="fa-solid fa-bell"></i><span id="notificationCount">0</span>
         </button>
@@ -383,7 +386,7 @@
     </section>
 
     <section id="imagesPage" class="page">
-      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload image or add an external image URL.</p></div></div>
+      <div class="page-intro"><div><h2>🖼️ Images Manager</h2><p>Upload to Cloudinary Storage or add an external image URL.</p></div></div>
       <div class="manager-form image-form horizontal-form">
         <input type="text" id="imageTitle" placeholder="Image Title">
         <select id="imageCategory"><option>Gallery</option><option>Header Logo</option><option>Home Banner</option><option>Services Banner</option><option>Yojana Banner</option><option>Divyang Banner</option><option>Documents Banner</option><option>Contact Banner</option><option>Service</option><option>Update</option><option>Other</option></select>
@@ -742,7 +745,6 @@
   </main>
 </div>
 
-<script type="module" src="supabase-app.js"></script>
 <script type="module" src="dashboard.js"></script>
 <script type="module" src="updates.js"></script>
 <script type="module" src="services.js?v=20260821-final24r3"></script>
