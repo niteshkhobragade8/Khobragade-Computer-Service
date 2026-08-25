@@ -1,0 +1,12 @@
+ONE-TIME BACKEND MIGRATION
+
+1. Upload migrate-services-242.js to the ROOT of the current Render backend GitHub repository.
+2. In Render, temporarily change Start Command from: node server.js
+   to: node migrate-services-242.js
+3. Deploy latest commit.
+4. In Render logs wait for: ✅ 242 services migration COMPLETE.
+5. IMPORTANT: Change Start Command back to: node server.js
+6. Deploy again.
+7. Delete migrate-services-242.js from backend repository after verification.
+
+This script uses the existing SUPABASE_SERVICE_ROLE_KEY, bypasses RLS safely, does NOT delete/edit existing services, and inserts only missing service names.
