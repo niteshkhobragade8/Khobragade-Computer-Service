@@ -1,6 +1,6 @@
-import {db} from './firebase-config.js';
+import {getDatabase,collection,onSnapshot,doc,updateDoc,deleteDoc,serverTimestamp} from './supabase-db.js';
+const db=getDatabase();
 import {adminDeleteUser} from './supabase-auth.js';
-import {collection,onSnapshot,doc,updateDoc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let users=[],apps=[];
 const date=v=>{try{return(v?.toDate?v.toDate():new Date(v)).toLocaleDateString('en-IN')}catch{return'—'}};

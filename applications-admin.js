@@ -1,5 +1,6 @@
-import {db,storage} from './firebase-config.js';
-import {collection,doc,updateDoc,onSnapshot,serverTimestamp,setDoc,deleteDoc} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+import {storage} from './firebase-config.js';
+import {getDatabase,collection,doc,updateDoc,onSnapshot,serverTimestamp,setDoc,deleteDoc} from './supabase-db.js';
+const db=getDatabase();
 import {ref,uploadBytes,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js';
 const $=id=>document.getElementById(id);let rows=[],selected=null,unsub=null;const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));const ms=v=>v?.toDate?v.toDate().getTime():v?.seconds?v.seconds*1000:new Date(v||0).getTime()||0;const date=v=>{const n=ms(v);return n?new Date(n).toLocaleString('en-IN'):'—'};const slug=s=>String(s||'').toLowerCase().replace(/\s+/g,'-');
 function filtered(){const q=($('applicationSearch')?.value||'').toLowerCase(),st=$('applicationStatusFilter')?.value||'all',pay=$('applicationPaymentFilter')?.value||'all';return rows.filter(x=>(st==='all'||x.status===st)&&(pay==='all'||x.paymentStatus===pay)&&(!q||[x.applicationId,x.userName,x.mobile,x.serviceName,x.actionName].join(' ').toLowerCase().includes(q)))}
