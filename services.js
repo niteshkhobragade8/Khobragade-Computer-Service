@@ -1,16 +1,19 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./supabase-app.js";
+import { db } from "./app-backend.js";
 import { DEFAULT_SERVICES, DEFAULT_SCHEMES, DEFAULT_DIVYANG } from "./catalog-data.js";
+import { MASTER_SERVICES } from "./master-catalog.js";
 import {
   collection,
   addDoc,
+  getDocs,
+  writeBatch,
   doc,
   updateDoc,
   setDoc,
   deleteDoc,
   serverTimestamp,
   onSnapshot
-} from "./supabase-compat.js";
+} from "./supabase-db.js";
 
 const $ = (id) => document.getElementById(id);
 const saveButton = $("saveService");
@@ -21,6 +24,103 @@ const statusFilter = $("serviceStatusFilter");
 const availabilityFilter = $("serviceAvailabilityFilter");
 let editId = null;
 let allServices = [];
+
+const TARGET_SERVICE_COUNT = 242;
+function normalizeServiceName(value){ return String(value || "").replace(/\s+/g," ").trim().toLocaleLowerCase(); }
+function buildTargetCatalog(){
+  const map = new Map();
+  for (const item of MASTER_SERVICES) {
+    // Current live catalogue intentionally does not expose the generic Aadhaar guidance item.
+    if (item.id === "aadhaar-assistance") continue;
+    const key = normalizeServiceName(item.name);
+    if (!key || map.has(key)) continue;
+    map.set(key,{
+      name:item.name, category:item.category || "Government", icon:item.icon || "📄",
+      description:item.description || `${item.name} service/assistance available.`
+    });
+  }
+  for (const item of [...DEFAULT_SERVICES, ...DEFAULT_SCHEMES, ...DEFAULT_DIVYANG]) {
+    const key = normalizeServiceName(item.name);
+    if (!key || map.has(key)) continue;
+    map.set(key,item);
+  }
+  return [...map.values()].slice(0,TARGET_SERVICE_COUNT);
+}
+const TARGET_SERVICE_CATALOG = buildTargetCatalog();
+let serviceCatalogSyncRunning = false;
+let serviceCatalogSyncDone = false;
+let actionCoverageSyncRunning = false;
+let actionCoverageSyncDone = false;
+
+function stableCatalogId(name){
+  let h=2166136261;
+  for(const ch of normalizeServiceName(name)){ h^=ch.charCodeAt(0); h=Math.imul(h,16777619); }
+  return `catalog_${(h>>>0).toString(36)}`;
+}
+function safeActionId(serviceId){
+  return `default_${String(serviceId||'service').replace(/[^A-Za-z0-9_-]/g,'_')}`.slice(0,120);
+}
+
+async function ensureEveryServiceHasAction(serviceRows){
+  if(actionCoverageSyncRunning || actionCoverageSyncDone || !serviceRows?.length) return;
+  actionCoverageSyncRunning = true;
+  try{
+    const snap = await getDocs(collection(db,'serviceActions'));
+    const actions = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const covered = new Set(actions.map(a=>String(a.serviceId||'')));
+    const missing = serviceRows.filter(s=>s.id && !covered.has(String(s.id)));
+    if(missing.length){
+      const batch = writeBatch(db);
+      for(const svc of missing){
+        batch.set(doc(db,'serviceActions',safeActionId(svc.id)),{
+          serviceId:svc.id,
+          name:'Apply Service',
+          serviceCharge:Number(svc.serviceCharge||0),
+          officialFee:0,
+          description:`${svc.name||'Service'} application / assistance`,
+          requiredDocuments:[],
+          availabilityStatus:svc.availabilityStatus||'Available',
+          available:(svc.availabilityStatus||'Available')==='Available',
+          order:10,
+          autoDefault:true,
+          createdAt:serverTimestamp(),
+          updatedAt:serverTimestamp()
+        },{merge:true});
+      }
+      await batch.commit();
+    }
+    actionCoverageSyncDone = true;
+  }catch(error){ console.error('Service action coverage sync error:',error); }
+  finally{ actionCoverageSyncRunning = false; }
+}
+
+async function ensureTargetServiceCatalog(){
+  if (serviceCatalogSyncRunning || serviceCatalogSyncDone) return;
+  serviceCatalogSyncRunning = true;
+  try{
+    const currentSnap = await getDocs(collection(db,'services'));
+    const currentRows = currentSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const existing = new Set(currentRows.map((x)=>normalizeServiceName(x.name)));
+    const missing = TARGET_SERVICE_CATALOG.filter((x)=>!existing.has(normalizeServiceName(x.name)));
+    const needed = Math.max(0, TARGET_SERVICE_COUNT - currentRows.length);
+    const toAdd = missing.slice(0,needed);
+    if(toAdd.length){
+      const batch = writeBatch(db);
+      for(const item of toAdd){
+        batch.set(doc(db,'services',stableCatalogId(item.name)),{
+          ...item,status:'Published',availabilityStatus:'Available',featured:false,
+          createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+        },{merge:true});
+      }
+      await batch.commit();
+    }
+    serviceCatalogSyncDone = true;
+    const finalSnap = await getDocs(collection(db,'services'));
+    const finalRows = finalSnap.docs.map(d=>({id:d.id,...d.data()}));
+    await ensureEveryServiceHasAction(finalRows);
+  }catch(error){ console.error("242 service sync error:",error); }
+  finally{ serviceCatalogSyncRunning = false; }
+}
 
 function escapeHTML(value) {
   return String(value ?? "")
@@ -155,7 +255,7 @@ async function loadDefaultCatalog() {
       await addDoc(collection(db,"services"), {...item,status:"Published",availabilityStatus:"Available",featured:false,createdAt:serverTimestamp()});
       existing.add(key); added++;
     }
-    await setDoc(doc(db,"settings","website"),{catalogMode:"database",updatedAt:serverTimestamp()},{merge:true});
+    await setDoc(doc(db,"settings","website"),{catalogMode:"supabase",updatedAt:serverTimestamp()},{merge:true});
     alert(`Catalog Ready: ${added} added, ${skipped} duplicates skipped. Editable mode ON.`);
   } catch(error) { console.error(error); alert(`Catalog Error: ${error.message}`); }
   finally { if (button) { button.disabled=false; button.textContent="⚡ Load Complete CSC + Yojana + Divyang Catalog"; } }
@@ -202,6 +302,7 @@ const unsubscribe = onSnapshot(collection(db, "services"), (snapshot) => {
   allServices = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
     .sort((a, b) => timeValue(b.createdAt || b.updatedAt) - timeValue(a.createdAt || a.updatedAt));
   renderServices();
+  ensureTargetServiceCatalog();
 }, (error) => {
   console.error(error);
   if (list) list.innerHTML = `<div class="empty-state danger">${escapeHTML(error.message)}</div>`;
