@@ -75,7 +75,7 @@ const DEFAULT_MEMBER_MENU=[
  ]},
  {key:'notifications',label:'Notifications',icon:'🔔',href:'notifications.html',visible:true,order:50},
  {key:'profile',label:'Profile',icon:'👤',href:'profile.html',visible:true,order:60},
- {key:'help',label:'Help / Support',icon:'💬',href:'../contact.html',visible:true,order:70}
+ {key:'help',label:'Help / Support',icon:'💬',href:'contact.html',visible:true,order:70}
 ];
 async function portalCms(){if(currentPortalCms)return currentPortalCms;try{const snap=await getDoc(doc(db,'settings','userPortalCms'));currentPortalCms=snap.exists()?snap.data():{};}catch(_){currentPortalCms={};}return currentPortalCms}
 function mergedProfileFields(cms={}){const rows=Array.isArray(cms.profileFields)&&cms.profileFields.length?cms.profileFields:DEFAULT_PROFILE_FIELDS;return [...rows].filter(x=>x.visible!==false).sort((a,b)=>Number(a.order||0)-Number(b.order||0))}
@@ -154,7 +154,7 @@ async function changeOwnPassword(newPassword){
  return j;
 }
 
-onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;commissionRateCache={uid:'',rows:[],loaded:false};const currentFile=(location.pathname.split('/').pop()||'index.html').toLowerCase();if(u&&currentProfile?.mustChangePassword===true&&currentFile!=='change-password.html'){location.replace('change-password.html');return;}nav();if(u){currentPortalCms=await portalCms();if(commissionProfileActive(currentProfile))ensureCommissionPwaAssets();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();setTimeout(()=>document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}})),0)}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
+onAuthStateChanged(auth,async u=>{try{currentUser=u;currentProfile=u?await profile(u.uid):null;currentPortalCms=null;commissionRateCache={uid:'',rows:[],loaded:false};const currentFile=(location.pathname.split('/').pop()||'index.html').toLowerCase();if(u&&currentProfile?.mustChangePassword===true&&currentFile!=='change-password.html'){location.replace('change-password.html');return;}if(u&&currentFile==='index.html'){location.replace(commissionProfileActive(currentProfile)?'commission-dashboard.html':'account.html');return;}if(!u&&currentFile==='index.html')document.documentElement.classList.remove('portal-auth-checking');nav();if(u){currentPortalCms=await portalCms();if(commissionProfileActive(currentProfile))ensureCommissionPwaAssets();memberChrome(currentProfile,currentPortalCms)}bindAdminNotifications();setTimeout(()=>document.dispatchEvent(new CustomEvent('portal-auth',{detail:{user:u,profile:currentProfile,cms:currentPortalCms||{}}})),0)}finally{resolveAuthReady?.({user:currentUser,profile:currentProfile,cms:currentPortalCms||{}});resolveAuthReady=null}});
 async function register(data){const mobile=String(data.mobile||'').replace(/\D/g,'');if(mobile.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');if(!data.fullName?.trim())throw new Error('Full Name required.');if((data.password||'').length<6)throw new Error('Password must be at least 6 characters.');if(data.password!==data.confirmPassword)throw new Error('Password and Confirm Password do not match.');try{const c=await createUserWithEmailAndPassword(auth,alias(mobile),data.password);await setDoc(doc(db,'users',c.user.uid),{fullName:data.fullName.trim(),email:(data.email||'').trim(),mobile,status:'Active',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});await signOut(auth);return {ok:true,mobile}}catch(err){throw friendlyAuthError(err,'register')}}
 async function login(mobile,password){const m=String(mobile||'').replace(/\D/g,'');if(m.length!==10)throw new Error('Please enter a valid 10-digit mobile number.');try{const c=await signInWithEmailAndPassword(auth,alias(m),password);const p=await profile(c.user.uid);if(!p){await signOut(auth);throw new Error('Account not found. Please register first.')}if(p?.status==='Disabled'){await signOut(auth);throw new Error('Account disabled. Contact support.')}const isCommission=commissionProfileActive(p);const destination=p?.mustChangePassword===true?'change-password.html':(isCommission?'commission-dashboard.html':'account.html');return {user:c.user,profile:p,isCommissionUser:isCommission,destination}}catch(err){if(err?.message==='Account not found. Please register first.'||err?.message==='Account disabled. Contact support.')throw err;throw friendlyAuthError(err,'login')}}
 async function logout(){await signOut(auth);location.href='index.html'}
@@ -312,7 +312,7 @@ function memberChrome(profileData,cms={}){
  const name=profileData?.fullName||'User',photo=profileData?.photoURL||'';
  const isCommission=commissionProfileActive(profileData);
  const baseMenu=(Array.isArray(cms.memberMenu)&&cms.memberMenu.length?cms.memberMenu:DEFAULT_MEMBER_MENU).map(x=>{
-   if(x.key==='help')return {...x,href:'../contact.html'};
+   if(x.key==='help')return {...x,href:'contact.html'};
    if(isCommission&&x.key==='dashboard')return {...x,href:'commission-dashboard.html'};
    return x;
  });
