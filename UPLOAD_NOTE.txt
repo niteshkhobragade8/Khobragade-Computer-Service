@@ -1,0 +1,13 @@
+V25 Service Categories Complete Feature
+Upload/replace these files in the same paths in the website repository.
+No Render/backend change required.
+
+Features:
+- 30 professional service categories auto-sync without deleting existing categories.
+- Admin Service Categories: Add / Edit / Update / Delete / Existing list.
+- Category rename also updates services using that category.
+- Category delete safely moves linked services to Other Digital Services.
+- Services, Actions, Forms, Service Charges, All Charge category filters.
+- Normal User and Commission User dashboards show service categories.
+- Portal Services page shows category chips + category filter.
+- Existing application/payment/auth flow unchanged.

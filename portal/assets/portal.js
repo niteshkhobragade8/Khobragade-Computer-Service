@@ -3,6 +3,7 @@ import {auth,db} from './portal-supabase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from '../../supabase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit,writeBatch} from '../../supabase-db.js';
 import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260824-supabasefinal1';
+import {PROFESSIONAL_SERVICE_CATEGORIES,professionalCategory} from '../../service-categories.js';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -163,6 +164,14 @@ const serviceMasterMap=new Map();
 const actionMasterMap=new Map();
 function masterServiceRows(){return MASTER_SERVICES.map(s=>({id:`svc_${s.id}`,name:s.name,category:s.category,icon:s.icon,description:s.description,status:'Published',availabilityStatus:'Available',featured:false,masterServiceId:s.id,_master:s}))}
 async function masterInstallState(){try{const snap=await getDoc(doc(db,'settings','masterCatalog'));return snap.exists()?snap.data():{}}catch(_){return {}}}
+async function categories(){
+ try{
+  const snap=await getDocs(collection(db,'categories'));
+  const names=snap.docs.map(d=>String(d.data()?.name||'').trim()).filter(Boolean);
+  if(names.length)return [...new Set(names)].sort((a,b)=>a.localeCompare(b));
+ }catch(e){console.warn('Categories database read failed; using professional defaults.',e)}
+ return [...PROFESSIONAL_SERVICE_CATEGORIES];
+}
 async function services(){
  let allLive=[],readOk=false;
  try{const snap=await getDocs(collection(db,'services'));allLive=snap.docs.map(d=>({id:d.id,...d.data()}));readOk=true}catch(e){console.warn('Services database read failed; using bundled catalogue.',e)}
@@ -355,7 +364,7 @@ function renderAdminNotifications(rows){
 function bindAdminNotifications(){try{adminNotificationUnsub?.()}catch(_){};adminNotificationUnsub=onSnapshot(collection(db,'notifications'),snap=>renderAdminNotifications(snap.docs.map(d=>({id:d.id,...d.data()}))),()=>{})}
 function bindLivePanels(){
  const svcBox=$('liveServicesGrid'),updBox=$('liveUpdatesGrid'),ytBox=$('liveYoutubeGrid');
- if(svcBox){onSnapshot(collection(db,'services'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,8);svcBox.innerHTML=rows.length?rows.map(x=>{const href=currentUser?'services.html':'index.html?auth=login#homeAuth';const t=safeTarget(x.target,'_self');return `<a class="live-card" href="${href}" target="${t}" ${t==='_blank'?'rel="noopener"':''}><span>${esc(x.icon||'🧰')}</span><div><b>${esc(x.name||'Service')}</b><small>${esc(x.category||'Digital Service')}</small></div><em>New / Updated</em></a>`}).join(''):'<div class="live-empty">Services will appear here.</div>'},()=>{});}
+ if(svcBox){onSnapshot(collection(db,'services'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,8);svcBox.innerHTML=rows.length?rows.map(x=>{const href=currentUser?'services.html':'index.html?auth=login#homeAuth';const t=safeTarget(x.target,'_self');return `<a class="live-card" href="${href}" target="${t}" ${t==='_blank'?'rel="noopener"':''}><span>${esc(x.icon||'🧰')}</span><div><b>${esc(x.name||'Service')}</b><small>${esc(professionalCategory(x.category,x.name))}</small></div><em>New / Updated</em></a>`}).join(''):'<div class="live-empty">Services will appear here.</div>'},()=>{});}
  if(updBox){onSnapshot(collection(db,'updates'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,6);updBox.innerHTML=rows.length?rows.map(x=>`<article class="live-update"><span>📢</span><div><b>${esc(x.title||'Latest Update')}</b><p>${esc(x.description||x.details||x.message||'')}</p></div></article>`).join(''):'<div class="live-empty">Latest updates will appear here.</div>'},()=>{});}
  if(ytBox){onSnapshot(collection(db,'youtube'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,6);ytBox.innerHTML=rows.length?rows.map(x=>{const id=youtubeVideoId(x.link||'');const thumb=id?`https://img.youtube.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`:'';const t=safeTarget(x.target,'_blank');return `<a class="live-video" href="${esc(x.link||'#')}" target="${t}" ${t==='_blank'?'rel="noopener"':''}>${thumb?`<img src="${thumb}" alt="${esc(x.title||'YouTube Video')}">`:'<div class="video-fallback">▶</div>'}<div><b>${esc(x.title||'YouTube Video')}</b><small>${esc(x.description||'Watch latest video')}</small></div></a>`}).join(''):'<div class="live-empty">Published YouTube videos will appear here.</div>'},()=>{});}
 }
@@ -377,4 +386,4 @@ async function myPaymentScreenshots(){
  }catch(e){console.warn('Payment screenshots unavailable:',e.message);return[]}
 }
 
-window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,requestPasswordReset,changeOwnPassword,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+window.Portal={ready:()=>authReady,register,login,logout,services,categories,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,requestPasswordReset,changeOwnPassword,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};

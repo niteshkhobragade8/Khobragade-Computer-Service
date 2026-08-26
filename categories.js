@@ -1,5 +1,6 @@
 import { moveToTrash } from './trash.js';
-import { db } from "./supabase-app.js";
+import { db } from "./app-backend.js";
+import { PROFESSIONAL_SERVICE_CATEGORIES } from './service-categories.js';
 
 import {
   collection,
@@ -8,8 +9,9 @@ import {
   updateDoc,
   serverTimestamp,
   onSnapshot,
-  getDocs
-} from "./supabase-compat.js";
+  getDocs,
+  writeBatch
+} from "./supabase-db.js";
 
 
 const $ = (id) => document.getElementById(id);
@@ -19,7 +21,9 @@ const list = $("categoriesList");
 const searchInput = $("categorySearch");
 
 let editId = null;
+let editOriginalName = "";
 let allCategories = [];
+let professionalSyncStarted = false;
 
 
 /* =========================================
@@ -145,6 +149,7 @@ function resetForm() {
   }
 
   editId = null;
+  editOriginalName = "";
 
   if (saveButton) {
     saveButton.textContent =
@@ -207,22 +212,21 @@ async function saveCategory() {
     if (editId) {
 
       await updateDoc(
-        doc(
-          db,
-          "categories",
-          editId
-        ),
-        {
-          name,
-          updatedAt:
-            serverTimestamp()
+        doc(db, "categories", editId),
+        { name, updatedAt: serverTimestamp() }
+      );
+
+      if (editOriginalName && normalizeKey(editOriginalName) !== normalizeKey(name)) {
+        const serviceSnapshot = await getDocs(collection(db, "services"));
+        const related = serviceSnapshot.docs.filter(row => normalizeKey(row.data()?.category) === normalizeKey(editOriginalName));
+        for (let i = 0; i < related.length; i += 300) {
+          const batch = writeBatch(db);
+          related.slice(i, i + 300).forEach(row => batch.update(row.ref, { category: name, updatedAt: serverTimestamp() }));
+          await batch.commit();
         }
-      );
+      }
 
-
-      alert(
-        "Category Updated Successfully"
-      );
+      alert("Category Updated Successfully");
 
     }
 
@@ -292,6 +296,7 @@ function editCategory(id) {
 
 
   editId = id;
+  editOriginalName = item.name || "";
 
 
   if ($("categoryName")) {
@@ -322,49 +327,25 @@ function editCategory(id) {
 ========================================= */
 
 async function deleteCategory(id) {
-
-  const item =
-    allCategories.find(
-      x => x.id === id
-    );
-
-
-  if (
-    !item ||
-    !confirm(
-      "Move this category to Recycle Bin?"
-    )
-  ) {
-    return;
-  }
-
-
+  const item = allCategories.find(x => x.id === id);
+  if (!item) return;
+  const serviceSnapshot = await getDocs(collection(db, "services"));
+  const related = serviceSnapshot.docs.filter(row => normalizeKey(row.data()?.category) === normalizeKey(item.name));
+  const message = related.length
+    ? `"${item.name}" delete karne par ${related.length} services "Other Digital Services" me move hongi. Continue?`
+    : `Move "${item.name}" category to Recycle Bin?`;
+  if (!confirm(message)) return;
   try {
-
-    await moveToTrash(
-      "categories",
-      id,
-      item
-    );
-
-
-    alert(
-      "Category moved to Recycle Bin"
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "Category delete error:",
-      error
-    );
-
-    alert(
-      error.message
-    );
-
+    for (let i = 0; i < related.length; i += 300) {
+      const batch = writeBatch(db);
+      related.slice(i, i + 300).forEach(row => batch.update(row.ref, { category: "Other Digital Services", updatedAt: serverTimestamp() }));
+      await batch.commit();
+    }
+    await moveToTrash("categories", id, item);
+    alert(related.length ? `Category deleted. ${related.length} services safely moved to Other Digital Services.` : "Category moved to Recycle Bin");
+  } catch (error) {
+    console.error("Category delete error:", error);
+    alert(error.message);
   }
 }
 
@@ -681,6 +662,35 @@ function addRecoveryButton() {
 
 
 /* =========================================
+   30 PROFESSIONAL MASTER CATEGORIES
+========================================= */
+
+async function syncProfessionalCategories(options = {}) {
+  const silent = options.silent === true;
+  const button = $("syncProfessionalCategories");
+  if (button) { button.disabled = true; button.textContent = "⏳ Syncing 30 Categories..."; }
+  try {
+    const existing = new Set(allCategories.map(item => normalizeKey(item.name)));
+    let added = 0;
+    for (let i = 0; i < PROFESSIONAL_SERVICE_CATEGORIES.length; i++) {
+      const name = PROFESSIONAL_SERVICE_CATEGORIES[i];
+      if (existing.has(normalizeKey(name))) continue;
+      await addDoc(collection(db, "categories"), {
+        name, professional: true, order: i + 1, createdAt: serverTimestamp()
+      });
+      existing.add(normalizeKey(name));
+      added++;
+    }
+    if (!silent) alert(`30 Professional Categories Ready. ${added} new categories added.`);
+  } catch (error) {
+    console.error("Professional category sync error:", error);
+    if (!silent) alert(`Category Sync Error: ${error.message}`);
+  } finally {
+    if (button) { button.disabled = false; button.textContent = "✨ Sync 30 Professional Categories"; }
+  }
+}
+
+/* =========================================
    EVENTS
 ========================================= */
 
@@ -688,6 +698,13 @@ saveButton
   ?.addEventListener(
     "click",
     saveCategory
+  );
+
+
+$("syncProfessionalCategories")
+  ?.addEventListener(
+    "click",
+    syncProfessionalCategories
   );
 
 
@@ -763,6 +780,12 @@ const unsubscribe =
       renderCategories();
 
       addRecoveryButton();
+
+      if (!professionalSyncStarted) {
+        const existingNames = new Set(allCategories.map(item => normalizeKey(item.name)));
+        const missing = PROFESSIONAL_SERVICE_CATEGORIES.some(name => !existingNames.has(normalizeKey(name)));
+        if (missing) { professionalSyncStarted = true; setTimeout(() => syncProfessionalCategories({ silent: true }), 100); }
+      }
 
     },
 

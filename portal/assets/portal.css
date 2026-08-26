@@ -119,3 +119,10 @@
 .login-home-only .stand,.login-home-only .base{display:block;flex:0 0 auto}
 @media(max-width:900px){.login-home-only .compact-welcome{padding:22px 18px}.login-home-only .hero-computer{width:min(560px,96%);margin:4px auto 0}}
 @media(max-width:480px){.login-home-only .hero-computer{width:100%}.login-home-only .welcome-screen{min-height:185px}.login-home-only .stand{width:74px}.login-home-only .base{width:145px}}
+
+/* Professional service category navigation */
+.service-category-strip{margin:0 0 16px;padding:14px;border:1px solid var(--line,#e5e7eb);border-radius:16px;background:var(--card,#fff)}
+.service-category-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.service-category-head small{opacity:.72}
+.service-category-chips{display:flex;flex-wrap:wrap;gap:8px}.service-category-chip{appearance:none;border:1px solid #dbe3f0;background:#fff;color:#172554;border-radius:999px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;transition:.18s ease}.service-category-chip:hover,.service-category-chip.active{background:#172554;color:#fff;border-color:#172554;transform:translateY(-1px)}
+.dashboard-category-panel .service-category-chips{margin-top:4px}
+@media(max-width:700px){.service-category-head{align-items:flex-start;flex-direction:column}.service-category-chip{padding:7px 10px;font-size:12px}}

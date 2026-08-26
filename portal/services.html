@@ -11,22 +11,23 @@
 <header class="nav"><div class="container nav-inner"><a class="brand" href="index.html"><span class="brand-mark">K</span><span><b>Khobragade Computer Service Centre</b><small>Applications & Payments Portal</small></span></a><div class="navlinks"><a href="index.html">Home</a><a class="active" href="services.html">Services</a><a href="track.html">Track</a><span id="navAuth"></span></div></div></header>
 <main class="section"><div class="container">
   <div class="section-head"><div><h2>All Services</h2><p>New Apply, Correction, Download aur other actions service-wise available honge.</p></div><div class="notice" id="serviceCountBadge" style="margin:0">Loading services...</div></div>
-  <div class="toolbar"><input id="q" placeholder="Search service..."><select id="status"><option value="all">All</option><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
+  <div class="service-category-strip"><div class="service-category-head"><b>Service Categories</b><small>30 professional categories</small></div><div id="categoryChips" class="service-category-chips"></div></div><div class="toolbar"><input id="q" placeholder="Search service..."><select id="category"><option value="all">All Categories</option></select><select id="status"><option value="all">All</option><option>Available</option><option>Unavailable</option><option>Coming Soon</option></select></div>
   <div id="servicesGrid" class="grid"></div>
 </div></main>
 <footer class="footer"><div class="container">Khobragade Computer Service Centre</div></footer>
 <div id="actionModal" class="modal"><div class="modal-card"><button id="closeActionModal" class="btn btn-soft" style="float:right">✕</button><h2 id="modalTitle">Service</h2><div id="actionsBox"></div></div></div>
 
-<!-- Portal chrome/auth is loaded separately. Even if the data service is unavailable, catalogue below still renders. -->
+<!-- Portal chrome/auth is loaded separately. Even if the database is unavailable, catalogue below still renders. -->
 <script type="module">
 if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);
 
 import './assets/portal.js?v=20260825-totalfix1';
 
 import {MASTER_SERVICES,actionId} from './assets/master-catalog.js?v=20260821-final24r3';
+import {PROFESSIONAL_SERVICE_CATEGORIES,professionalCategory} from '../service-categories.js';
 
 const els={
-  q:document.getElementById('q'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
+  q:document.getElementById('q'),category:document.getElementById('category'),chips:document.getElementById('categoryChips'),status:document.getElementById('status'),grid:document.getElementById('servicesGrid'),badge:document.getElementById('serviceCountBadge'),modal:document.getElementById('actionModal'),title:document.getElementById('modalTitle'),actions:document.getElementById('actionsBox'),close:document.getElementById('closeActionModal')
 };
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
@@ -35,24 +36,29 @@ const norm=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
 const masterRows=()=>MASTER_SERVICES.map(s=>({id:`svc_${s.id}`,name:s.name,category:s.category,icon:s.icon,description:s.description,status:'Published',availabilityStatus:'Available',featured:false,masterServiceId:s.id,_master:s}));
 
 let rows=masterRows();
-const requested=new URLSearchParams(location.search).get('q')||'';
+const params=new URLSearchParams(location.search);const requested=params.get('q')||'';const requestedCategory=params.get('category')||'all';
+let categoryChoices=[...PROFESSIONAL_SERVICE_CATEGORIES];
 els.q.value=requested;
+function fillCategoryChoices(){const cur=els.category.value||requestedCategory||'all';els.category.innerHTML='<option value="all">All Categories</option>'+categoryChoices.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');els.category.value=categoryChoices.includes(cur)?cur:'all'}
+function renderCategoryChips(){els.chips.innerHTML=['all',...categoryChoices].map(c=>`<button type="button" class="service-category-chip ${els.category.value===c?'active':''}" data-category="${esc(c)}">${c==='all'?'All Services':esc(c)}</button>`).join('')}
+fillCategoryChoices();renderCategoryChips();
 
 function render(){
-  const term=els.q.value.trim().toLowerCase(),st=els.status.value;
-  const filtered=rows.filter(x=>(!term||`${x.name||''} ${x.category||''} ${x.description||''}`.toLowerCase().includes(term))&&(st==='all'||(x.availabilityStatus||'Available')===st));
+  const term=els.q.value.trim().toLowerCase(),st=els.status.value,cat=els.category.value;
+  const filtered=rows.filter(x=>{const raw=String(x.category||'').trim();const pc=categoryChoices.includes(raw)?raw:professionalCategory(raw,x.name);return (!term||`${x.name||''} ${pc} ${x.description||''}`.toLowerCase().includes(term))&&(cat==='all'||pc===cat)&&(st==='all'||(x.availabilityStatus||'Available')===st)});
   els.badge.textContent=`${rows.length} Services Loaded`;
-  els.grid.innerHTML=filtered.length?filtered.map(x=>{const s=x.availabilityStatus||'Available',disabled=s!=='Available';return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(x.category||'Digital Service')}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
+  els.grid.innerHTML=filtered.length?filtered.map(x=>{const s=x.availabilityStatus||'Available',disabled=s!=='Available';return `<article class="card"><div class="icon">${esc(x.icon||'📄')}</div><span class="status ${statusClass(s)}">${esc(s)}</span><h3>${esc(x.name)}</h3><p>${esc(x.description||'')}</p><small>${esc(categoryChoices.includes(String(x.category||'').trim())?String(x.category||'').trim():professionalCategory(x.category,x.name))}</small><div class="actions"><button class="btn ${disabled?'btn-soft':'btn-primary'}" data-id="${esc(x.id)}" ${disabled?'disabled':''}>${s==='Coming Soon'?'Coming Soon':s==='Unavailable'?'Currently Unavailable':'Apply / Actions'}</button></div></article>`}).join(''):'<div class="card">No matching services.</div>';
 }
 
-// Guaranteed first render from the bundled catalogue; no remote database permission is needed for this.
+// Guaranteed first render from the bundled catalogue; no database permission is needed for this.
 render();
-els.q.addEventListener('input',render);els.status.addEventListener('change',render);els.close.addEventListener('click',()=>els.modal.classList.remove('show'));
+els.q.addEventListener('input',render);els.category.addEventListener('change',()=>{renderCategoryChips();render()});els.chips.addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;els.category.value=b.dataset.category;renderCategoryChips();render()});els.status.addEventListener('change',render);els.close.addEventListener('click',()=>els.modal.classList.remove('show'));
 
 async function mergeAdminData(){
   try{
     if(!window.Portal||typeof window.Portal.services!=='function')return;
-    const live=await window.Portal.services();
+    const [live,cats]=await Promise.all([window.Portal.services(),window.Portal.categories?.()||Promise.resolve([])]);
+    if(Array.isArray(cats)&&cats.length){categoryChoices=[...new Set(cats)].sort((a,b)=>a.localeCompare(b));fillCategoryChoices();renderCategoryChips()}
     if(!Array.isArray(live)||!live.length)return;
     const byName=new Map(live.map(x=>[norm(x.name),x]));
     rows=masterRows().map(m=>{

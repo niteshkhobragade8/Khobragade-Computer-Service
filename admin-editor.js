@@ -1,5 +1,5 @@
-import { db } from './supabase-app.js';
-import { doc, onSnapshot, setDoc, collection, addDoc, serverTimestamp } from './supabase-compat.js';
+import { db } from './app-backend.js';
+import { doc, onSnapshot, setDoc, collection, addDoc, serverTimestamp } from './supabase-db.js';
 const $=id=>document.getElementById(id); const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const FIXED=[
  ['dashboard','Dashboard','fa-solid fa-house',10],
@@ -9,6 +9,7 @@ const FIXED=[
  ['passwordreset','Password Reset Requests','fa-solid fa-key',35],
  ['payments','Payments / PayU','fa-solid fa-indian-rupee-sign',40],
  ['servicesmanager','Services','fa-solid fa-layer-group',50],
+ ['categories','Service Categories','fa-solid fa-folder-tree',55],
  ['actionsmanager','Actions','fa-solid fa-bolt',60],
  ['formsmanager','Forms','fa-solid fa-file-pen',70],
  ['servicecharges','Service Charges','fa-solid fa-indian-rupee-sign',80],

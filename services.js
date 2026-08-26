@@ -1,12 +1,10 @@
 import { moveToTrash } from './trash.js';
 import { db } from "./app-backend.js";
 import { DEFAULT_SERVICES, DEFAULT_SCHEMES, DEFAULT_DIVYANG } from "./catalog-data.js";
-import { MASTER_SERVICES } from "./master-catalog.js";
+import { PROFESSIONAL_SERVICE_CATEGORIES, professionalCategory } from "./service-categories.js";
 import {
   collection,
   addDoc,
-  getDocs,
-  writeBatch,
   doc,
   updateDoc,
   setDoc,
@@ -25,103 +23,6 @@ const availabilityFilter = $("serviceAvailabilityFilter");
 let editId = null;
 let allServices = [];
 
-const TARGET_SERVICE_COUNT = 242;
-function normalizeServiceName(value){ return String(value || "").replace(/\s+/g," ").trim().toLocaleLowerCase(); }
-function buildTargetCatalog(){
-  const map = new Map();
-  for (const item of MASTER_SERVICES) {
-    // Current live catalogue intentionally does not expose the generic Aadhaar guidance item.
-    if (item.id === "aadhaar-assistance") continue;
-    const key = normalizeServiceName(item.name);
-    if (!key || map.has(key)) continue;
-    map.set(key,{
-      name:item.name, category:item.category || "Government", icon:item.icon || "📄",
-      description:item.description || `${item.name} service/assistance available.`
-    });
-  }
-  for (const item of [...DEFAULT_SERVICES, ...DEFAULT_SCHEMES, ...DEFAULT_DIVYANG]) {
-    const key = normalizeServiceName(item.name);
-    if (!key || map.has(key)) continue;
-    map.set(key,item);
-  }
-  return [...map.values()].slice(0,TARGET_SERVICE_COUNT);
-}
-const TARGET_SERVICE_CATALOG = buildTargetCatalog();
-let serviceCatalogSyncRunning = false;
-let serviceCatalogSyncDone = false;
-let actionCoverageSyncRunning = false;
-let actionCoverageSyncDone = false;
-
-function stableCatalogId(name){
-  let h=2166136261;
-  for(const ch of normalizeServiceName(name)){ h^=ch.charCodeAt(0); h=Math.imul(h,16777619); }
-  return `catalog_${(h>>>0).toString(36)}`;
-}
-function safeActionId(serviceId){
-  return `default_${String(serviceId||'service').replace(/[^A-Za-z0-9_-]/g,'_')}`.slice(0,120);
-}
-
-async function ensureEveryServiceHasAction(serviceRows){
-  if(actionCoverageSyncRunning || actionCoverageSyncDone || !serviceRows?.length) return;
-  actionCoverageSyncRunning = true;
-  try{
-    const snap = await getDocs(collection(db,'serviceActions'));
-    const actions = snap.docs.map(d=>({id:d.id,...d.data()}));
-    const covered = new Set(actions.map(a=>String(a.serviceId||'')));
-    const missing = serviceRows.filter(s=>s.id && !covered.has(String(s.id)));
-    if(missing.length){
-      const batch = writeBatch(db);
-      for(const svc of missing){
-        batch.set(doc(db,'serviceActions',safeActionId(svc.id)),{
-          serviceId:svc.id,
-          name:'Apply Service',
-          serviceCharge:Number(svc.serviceCharge||0),
-          officialFee:0,
-          description:`${svc.name||'Service'} application / assistance`,
-          requiredDocuments:[],
-          availabilityStatus:svc.availabilityStatus||'Available',
-          available:(svc.availabilityStatus||'Available')==='Available',
-          order:10,
-          autoDefault:true,
-          createdAt:serverTimestamp(),
-          updatedAt:serverTimestamp()
-        },{merge:true});
-      }
-      await batch.commit();
-    }
-    actionCoverageSyncDone = true;
-  }catch(error){ console.error('Service action coverage sync error:',error); }
-  finally{ actionCoverageSyncRunning = false; }
-}
-
-async function ensureTargetServiceCatalog(){
-  if (serviceCatalogSyncRunning || serviceCatalogSyncDone) return;
-  serviceCatalogSyncRunning = true;
-  try{
-    const currentSnap = await getDocs(collection(db,'services'));
-    const currentRows = currentSnap.docs.map(d=>({id:d.id,...d.data()}));
-    const existing = new Set(currentRows.map((x)=>normalizeServiceName(x.name)));
-    const missing = TARGET_SERVICE_CATALOG.filter((x)=>!existing.has(normalizeServiceName(x.name)));
-    const needed = Math.max(0, TARGET_SERVICE_COUNT - currentRows.length);
-    const toAdd = missing.slice(0,needed);
-    if(toAdd.length){
-      const batch = writeBatch(db);
-      for(const item of toAdd){
-        batch.set(doc(db,'services',stableCatalogId(item.name)),{
-          ...item,status:'Published',availabilityStatus:'Available',featured:false,
-          createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-        },{merge:true});
-      }
-      await batch.commit();
-    }
-    serviceCatalogSyncDone = true;
-    const finalSnap = await getDocs(collection(db,'services'));
-    const finalRows = finalSnap.docs.map(d=>({id:d.id,...d.data()}));
-    await ensureEveryServiceHasAction(finalRows);
-  }catch(error){ console.error("242 service sync error:",error); }
-  finally{ serviceCatalogSyncRunning = false; }
-}
-
 function escapeHTML(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -136,11 +37,18 @@ function timeValue(value) {
 }
 
 function fillCategoryFilter() {
-  if (!categoryFilter) return;
-  const current = categoryFilter.value;
-  const categories = [...new Set(allServices.map((item) => item.category).filter(Boolean))].sort();
-  categoryFilter.innerHTML = `<option value="all">All Categories</option>${categories.map((category) => `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`).join("")}`;
-  if (["all", ...categories].includes(current)) categoryFilter.value = current;
+  const options = PROFESSIONAL_SERVICE_CATEGORIES.map((name) => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join("");
+  if (categoryFilter) {
+    const current = categoryFilter.value || "all";
+    categoryFilter.innerHTML = `<option value="all">All Categories</option>${options}`;
+    if (["all", ...PROFESSIONAL_SERVICE_CATEGORIES].includes(current)) categoryFilter.value = current;
+  }
+  const serviceCategory = $("serviceCategory");
+  if (serviceCategory) {
+    const current = serviceCategory.value;
+    serviceCategory.innerHTML = options;
+    if (PROFESSIONAL_SERVICE_CATEGORIES.includes(current)) serviceCategory.value = current;
+  }
 }
 
 function renderServices() {
@@ -152,7 +60,8 @@ function renderServices() {
   const availability = availabilityFilter?.value || "all";
   const filtered = allServices.filter((item) => {
     const matchesSearch = !search || `${item.name || ""} ${item.description || ""} ${item.category || ""}`.toLowerCase().includes(search);
-    const matchesCategory = category === "all" || item.category === category;
+    const itemCategory = professionalCategory(item.category, item.name);
+    const matchesCategory = category === "all" || itemCategory === category;
     const itemStatus = item.status || "Published";
     const matchesStatus = status === "all" || itemStatus === status;
     const itemAvailability = item.availabilityStatus || "Available";
@@ -177,7 +86,7 @@ function renderServices() {
       </div>
       <h3>${escapeHTML(item.name)}</h3>
       <p>${escapeHTML(item.description || "")}</p>
-      <small>${escapeHTML(item.category || "Government")}</small>
+      <small>${escapeHTML(professionalCategory(item.category, item.name))}</small>
       <div class="card-actions">
         <button class="action-btn edit" data-action="edit" data-id="${item.id}">✏️ Edit</button>
         <button class="action-btn delete" data-action="delete" data-id="${item.id}">🗑 Delete</button>
@@ -190,7 +99,7 @@ function resetForm() {
   $("serviceName").value = "";
   $("serviceDescription").value = "";
   if ($("serviceNameHI")) $("serviceNameHI").value=""; if ($("serviceNameMR")) $("serviceNameMR").value=""; if ($("serviceDescriptionHI")) $("serviceDescriptionHI").value=""; if ($("serviceDescriptionMR")) $("serviceDescriptionMR").value="";
-  $("serviceCategory").selectedIndex = 0;
+  if ($("serviceCategory")) $("serviceCategory").value = PROFESSIONAL_SERVICE_CATEGORIES[0];
   $("serviceIcon").value = "";
   if ($("serviceStatus")) $("serviceStatus").value = "Published";
   if ($("serviceAvailability")) $("serviceAvailability").value = "Available";
@@ -205,7 +114,7 @@ async function saveService() {
   const description = $("serviceDescription")?.value.trim() || "";
   const nameHI=$("serviceNameHI")?.value.trim()||"", nameMR=$("serviceNameMR")?.value.trim()||"";
   const descriptionHI=$("serviceDescriptionHI")?.value.trim()||"", descriptionMR=$("serviceDescriptionMR")?.value.trim()||"";
-  const category = $("serviceCategory")?.value || "Government";
+  const category = $("serviceCategory")?.value || PROFESSIONAL_SERVICE_CATEGORIES[29];
   const icon = $("serviceIcon")?.value.trim() || "📄";
   const status = $("serviceStatus")?.value || "Published";
   const featured = Boolean($("serviceFeatured")?.checked);
@@ -268,7 +177,8 @@ function editService(id) {
   $("serviceName").value = item.name || "";
   $("serviceDescription").value = item.description || "";
   if ($("serviceNameHI")) $("serviceNameHI").value=item.nameHI||""; if ($("serviceNameMR")) $("serviceNameMR").value=item.nameMR||""; if ($("serviceDescriptionHI")) $("serviceDescriptionHI").value=item.descriptionHI||""; if ($("serviceDescriptionMR")) $("serviceDescriptionMR").value=item.descriptionMR||"";
-  $("serviceCategory").value = item.category || "Government";
+  fillCategoryFilter();
+  $("serviceCategory").value = professionalCategory(item.category, item.name);
   $("serviceIcon").value = item.icon || "";
   if ($("serviceStatus")) $("serviceStatus").value = item.status || "Published";
   if ($("serviceAvailability")) $("serviceAvailability").value = item.availabilityStatus || "Available";
@@ -285,6 +195,7 @@ async function deleteService(id) {
   catch (error) { console.error(error); alert(error.message); }
 }
 
+fillCategoryFilter();
 saveButton?.addEventListener("click", saveService);
 $("loadDefaultCatalog")?.addEventListener("click", loadDefaultCatalog);
 list?.addEventListener("click", (event) => {
@@ -302,7 +213,6 @@ const unsubscribe = onSnapshot(collection(db, "services"), (snapshot) => {
   allServices = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
     .sort((a, b) => timeValue(b.createdAt || b.updatedAt) - timeValue(a.createdAt || a.updatedAt));
   renderServices();
-  ensureTargetServiceCatalog();
 }, (error) => {
   console.error(error);
   if (list) list.innerHTML = `<div class="empty-state danger">${escapeHTML(error.message)}</div>`;

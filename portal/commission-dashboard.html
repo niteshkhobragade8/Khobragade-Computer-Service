@@ -42,6 +42,7 @@
   <a href="#commissionLedgerPanel"><span>📒</span><b>Commission Ledger</b><small>Benefit & payment history</small></a>
 </section>
 
+<section class="commission-panel dashboard-category-panel"><div class="commission-panel-head"><div><span>SERVICE CATEGORIES</span><h2>Browse by Category</h2><p>30 professional categories me service select karein.</p></div><a href="services.html">View All →</a></div><div id="commissionCategories" class="service-category-chips"></div></section>
 <section class="commission-panel">
   <div class="commission-panel-head">
     <div><span>RECENT ACTIVITY</span><h2>Commission Applications</h2><p>Original charge → Commission → Final payable amount.</p></div>
@@ -68,6 +69,8 @@
 if('scrollRestoration' in history) history.scrollRestoration='manual';
 window.scrollTo(0,0);
 import './assets/portal.js?v=20260825-totalfix1';
+import {PROFESSIONAL_SERVICE_CATEGORIES} from '../service-categories.js';
+const commissionCategories=document.getElementById('commissionCategories');function renderCommissionCategories(rows){if(commissionCategories)commissionCategories.innerHTML=rows.map(c=>`<a class="service-category-chip" href="services.html?category=${encodeURIComponent(c)}">${c}</a>`).join('')}renderCommissionCategories(PROFESSIONAL_SERVICE_CATEGORIES);
 
 const safeDate=v=>{
   try{
@@ -79,6 +82,7 @@ const safeDate=v=>{
 document.addEventListener('portal-auth',async e=>{
   if(!e.detail.user){location.href='index.html?auth=login';return}
   const p=e.detail.profile||{};
+  try{const cats=await Portal.categories();if(cats?.length)renderCommissionCategories(cats)}catch(_){}
   if(!Portal.commissionProfileActive(p)){location.replace('account.html');return}
 
   cPartnerCode.textContent='Code: '+(p.commissionCode||'—');
