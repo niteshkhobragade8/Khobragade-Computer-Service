@@ -3,13 +3,14 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';window.scro
 
 import './assets/portal.js?v=20260825-totalfix1';
 import{db}from'./assets/portal-supabase.js';
-import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'../supabase-compat.js';
+import{doc,getDoc,updateDoc,setDoc,serverTimestamp}from'../supabase-db.js';
 
 await Portal.ready();
 if(!Portal.user){location.href='index.html?auth=login';throw new Error('login')}
 
 const loading=document.getElementById('loading'),applyForm=document.getElementById('applyForm'),applyTitle=document.getElementById('applyTitle'),applyDesc=document.getElementById('applyDesc'),priceBox=document.getElementById('priceBox'),dynamicFields=document.getElementById('dynamicFields'),profilePrefillNotice=document.getElementById('profilePrefillNotice'),useProfile=document.getElementById('useProfile'),profilePhotoOption=document.getElementById('profilePhotoOption'),documentFields=document.getElementById('documentFields'),applyMsg=document.getElementById('applyMsg');
 const profile=Portal.profile||{},sp=new URLSearchParams(location.search),sid=sp.get('service'),aid=sp.get('action'),resubmitId=sp.get('resubmit');
+function serviceDocs(s,a){let d=[...(a?.requiredDocuments||[])].map(x=>String(x).trim()).filter(Boolean);const n=String(s?.name||'').toLowerCase(),an=String(a?.name||'').toLowerCase();d=d.flatMap(x=>/^aadhaar card$/i.test(x)?['Aadhaar Front','Aadhaar Back']:[x]);if(/pan/.test(n)&&/new/.test(an))['Passport Size Photo','Signature','Aadhaar Front','Aadhaar Back','Birth / Date of Birth Proof'].forEach(x=>{if(!d.some(y=>y.toLowerCase()===x.toLowerCase()))d.push(x)});const z=new Set();return d.filter(x=>{const k=x.toLowerCase();if(z.has(k))return false;z.add(k);return true})}
 const svcs=await Portal.services(),svc=svcs.find(x=>x.id===sid),acts=await Portal.actions(sid),act=acts.find(x=>x.id===aid);
 if(!svc||!act){loading.textContent='Invalid service/action.';throw new Error('invalid')}
 const st=act.availabilityStatus||((act.available!==false)?'Available':'Unavailable');
@@ -55,7 +56,7 @@ if(resubmitId){useProfile.checked=false;useProfile.closest('label').style.displa
 renderFields();
 
 const NON_DOCUMENT=/^(mobile( number)?|phone( number)?|contact( number)?|name|full name|email|e-?mail|dob|date of birth|gender|address|village|city|taluka|tehsil|district|state|pin ?code|pincode|age|father'?s? name|mother'?s? name|husband'?s? name)$/i;
-const docs=(act.requiredDocuments||[]).filter(d=>!NON_DOCUMENT.test(String(d).trim()));
+const docs=serviceDocs(svc,act).filter(d=>!NON_DOCUMENT.test(String(d).trim()));
 const removed=(act.requiredDocuments||[]).length-docs.length;
 if(removed>0){
   const n=document.createElement('div');n.className='notice';n.innerHTML=`ℹ️ Mobile/Name/Email jaise detail fields ko document upload se hata diya gaya hai.`;

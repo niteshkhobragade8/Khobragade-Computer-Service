@@ -1,9 +1,11 @@
-import { db } from "./supabase-app.js";
-import { collection, onSnapshot, doc } from "./supabase-compat.js";
+import { db } from "./app-backend.js";
+import { collection, onSnapshot, doc } from "./supabase-db.js";
+import {professionalCategory,categoryCardHTML,installCategoryCardStyles} from "./service-category-system.js";
 
 const container = document.getElementById("liveServices");
 const search = document.getElementById("liveServiceSearch");
 let services = [];
+let activeCategory="all";
 let whatsappNumber = "9637832490";
 
 function escapeHTML(value) {
@@ -13,7 +15,7 @@ function escapeHTML(value) {
 function render() {
   if (!container) return;
   const q = (search?.value || "").trim().toLowerCase();
-  const rows = services.filter((item) => !q || `${item.name || ""} ${item.description || ""} ${item.category || ""}`.toLowerCase().includes(q));
+  const rows = services.filter((item)=>activeCategory==="all"||professionalCategory(item)===activeCategory).filter((item) => !q || `${item.name || ""} ${item.description || ""} ${item.category || ""}`.toLowerCase().includes(q));
   container.innerHTML = rows.length ? rows.map((item) => `
     <div class="card">
       <h3>${escapeHTML(item.icon || "📄")} ${escapeHTML(item.name)}</h3>
@@ -40,3 +42,5 @@ onSnapshot(doc(db, "settings", "website"), (snapshot) => {
     render();
   }
 });
+
+const publicCatBox=document.getElementById('publicServiceCategoryCards');if(publicCatBox){installCategoryCardStyles();const paint=()=>publicCatBox.innerHTML=categoryCardHTML(activeCategory);paint();publicCatBox.addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;activeCategory=b.dataset.cat;paint();render()})}

@@ -1,6 +1,6 @@
 import { db } from './supabase-app.js';
 import { collection, onSnapshot, doc, updateDoc, serverTimestamp } from './supabase-db.js';
-import { PROFESSIONAL_SERVICE_CATEGORIES, professionalCategory } from './service-categories.js';
+import {professionalCategory,categoryCardHTML,installCategoryCardStyles} from './service-category-system.js';
 
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '')
@@ -8,17 +8,14 @@ const esc = value => String(value ?? '')
   .replaceAll('"','&quot;').replaceAll("'",'&#039;');
 
 let services = [];
-let categoryNames=[...PROFESSIONAL_SERVICE_CATEGORIES];
-fillCategoryFilter();
 let actions = [];
+let activeCategory="all";
 const editedCharges = new Map();
 const editedAvailability = new Map();
 
 function serviceName(id){
   return services.find(s => s.id === id)?.name || id || 'Unknown Service';
 }
-function serviceCategory(id){const s=services.find(x=>x.id===id);const raw=String(s?.category||'').trim();return categoryNames.includes(raw)?raw:professionalCategory(raw,s?.name)}
-function fillCategoryFilter(){const e=$('allChargeCategoryFilter');if(!e)return;const cur=e.value||'all';e.innerHTML='<option value="all">All Categories</option>'+categoryNames.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');if(cur==='all'||categoryNames.includes(cur))e.value=cur}
 function currentCharge(action){
   return Number(action?.serviceCharge || 0);
 }
@@ -33,17 +30,16 @@ function setMessage(text, type='info'){
 }
 function rows(){
   const q = ($('allChargeSearch')?.value || '').trim().toLowerCase();
-  const cat = $('allChargeCategoryFilter')?.value || 'all';
   return [...actions]
-    .filter(a => (cat==='all'||serviceCategory(a.serviceId)===cat) && (!q || `${serviceName(a.serviceId)} ${a.name || ''}`.toLowerCase().includes(q)))
+    .filter(a => activeCategory==='all'||professionalCategory(services.find(s=>s.id===a.serviceId)||{})===activeCategory)
+    .filter(a => !q || `${serviceName(a.serviceId)} ${a.name || ''}`.toLowerCase().includes(q))
     .sort((a,b) => serviceName(a.serviceId).localeCompare(serviceName(b.serviceId)) || Number(a.order||0)-Number(b.order||0));
 }
 function renderAddActionSelect(){
   const select = $('allChargeAddAction');
   if(!select) return;
   const current = select.value;
-  const cat=$('allChargeCategoryFilter')?.value||'all';
-  const opts = [...actions].filter(a=>cat==='all'||serviceCategory(a.serviceId)===cat)
+  const opts = [...actions]
     .sort((a,b) => serviceName(a.serviceId).localeCompare(serviceName(b.serviceId)) || String(a.name||'').localeCompare(String(b.name||'')))
     .map(a => `<option value="${esc(a.id)}">${esc(serviceName(a.serviceId))} — ${esc(a.name||'Action')} — ₹${currentCharge(a).toFixed(2)}</option>`)
     .join('');
@@ -76,7 +72,7 @@ function render(){
     const availabilityValue = editedAvailability.has(a.id) ? editedAvailability.get(a.id) : currentAvailability(a);
     return `<tr>
       <td>${i+1}</td>
-      <td><b>${esc(serviceName(a.serviceId))}</b><br><small>${esc(serviceCategory(a.serviceId))}</small></td>
+      <td><b>${esc(serviceName(a.serviceId))}</b></td>
       <td>${esc(a.name || 'Action')}</td>
       <td>₹${oldCharge.toFixed(2)}</td>
       <td><input type="number" min="0" step="0.01" value="${Number(chargeValue)}" data-all-charge="${esc(a.id)}" style="width:130px"></td>
@@ -96,6 +92,7 @@ function render(){
   updatePendingMessage();
 }
 
+const allCatBox=$('allChargesCategoryCards');if(allCatBox){installCategoryCardStyles();const paint=()=>allCatBox.innerHTML=categoryCardHTML(activeCategory);paint();allCatBox.addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;activeCategory=b.dataset.cat;paint();render()})}
 $('allChargeTable')?.addEventListener('input', e => {
   const input = e.target.closest('[data-all-charge]');
   if(!input) return;
@@ -121,7 +118,6 @@ $('allChargeTable')?.addEventListener('change', e => {
 });
 
 $('allChargeSearch')?.addEventListener('input', render);
-$('allChargeCategoryFilter')?.addEventListener('change',()=>{renderAddActionSelect();render()});
 
 
 $('allChargeAddBtn')?.addEventListener('click', async () => {
@@ -225,11 +221,9 @@ $('allChargeSaveAll')?.addEventListener('click', async () => {
   }
 });
 
-onSnapshot(collection(db,'categories'), snap => { const rows=snap.docs.map(d=>String(d.data()?.name||'').trim()).filter(Boolean); categoryNames=rows.length?[...new Set(rows)].sort((a,b)=>a.localeCompare(b)):[...PROFESSIONAL_SERVICE_CATEGORIES]; fillCategoryFilter(); renderAddActionSelect(); render(); });
-
 onSnapshot(collection(db,'services'), snap => {
   services = snap.docs.map(d => ({id:d.id, ...d.data()}));
-  fillCategoryFilter(); renderAddActionSelect(); render();
+  render();
 }, err => setMessage('Services load error: '+err.message,'danger'));
 
 onSnapshot(collection(db,'serviceActions'), snap => {
