@@ -1,37 +1,193 @@
-export const SERVICE_CATEGORIES=["Aadhaar & Identity Services","PAN Card Services","Voter ID & Election Services","Ayushman Bharat & Health Services","ABHA & Digital Health Services","Divyang & UDID Services","Government Certificates","Maharashtra Government Schemes","Central Government Schemes","Women & Child Welfare Schemes","Pension & Social Security Services","Ration Card & Food Services","Income, Caste & Domicile Services","Land Records & Revenue Services","Agriculture & Farmer Services","RTO & Driving Licence Services","Education & Scholarship Services","Employment & Labour Services","e-Shram & Worker Services","Banking & Financial Services","Insurance Services","EPFO, UAN & Pension Services","Passport & Travel Services","Police & Verification Services","Business, GST & MSME Services","Utility Bill & Recharge Services","Online Application & Form Services","Document, Printing & Digital Services","Maha e-Seva & Aaple Sarkar Services","Other Digital Services"];
-export function professionalCategory(s={}){const t=`${s.name||''} ${s.category||''} ${s.description||''}`.toLowerCase();const m=[[/pan\b/,1],[/voter|election|epic/,2],[/ayushman/,3],[/\babha\b|digital health/,4],[/divyang|udid|disabil/,5],[/aadhaar|identity/,0],[/ladki|maharashtra|maha yoj|aaple/,7],[/women|child|mahila|bal/,9],[/ration|food/,11],[/income|caste|domicile|non.?creamy|nationality/,12],[/land|7\/12|8a|bhulekh|revenue/,13],[/agri|farmer|kisan|crop|pm.?kisan/,14],[/rto|driving|licen[cs]e|vehicle|challan/,15],[/scholar|education|student|admission|exam|migration/,16],[/e.?shram|worker|labour|labor/,18],[/employment|job|rojgar/,17],[/epfo|\bpf\b|uan/,21],[/pension|jeevan pramaan|social security/,10],[/bank|financial|loan|aeps/,19],[/insurance|pmjjby|pmsby/,20],[/passport|travel|visa|ticket/,22],[/police|verification|character/,23],[/gst|udyam|msme|business|shop act|gumasta|fssai|trade/,24],[/bill|recharge|electric|gas|water|utility/,25],[/certificate|birth|death|marriage|affidavit/,6],[/form|application|online/,26],[/photo|print|xerox|laminat|scan|document|pdf|typing/,27],[/maha e|aaple sarkar/,28],[/scheme|government/,8]];for(const [r,i] of m)if(r.test(t))return SERVICE_CATEGORIES[i];return SERVICE_CATEGORIES[29]}
-export function categoryCardHTML(active='all'){
-  const all=`<button type="button" class="svc-cat-card svc-cat-all ${active==='all'?'active':''}" data-cat="all"><span class="svc-star">★</span><span>All Categories</span></button>`;
-  return [all,...SERVICE_CATEGORIES.map((n,i)=>`<button type="button" class="svc-cat-card svc-c${i+1} ${active===n?'active':''}" data-cat="${n}"><span class="svc-star">★</span><span>${n}</span></button>`)].join('')
+
+export const SERVICE_CATEGORIES = [
+  "Aadhaar & Identity Services",
+  "PAN Card Services",
+  "Voter ID & Election Services",
+  "Ayushman Bharat & Health Services",
+  "ABHA & Digital Health Services",
+  "Divyang & UDID Services",
+  "Government Certificates",
+  "Maharashtra Government Schemes",
+  "Central Government Schemes",
+  "Women & Child Welfare Schemes",
+  "Pension & Social Security Services",
+  "Ration Card & Food Services",
+  "Income, Caste & Domicile Services",
+  "Land Records & Revenue Services",
+  "Agriculture & Farmer Services",
+  "RTO & Driving Licence Services",
+  "Education & Scholarship Services",
+  "Employment & Labour Services",
+  "e-Shram & Worker Services",
+  "Banking & Financial Services",
+  "Insurance Services",
+  "EPFO, UAN & Pension Services",
+  "Passport & Travel Services",
+  "Police & Verification Services",
+  "Business, GST & MSME Services",
+  "Utility Bill & Recharge Services",
+  "Online Application & Form Services",
+  "Document, Printing & Digital Services",
+  "Maha e-Seva & Aaple Sarkar Services",
+  "Other Digital Services"
+];
+
+const CATEGORY_ICONS = {
+  "Aadhaar & Identity Services":"🪪",
+  "PAN Card Services":"💳",
+  "Voter ID & Election Services":"🗳️",
+  "Ayushman Bharat & Health Services":"🏥",
+  "ABHA & Digital Health Services":"🩺",
+  "Divyang & UDID Services":"♿",
+  "Government Certificates":"📜",
+  "Maharashtra Government Schemes":"🏛️",
+  "Central Government Schemes":"🇮🇳",
+  "Women & Child Welfare Schemes":"👩‍👧",
+  "Pension & Social Security Services":"👴",
+  "Ration Card & Food Services":"🍚",
+  "Income, Caste & Domicile Services":"📄",
+  "Land Records & Revenue Services":"🌾",
+  "Agriculture & Farmer Services":"🚜",
+  "RTO & Driving Licence Services":"🚘",
+  "Education & Scholarship Services":"🎓",
+  "Employment & Labour Services":"💼",
+  "e-Shram & Worker Services":"👷",
+  "Banking & Financial Services":"🏦",
+  "Insurance Services":"🛡️",
+  "EPFO, UAN & Pension Services":"💰",
+  "Passport & Travel Services":"✈️",
+  "Police & Verification Services":"👮",
+  "Business, GST & MSME Services":"🏢",
+  "Utility Bill & Recharge Services":"💡",
+  "Online Application & Form Services":"📝",
+  "Document, Printing & Digital Services":"🖨️",
+  "Maha e-Seva & Aaple Sarkar Services":"💻",
+  "Other Digital Services":"🧰"
+};
+
+export function professionalCategory(service={}){
+  const t = `${service.name||""} ${service.category||""} ${service.description||""}`.toLowerCase();
+  if(/pan\b/.test(t)) return "PAN Card Services";
+  if(/voter|election|epic/.test(t)) return "Voter ID & Election Services";
+  if(/ayushman/.test(t)) return "Ayushman Bharat & Health Services";
+  if(/\babha\b|health id|digital health/.test(t)) return "ABHA & Digital Health Services";
+  if(/divyang|udid|disabil/.test(t)) return "Divyang & UDID Services";
+  if(/aadhaar|identity|id card/.test(t)) return "Aadhaar & Identity Services";
+  if(/maha e|aaple sarkar/.test(t)) return "Maha e-Seva & Aaple Sarkar Services";
+  if(/maha|maharashtra|ladki|yojana/.test(t)) return "Maharashtra Government Schemes";
+  if(/women|child|mahila|bal/.test(t)) return "Women & Child Welfare Schemes";
+  if(/ration|food|civil supplies/.test(t)) return "Ration Card & Food Services";
+  if(/income|caste|domicile|non creamy|nationality/.test(t)) return "Income, Caste & Domicile Services";
+  if(/land|7\/12|8a|property|revenue|bhulekh/.test(t)) return "Land Records & Revenue Services";
+  if(/agri|farmer|kisan|crop|pm-kisan/.test(t)) return "Agriculture & Farmer Services";
+  if(/rto|driving|licen[cs]e|vehicle|rc\b|challan/.test(t)) return "RTO & Driving Licence Services";
+  if(/scholar|education|student|admission|exam|migration/.test(t)) return "Education & Scholarship Services";
+  if(/e-?shram|worker|labour|labor/.test(t)) return "e-Shram & Worker Services";
+  if(/employment|job|rojgar/.test(t)) return "Employment & Labour Services";
+  if(/epfo|\bpf\b|uan/.test(t)) return "EPFO, UAN & Pension Services";
+  if(/pension|jeevan pramaan|social security/.test(t)) return "Pension & Social Security Services";
+  if(/bank|financial|loan|account|aeps/.test(t)) return "Banking & Financial Services";
+  if(/insurance|pmjjby|pmsby/.test(t)) return "Insurance Services";
+  if(/passport|travel|visa|ticket/.test(t)) return "Passport & Travel Services";
+  if(/police|verification|character/.test(t)) return "Police & Verification Services";
+  if(/gst|udyam|msme|business|shop act|gumasta|fssai|trade/.test(t)) return "Business, GST & MSME Services";
+  if(/bill|recharge|electric|gas|water|utility/.test(t)) return "Utility Bill & Recharge Services";
+  if(/certificate|birth|death|marriage|affidavit/.test(t)) return "Government Certificates";
+  if(/form|application|online/.test(t)) return "Online Application & Form Services";
+  if(/photo|print|xerox|laminat|scan|document|pdf|typing/.test(t)) return "Document, Printing & Digital Services";
+  if(/scheme|government/.test(t)) return "Central Government Schemes";
+  return "Other Digital Services";
 }
+
+export function categoryCardHTML(active="all"){
+  const cards = [
+    `<button type="button" class="svc-cat-card svc-cat-all ${active==="all"?"active":""}" data-cat="all">
+      <span class="svc-cat-icon">🧩</span><span class="svc-cat-label">All Categories</span>
+    </button>`
+  ];
+  SERVICE_CATEGORIES.forEach((name)=>{
+    const icon = CATEGORY_ICONS[name] || "🧰";
+    cards.push(
+      `<button type="button" class="svc-cat-card ${active===name?"active":""}" data-cat="${name.replaceAll('"','&quot;')}">
+        <span class="svc-cat-icon">${icon}</span>
+        <span class="svc-cat-label">${name}</span>
+      </button>`
+    );
+  });
+  return cards.join("");
+}
+
 export function installCategoryCardStyles(){
-  if(document.getElementById('svcCategoryStyles'))return;
-  const s=document.createElement('style');
-  s.id='svcCategoryStyles';
+  if(document.getElementById("svcCategoryStyles")) return;
+  const s=document.createElement("style");
+  s.id="svcCategoryStyles";
   s.textContent=`
-  .svc-cat-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin:12px 0 18px}
-  .svc-cat-card{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(15,23,42,.15);border-radius:11px;padding:7px 7px;min-height:44px;font:800 10.5px/1.18 inherit;letter-spacing:.05px;cursor:pointer;white-space:normal;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 4px 0 rgba(15,23,42,.20),0 7px 14px rgba(15,23,42,.12);transition:transform .14s ease,box-shadow .14s ease,filter .14s ease;text-shadow:0 1px 1px rgba(0,0,0,.15)}
-  .svc-cat-card:before{content:"";position:absolute;z-index:-1;inset:0 0 52% 0;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0));pointer-events:none}
-  .svc-cat-card:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(15,23,42,.18),0 10px 18px rgba(15,23,42,.16);filter:saturate(1.08)}
-  .svc-cat-card:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(15,23,42,.18),0 4px 8px rgba(15,23,42,.12)}
-  .svc-cat-card.active{outline:3px solid #22c55e;outline-offset:2px;box-shadow:0 4px 0 rgba(15,23,42,.18),0 0 0 2px #fff,0 8px 18px rgba(34,197,94,.28)}
-  .svc-star{font-size:12px;line-height:1;flex:0 0 auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
-  .svc-cat-all{background:linear-gradient(135deg,#0f172a,#334155);color:#fff}
-  .svc-c1{background:linear-gradient(135deg,#15803d,#22c55e);color:#fff}.svc-c2{background:linear-gradient(135deg,#84cc16,#bef264);color:#1f2937}
-  .svc-c3{background:linear-gradient(135deg,#eab308,#fde047);color:#3f2d00}.svc-c4{background:linear-gradient(135deg,#ca8a04,#f59e0b);color:#fff}
-  .svc-c5{background:linear-gradient(135deg,#ea580c,#fb923c);color:#fff}.svc-c6{background:linear-gradient(135deg,#f97316,#fdba74);color:#3b1b00}
-  .svc-c7{background:linear-gradient(135deg,#dc2626,#f87171);color:#fff}.svc-c8{background:linear-gradient(135deg,#be123c,#fb7185);color:#fff}
-  .svc-c9{background:linear-gradient(135deg,#db2777,#f472b6);color:#fff}.svc-c10{background:linear-gradient(135deg,#c026d3,#e879f9);color:#fff}
-  .svc-c11{background:linear-gradient(135deg,#9333ea,#c084fc);color:#fff}.svc-c12{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff}
-  .svc-c13{background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff}.svc-c14{background:linear-gradient(135deg,#1d4ed8,#60a5fa);color:#fff}
-  .svc-c15{background:linear-gradient(135deg,#2563eb,#93c5fd);color:#fff}.svc-c16{background:linear-gradient(135deg,#0284c7,#38bdf8);color:#fff}
-  .svc-c17{background:linear-gradient(135deg,#0891b2,#67e8f9);color:#083344}.svc-c18{background:linear-gradient(135deg,#0f766e,#2dd4bf);color:#fff}
-  .svc-c19{background:linear-gradient(135deg,#0d9488,#5eead4);color:#083344}.svc-c20{background:linear-gradient(135deg,#059669,#34d399);color:#fff}
-  .svc-c21{background:linear-gradient(135deg,#65a30d,#a3e635);color:#1a2e05}.svc-c22{background:linear-gradient(135deg,#92400e,#d97706);color:#fff}
-  .svc-c23{background:linear-gradient(135deg,#78350f,#b45309);color:#fff}.svc-c24{background:linear-gradient(135deg,#7f1d1d,#b91c1c);color:#fff}
-  .svc-c25{background:linear-gradient(135deg,#172554,#1e3a8a);color:#fff}.svc-c26{background:linear-gradient(135deg,#334155,#64748b);color:#fff}
-  .svc-c27{background:linear-gradient(135deg,#111827,#374151);color:#fff}.svc-c28{background:linear-gradient(135deg,#020617,#18181b);color:#fff}
-  .svc-c29{background:linear-gradient(135deg,#94a3b8,#e2e8f0);color:#0f172a;text-shadow:none}.svc-c30{background:linear-gradient(135deg,#ffffff,#f8fafc);color:#111827;border-color:#cbd5e1;text-shadow:none}
-  @media(max-width:640px){.svc-cat-wrap{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.svc-cat-card{font-size:9.5px;padding:6px 4px}.svc-star{font-size:11px}}
-  `;document.head.appendChild(s)
+    .svc-cat-wrap{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px 14px;
+      margin:12px 0 18px;
+      padding:10px 12px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      box-shadow:0 2px 10px rgba(15,23,42,.05)
+    }
+    .svc-cat-card{
+      width:92px;
+      min-height:82px;
+      border:0;
+      background:transparent;
+      color:#1f2937;
+      border-radius:10px;
+      padding:7px 5px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      gap:5px;
+      transition:background .16s ease,transform .16s ease,box-shadow .16s ease;
+      font-family:inherit
+    }
+    .svc-cat-card:hover{
+      background:#f8fafc;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(15,23,42,.08)
+    }
+    .svc-cat-card.active{
+      background:#eff6ff;
+      box-shadow:inset 0 0 0 2px #2563eb,0 3px 10px rgba(37,99,235,.12)
+    }
+    .svc-cat-icon{
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      font-size:29px;
+      line-height:1;
+      background:linear-gradient(180deg,#ffffff,#f3f4f6);
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      box-shadow:0 2px 6px rgba(15,23,42,.10)
+    }
+    .svc-cat-label{
+      display:block;
+      width:100%;
+      text-align:center;
+      font-size:11px;
+      line-height:1.15;
+      font-weight:700;
+      color:#334155;
+      overflow-wrap:anywhere
+    }
+    .svc-cat-all .svc-cat-icon{background:linear-gradient(180deg,#dbeafe,#bfdbfe)}
+    @media(max-width:640px){
+      .svc-cat-wrap{gap:8px 6px;padding:8px;justify-content:flex-start}
+      .svc-cat-card{width:78px;min-height:76px;padding:5px 3px}
+      .svc-cat-icon{width:38px;height:38px;font-size:26px}
+      .svc-cat-label{font-size:10px}
+    }
+  `;
+  document.head.appendChild(s);
 }
