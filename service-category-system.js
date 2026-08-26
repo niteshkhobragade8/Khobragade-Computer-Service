@@ -182,11 +182,49 @@ export function installCategoryCardStyles(){
       overflow-wrap:anywhere
     }
     .svc-cat-all .svc-cat-icon{background:linear-gradient(180deg,#dbeafe,#bfdbfe)}
+    /* Admin only: match the normal/user portal proportions while using the full content width. */
+    body:has(#servicesCategoryCards) #servicesCategoryCards,
+    body:has(#actionsCategoryCards) #actionsCategoryCards,
+    body:has(#formsCategoryCards) #formsCategoryCards,
+    body:has(#chargesCategoryCards) #chargesCategoryCards,
+    body:has(#allChargesCategoryCards) #allChargesCategoryCards{
+      display:grid;
+      grid-template-columns:repeat(9,minmax(82px,1fr));
+      column-gap:10px;
+      row-gap:10px;
+      align-items:start;
+      justify-content:stretch;
+    }
+    #servicesCategoryCards .svc-cat-card,
+    #actionsCategoryCards .svc-cat-card,
+    #formsCategoryCards .svc-cat-card,
+    #chargesCategoryCards .svc-cat-card,
+    #allChargesCategoryCards .svc-cat-card{
+      width:100%;
+      min-width:0;
+      min-height:82px;
+    }
+    @media(max-width:1100px){
+      body:has(#servicesCategoryCards) #servicesCategoryCards,
+      body:has(#actionsCategoryCards) #actionsCategoryCards,
+      body:has(#formsCategoryCards) #formsCategoryCards,
+      body:has(#chargesCategoryCards) #chargesCategoryCards,
+      body:has(#allChargesCategoryCards) #allChargesCategoryCards{
+        grid-template-columns:repeat(8,minmax(78px,1fr));
+      }
+    }
     @media(max-width:640px){
       .svc-cat-wrap{gap:8px 6px;padding:8px;justify-content:flex-start}
       .svc-cat-card{width:78px;min-height:76px;padding:5px 3px}
       .svc-cat-icon{width:38px;height:38px;font-size:26px}
       .svc-cat-label{font-size:10px}
+      body:has(#servicesCategoryCards) #servicesCategoryCards,
+      body:has(#actionsCategoryCards) #actionsCategoryCards,
+      body:has(#formsCategoryCards) #formsCategoryCards,
+      body:has(#chargesCategoryCards) #chargesCategoryCards,
+      body:has(#allChargesCategoryCards) #allChargesCategoryCards{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+      }
     }
   `;
   document.head.appendChild(s);
