@@ -1,11 +1,41 @@
-import { db } from "./supabase-app.js";
+import { db } from "./app-backend.js";
 import {
   doc,
   onSnapshot,
   setDoc,
   increment,
   serverTimestamp
-} from "./supabase-compat.js";
+} from "./supabase-db.js";
+
+
+function kcscMaintenanceOverlay(data={}){
+  const id="kcscMaintenanceOverlay";
+  let box=document.getElementById(id);
+  if(!data.enabled){
+    box?.remove();
+    document.documentElement.style.overflow="";
+    return;
+  }
+  if(!box){
+    box=document.createElement("div");
+    box.id=id;
+    document.body.appendChild(box);
+  }
+  const title=data.title||"Khobragade Computer Service Centre is being updated";
+  const message=data.message||"New improvements are being added. Please check back shortly.";
+  const status=data.statusText||"UPDATE IN PROGRESS";
+  const reopen=data.reopen?`<div class="kcsc-mm-reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`:"";
+  box.innerHTML=`<style>
+  #kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#eef4ff,#fff8ec);display:grid;place-items:center;padding:22px;font-family:Arial,sans-serif;color:#0f172a}
+  #kcscMaintenanceOverlay .kcsc-mm-box{width:min(680px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.16)}
+  #kcscMaintenanceOverlay .kcsc-mm-icon{font-size:50px}
+  #kcscMaintenanceOverlay .kcsc-mm-status{display:inline-block;margin:12px 0 6px;padding:7px 14px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900;letter-spacing:.8px}
+  #kcscMaintenanceOverlay h1{margin:12px 0;font-size:clamp(25px,5vw,38px)}
+  #kcscMaintenanceOverlay p{margin:0;color:#475569;font-size:17px;line-height:1.65}
+  #kcscMaintenanceOverlay .kcsc-mm-reopen{margin-top:18px;font-weight:800;color:#1d4ed8}
+  </style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🛠️</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}</main>`;
+  document.documentElement.style.overflow="hidden";
+}
 
 function normalizePhone(value) {
   return String(value || "").replace(/\D/g, "");
@@ -61,3 +91,11 @@ async function trackVisitor() {
 }
 
 trackVisitor();
+
+
+onSnapshot(doc(db, "settings", "maintenance"), (snapshot) => {
+  kcscMaintenanceOverlay(snapshot.exists() ? snapshot.data() : { enabled:false });
+}, (error) => {
+  console.warn("Maintenance status unavailable:", error.message);
+  kcscMaintenanceOverlay({ enabled:false });
+});

@@ -3,11 +3,40 @@ import {auth,db} from './portal-supabase.js';
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updatePassword} from '../../supabase-auth.js';
 import {collection,doc,setDoc,getDoc,getDocs,addDoc,updateDoc,onSnapshot,query,where,orderBy,serverTimestamp,limit,writeBatch} from '../../supabase-db.js';
 import {MASTER_SERVICES,actionId,fieldsFor} from './master-catalog.js?v=20260824-supabasefinal1';
-import {PROFESSIONAL_SERVICE_CATEGORIES,professionalCategory} from '../../service-categories.js';
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const alias=mobile=>`m${String(mobile||'').replace(/\D/g,'')}@login.9637832490.online`;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
 const statusClass=s=>String(s||'').toLowerCase().replace(/\s+/g,'-');
+
+function kcscMaintenanceOverlay(data={}){
+  const id="kcscMaintenanceOverlay";
+  let box=document.getElementById(id);
+  if(!data.enabled){
+    box?.remove();
+    document.documentElement.style.overflow="";
+    return;
+  }
+  if(!box){
+    box=document.createElement("div");
+    box.id=id;
+    document.body.appendChild(box);
+  }
+  const title=data.title||"Khobragade Computer Service Centre is being updated";
+  const message=data.message||"New improvements are being added. Please check back shortly.";
+  const status=data.statusText||"UPDATE IN PROGRESS";
+  const reopen=data.reopen?`<div class="kcsc-mm-reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`:"";
+  box.innerHTML=`<style>
+  #kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#eef4ff,#fff8ec);display:grid;place-items:center;padding:22px;font-family:Arial,sans-serif;color:#0f172a}
+  #kcscMaintenanceOverlay .kcsc-mm-box{width:min(680px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.16)}
+  #kcscMaintenanceOverlay .kcsc-mm-icon{font-size:50px}
+  #kcscMaintenanceOverlay .kcsc-mm-status{display:inline-block;margin:12px 0 6px;padding:7px 14px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900;letter-spacing:.8px}
+  #kcscMaintenanceOverlay h1{margin:12px 0;font-size:clamp(25px,5vw,38px)}
+  #kcscMaintenanceOverlay p{margin:0;color:#475569;font-size:17px;line-height:1.65}
+  #kcscMaintenanceOverlay .kcsc-mm-reopen{margin-top:18px;font-weight:800;color:#1d4ed8}
+  </style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🛠️</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}</main>`;
+  document.documentElement.style.overflow="hidden";
+}
+
 const appId=()=>`KCSC-${new Date().getFullYear()}-${crypto.randomUUID().slice(0,8).toUpperCase()}`;
 let currentUser=null,currentProfile=null,currentPortalCms=null;
 let adminNotificationUnsub=null;
@@ -164,14 +193,6 @@ const serviceMasterMap=new Map();
 const actionMasterMap=new Map();
 function masterServiceRows(){return MASTER_SERVICES.map(s=>({id:`svc_${s.id}`,name:s.name,category:s.category,icon:s.icon,description:s.description,status:'Published',availabilityStatus:'Available',featured:false,masterServiceId:s.id,_master:s}))}
 async function masterInstallState(){try{const snap=await getDoc(doc(db,'settings','masterCatalog'));return snap.exists()?snap.data():{}}catch(_){return {}}}
-async function categories(){
- try{
-  const snap=await getDocs(collection(db,'categories'));
-  const names=snap.docs.map(d=>String(d.data()?.name||'').trim()).filter(Boolean);
-  if(names.length)return [...new Set(names)].sort((a,b)=>a.localeCompare(b));
- }catch(e){console.warn('Categories database read failed; using professional defaults.',e)}
- return [...PROFESSIONAL_SERVICE_CATEGORIES];
-}
 async function services(){
  let allLive=[],readOk=false;
  try{const snap=await getDocs(collection(db,'services'));allLive=snap.docs.map(d=>({id:d.id,...d.data()}));readOk=true}catch(e){console.warn('Services database read failed; using bundled catalogue.',e)}
@@ -325,7 +346,7 @@ function memberChrome(profileData,cms={}){
  const avatar=photo?`<img class="member-pro-avatar member-pro-avatar-img" src="${esc(photo)}" alt="Profile">`:`<span class="member-pro-avatar">${esc(memberInitials(name))}</span>`;
  const root=document.createElement('div');root.id='memberProChrome';
  const portalHome=isCommission?'commission-dashboard.html':'account.html';
- root.innerHTML=`<aside class="member-pro-sidebar"><a class="member-pro-brand" href="${portalHome}"><span class="member-pro-logo">K</span><span class="member-pro-brand-copy"><b>Khobragade Computer Service Centre</b><small>${isCommission?'COMMISSION PARTNER PORTAL':'SECURE USER PORTAL'}</small></span></a><div class="member-pro-nav-label">MY ACCOUNT</div><nav class="member-pro-nav">${navHtml}</nav><div class="member-pro-sidebar-bottom"><button class="member-pro-side-logout" type="button">↪ Logout</button><div class="member-pro-security"><span>🛡️</span><div><b>Secure Account</b><br>Protected application portal</div></div></div></aside><header class="member-pro-header"><div class="member-pro-header-inner"><button class="member-pro-mobile-toggle" type="button" aria-label="Open menu">☰</button><div class="member-pro-page-meta"><small>USER PORTAL</small><strong>${esc(meta.title)}</strong></div><div class="member-pro-head-actions">${isCommission&&meta.key==='dashboard'?'<button id="commissionInstallAppBtn" class="commission-install-app-btn" type="button" hidden>📱 <span>Install App</span></button>':''}<a class="member-pro-icon-btn" href="notifications.html" title="Notifications">🔔<span id="memberHeadNotif" class="member-pro-badge" hidden>0</span></a><a class="member-pro-user" href="profile.html">${avatar}<span class="member-pro-user-copy"><b>${esc(name)}</b><small>${isCommission?'Commission Partner':'Member Account'}</small></span></a></div></div></header>`;
+ root.innerHTML=`<aside class="member-pro-sidebar"><a class="member-pro-brand" href="${portalHome}"><span class="member-pro-logo">K</span><span class="member-pro-brand-copy"><b>Khobragade Computer Service Centre</b><small>${isCommission?'COMMISSION PARTNER PORTAL':'SECURE USER PORTAL'}</small></span></a><div class="member-pro-nav-label">MY ACCOUNT</div><nav class="member-pro-nav">${navHtml}</nav><div class="member-pro-sidebar-bottom"><button class="member-pro-side-logout" type="button">↪ Logout</button><div class="member-pro-security"><span>🛡️</span><div><b>Secure Account</b><br>Protected application portal</div></div></div></aside><header class="member-pro-header"><div class="member-pro-header-inner"><button class="member-pro-mobile-toggle" type="button" aria-label="Open menu">☰</button><div class="member-pro-page-meta"><small>USER PORTAL</small><strong>${esc(meta.title)}</strong></div><div class="member-pro-head-actions">${isCommission?'<button id="commissionInstallAppBtn" class="commission-install-app-btn" type="button" hidden>📱 <span>Install App</span></button>':''}<a class="member-pro-icon-btn" href="notifications.html" title="Notifications">🔔<span id="memberHeadNotif" class="member-pro-badge" hidden>0</span></a><a class="member-pro-user" href="profile.html">${avatar}<span class="member-pro-user-copy"><b>${esc(name)}</b><small>${isCommission?'Commission Partner':'Member Account'}</small></span></a></div></div></header>`;
  document.body.prepend(root);
  const installBtn=root.querySelector('#commissionInstallAppBtn');
  installBtn?.addEventListener('click',installCommissionApp);
@@ -364,7 +385,7 @@ function renderAdminNotifications(rows){
 function bindAdminNotifications(){try{adminNotificationUnsub?.()}catch(_){};adminNotificationUnsub=onSnapshot(collection(db,'notifications'),snap=>renderAdminNotifications(snap.docs.map(d=>({id:d.id,...d.data()}))),()=>{})}
 function bindLivePanels(){
  const svcBox=$('liveServicesGrid'),updBox=$('liveUpdatesGrid'),ytBox=$('liveYoutubeGrid');
- if(svcBox){onSnapshot(collection(db,'services'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,8);svcBox.innerHTML=rows.length?rows.map(x=>{const href=currentUser?'services.html':'index.html?auth=login#homeAuth';const t=safeTarget(x.target,'_self');return `<a class="live-card" href="${href}" target="${t}" ${t==='_blank'?'rel="noopener"':''}><span>${esc(x.icon||'🧰')}</span><div><b>${esc(x.name||'Service')}</b><small>${esc(professionalCategory(x.category,x.name))}</small></div><em>New / Updated</em></a>`}).join(''):'<div class="live-empty">Services will appear here.</div>'},()=>{});}
+ if(svcBox){onSnapshot(collection(db,'services'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,8);svcBox.innerHTML=rows.length?rows.map(x=>{const href=currentUser?'services.html':'index.html?auth=login#homeAuth';const t=safeTarget(x.target,'_self');return `<a class="live-card" href="${href}" target="${t}" ${t==='_blank'?'rel="noopener"':''}><span>${esc(x.icon||'🧰')}</span><div><b>${esc(x.name||'Service')}</b><small>${esc(x.category||'Digital Service')}</small></div><em>New / Updated</em></a>`}).join(''):'<div class="live-empty">Services will appear here.</div>'},()=>{});}
  if(updBox){onSnapshot(collection(db,'updates'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,6);updBox.innerHTML=rows.length?rows.map(x=>`<article class="live-update"><span>📢</span><div><b>${esc(x.title||'Latest Update')}</b><p>${esc(x.description||x.details||x.message||'')}</p></div></article>`).join(''):'<div class="live-empty">Latest updates will appear here.</div>'},()=>{});}
  if(ytBox){onSnapshot(collection(db,'youtube'),snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>(x.status||'Published')==='Published').sort((a,b)=>liveTime(b.createdAt||b.updatedAt)-liveTime(a.createdAt||a.updatedAt)).slice(0,6);ytBox.innerHTML=rows.length?rows.map(x=>{const id=youtubeVideoId(x.link||'');const thumb=id?`https://img.youtube.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`:'';const t=safeTarget(x.target,'_blank');return `<a class="live-video" href="${esc(x.link||'#')}" target="${t}" ${t==='_blank'?'rel="noopener"':''}>${thumb?`<img src="${thumb}" alt="${esc(x.title||'YouTube Video')}">`:'<div class="video-fallback">▶</div>'}<div><b>${esc(x.title||'YouTube Video')}</b><small>${esc(x.description||'Watch latest video')}</small></div></a>`}).join(''):'<div class="live-empty">Published YouTube videos will appear here.</div>'},()=>{});}
 }
@@ -386,4 +407,12 @@ async function myPaymentScreenshots(){
  }catch(e){console.warn('Payment screenshots unavailable:',e.message);return[]}
 }
 
-window.Portal={ready:()=>authReady,register,login,logout,services,categories,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,requestPasswordReset,changeOwnPassword,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+window.Portal={ready:()=>authReady,register,login,logout,services,actions,fields,createApplication,startPayment,getApplication,initiatePayu,myApplications,trackPublic,money,statusClass,esc,memberChrome,portalCms,mergedProfileFields,profileAutofill,inferProfileKey,profileValueByKey,uploadFile,bindAdminNotifications,commissionProfileActive,commissionRates,applyCommissionAction,myCommissionLedger,myPaymentScreenshots,installCommissionApp,requestPasswordReset,changeOwnPassword,get user(){return currentUser},get profile(){return currentProfile},get cms(){return currentPortalCms||{}}};
+
+
+onSnapshot(doc(db,"settings","maintenance"),(snapshot)=>{
+  kcscMaintenanceOverlay(snapshot.exists()?snapshot.data():{enabled:false});
+},(error)=>{
+  console.warn("Maintenance status unavailable:",error.message);
+  kcscMaintenanceOverlay({enabled:false});
+});
