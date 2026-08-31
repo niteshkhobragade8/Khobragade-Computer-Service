@@ -2,38 +2,28 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Maintenance Preview | Khobragade Computer Service Centre</title>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#12351d;background:#fbfff6;overflow-x:hidden}
-.page{min-height:100vh;display:flex;flex-direction:column;position:relative;background:
-radial-gradient(ellipse at 7% 5%,#eef7df 0 12%,transparent 12.5%),
-radial-gradient(ellipse at 92% 5%,#d8edb4 0 18%,transparent 18.5%),
-linear-gradient(180deg,#fff 0%,#fbfff5 68%,#eef8e2 100%)}
-.wave{position:absolute;left:0;right:0;bottom:40px;height:170px;overflow:hidden;pointer-events:none}
-.wave:before,.wave:after{content:"";position:absolute;width:120%;height:170px;left:-10%;border-radius:50% 50% 0 0}
-.wave:before{top:60px;background:#d8edb1;transform:rotate(-2deg)}.wave:after{top:105px;background:#a8d16d;transform:rotate(2deg)}
-.wrap{width:min(900px,92%);margin:auto;text-align:center;position:relative;z-index:2;padding:45px 0 75px}
-.icon{width:84px;height:84px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-size:40px;background:#f2f9e9;border:4px solid #dfefce;color:#18832b}
-.status{display:inline-flex;align-items:center;padding:6px 18px;border-radius:999px;background:#e8f5da;color:#23752c;font-weight:900;font-size:12px;letter-spacing:.8px}
-h1{font-size:clamp(32px,5vw,50px);line-height:1.08;margin:16px 0 2px;color:#124522}.sub{font-size:22px;font-weight:850;color:#198b2b;margin:0 0 22px}
-.msg{font-size:17px;color:#334b39;margin:0 auto 22px}
-.info{max-width:720px;margin:0 auto 22px;background:rgba(237,247,224,.92);border:1px solid #deedcf;border-radius:15px;padding:17px 22px;display:grid;grid-template-columns:1fr 1fr;text-align:left;box-shadow:0 8px 22px #47752b12}
-.info>div{padding:0 20px}.info>div+div{border-left:1px solid #cbdcba}.label{font-size:12px;font-weight:900;color:#2d7136;letter-spacing:.5px;margin-bottom:7px}.value{font-size:16px;font-weight:900;color:#173d20}.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:#31a73e;margin-right:8px;vertical-align:-2px}
-.thanks{margin:18px 0;font-size:15px}
-.features{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:690px;margin:0 auto}.feature{background:#f4faeb;border:1px solid #e2eed5;border-radius:13px;padding:12px 8px;font-size:12px;font-weight:800;box-shadow:0 6px 15px #42622b12}.feature b{display:block;font-size:22px;margin-bottom:3px}
-.footer{position:relative;z-index:3;background:#2d712f;color:#fff;text-align:center;padding:15px;font-size:12px}.back{position:fixed;right:18px;top:18px;z-index:5;text-decoration:none;background:#fff;color:#216b2b;border:1px solid #d9e9c9;border-radius:11px;padding:9px 13px;font-weight:800;box-shadow:0 7px 18px #24421d1a}
-@media(max-width:650px){.wrap{padding-top:70px}.info{grid-template-columns:1fr;gap:14px}.info>div+div{border-left:0;border-top:1px solid #cbdcba;padding-top:14px}.features{grid-template-columns:1fr 1fr}h1{font-size:32px}.sub{font-size:19px}}
-</style></head><body>
-<div class="page"><a class="back" href="dashboard.html">← Admin</a><main class="wrap">
-<div class="icon">🖥️⚙</div><div class="status" id="status">UPDATE IN PROGRESS</div>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#111827;background:linear-gradient(135deg,#f43f5e 0%,#b832d9 48%,#4f46e5 100%);display:grid;place-items:center;padding:28px}
+.shell{width:min(900px,96%)}.back{display:inline-block;margin-bottom:14px;text-decoration:none;color:#fff;font-weight:850;background:#ffffff20;border:1px solid #ffffff55;padding:9px 14px;border-radius:12px}
+.card{background:#fff;border-radius:27px;padding:34px 34px 28px;text-align:center;box-shadow:0 28px 80px #3b164955;border:1px solid #ffffffaa}
+.art{font-size:58px;line-height:1;margin-bottom:8px}.status{display:inline-flex;align-items:center;gap:8px;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:7px 15px;font-size:12px;font-weight:950;letter-spacing:.8px}.status:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 5px #22c55e20}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.08;margin:16px 0 3px}.sub{color:#ec4899;font-size:21px;font-weight:900}.message{color:#475569;font-size:16px;line-height:1.65;margin:15px auto 20px;max-width:680px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #f0c5dc;background:#fff7fb;border-radius:15px;padding:16px;max-width:720px;margin:0 auto}.info>div{padding:3px 18px}.info>div+div{border-left:1px solid #edc6d9}.label{font-size:11px;font-weight:900;color:#475569;margin-bottom:6px}.value{font-size:16px;font-weight:900}.green{color:#16833a}
+.count-title{font-size:12px;font-weight:900;color:#166534;margin:20px 0 8px}.countdown{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}.time{min-width:78px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:13px;padding:10px 8px;color:#166534}.time b{display:block;font-size:24px}.time span{font-size:10px;font-weight:850;text-transform:uppercase}
+.thanks{margin:18px 0 13px;color:#334155}.features{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.feature{border:1px solid #f1d6e3;background:#fff9fc;border-radius:13px;padding:11px 7px;font-size:11px;font-weight:850}.feature b{display:block;font-size:21px;margin-bottom:3px}.footer{color:#fff;text-align:center;font-size:12px;margin-top:14px}
+@media(max-width:650px){body{padding:14px}.card{padding:27px 17px;border-radius:21px}.info{grid-template-columns:1fr}.info>div+div{border-left:0;border-top:1px solid #edc6d9;margin-top:12px;padding-top:14px}.features{grid-template-columns:1fr 1fr}.time{min-width:65px}h1{font-size:30px}}
+</style></head><body><main class="shell"><a class="back" href="dashboard.html">← Admin Dashboard</a><section class="card">
+<div class="art">🚧⚙️</div><div class="status" id="status">UPDATE IN PROGRESS</div>
 <h1 id="title">Khobragade Computer Service Centre</h1><div class="sub">is being updated</div>
-<p class="msg" id="message">We are working hard to bring you a better experience.</p>
-<div class="info"><div><div class="label">📅 EXPECTED TO BE BACK</div><div class="value" id="reopen">Update time will be announced</div></div><div><div class="label">STATUS</div><div class="value"><span class="dot"></span><span id="status2">Update In Progress</span></div></div></div>
+<p class="message" id="message">We are improving our website to serve you better.</p>
+<div class="info"><div><div class="label">📅 EXPECTED TO BE BACK</div><div class="value green" id="reopen">Time will be announced</div></div><div><div class="label">STATUS</div><div class="value green">● <span id="status2">Update In Progress</span></div></div></div>
+<div id="countWrap"><div class="count-title">⏱ TIME REMAINING</div><div class="countdown"><div class="time"><b id="days">00</b><span>Days</span></div><div class="time"><b id="hours">00</b><span>Hours</span></div><div class="time"><b id="minutes">00</b><span>Minutes</span></div><div class="time"><b id="seconds">00</b><span>Seconds</span></div></div></div>
 <div class="thanks">Thank you for your patience and support.</div>
-<div class="features"><div class="feature"><b>🛡️</b>Secure & Safe</div><div class="feature"><b>⚡</b>Fast & Reliable</div><div class="feature"><b>⚙️</b>New Features</div><div class="feature"><b>👥</b>Dedicated Support</div></div>
-</main><div class="wave"></div><footer class="footer">© 2026 Khobragade Computer Service Centre. All rights reserved.</footer></div>
+<div class="features"><div class="feature"><b>🛡️</b>Better Security</div><div class="feature"><b>⚡</b>Faster Performance</div><div class="feature"><b>⭐</b>New Features</div><div class="feature"><b>🎧</b>24×7 Support</div></div>
+</section><div class="footer">© 2026 Khobragade Computer Service Centre. All rights reserved.</div></main>
 <script>
-let d={};try{d=JSON.parse(sessionStorage.getItem("kcsc_maintenance_preview_v1")||"{}")}catch(e){}
-if(d.title)document.getElementById("title").textContent=d.title;
-if(d.message)document.getElementById("message").textContent=d.message;
-if(d.statusText){document.getElementById("status").textContent=d.statusText;document.getElementById("status2").textContent=d.statusText}
+const def={title:"Khobragade Computer Service Centre",message:"We are improving our website to serve you better.",statusText:"UPDATE IN PROGRESS",reopen:""};let d=def;try{d={...def,...JSON.parse(sessionStorage.getItem("kcsc_maintenance_preview_v1")||"{}")}}catch(e){}
+document.getElementById("title").textContent=d.title||def.title;document.getElementById("message").textContent=d.message||def.message;document.getElementById("status").textContent=d.statusText||def.statusText;document.getElementById("status2").textContent=d.statusText||def.statusText;
 if(d.reopen)document.getElementById("reopen").textContent=new Date(d.reopen).toLocaleString();
+function tick(){if(!d.reopen){document.getElementById("countWrap").style.display="none";return}let n=Math.max(0,new Date(d.reopen).getTime()-Date.now()),x=Math.floor(n/1000);document.getElementById("days").textContent=String(Math.floor(x/86400)).padStart(2,"0");x%=86400;document.getElementById("hours").textContent=String(Math.floor(x/3600)).padStart(2,"0");x%=3600;document.getElementById("minutes").textContent=String(Math.floor(x/60)).padStart(2,"0");document.getElementById("seconds").textContent=String(x%60).padStart(2,"0")}
+tick();setInterval(tick,1000);
 </script></body></html>
