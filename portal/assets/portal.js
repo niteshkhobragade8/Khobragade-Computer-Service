@@ -26,23 +26,20 @@ function kcscMaintenanceOverlay(data={}){
   const status=data.statusText||"UPDATE IN PROGRESS";
   const reopen=data.reopen?`<div class="kcsc-mm-reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`:"";
   box.innerHTML=`<style>
-#kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#f43f5e 0%,#b832d9 48%,#4f46e5 100%);display:grid;place-items:center;padding:22px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#111827}
-#kcscMaintenanceOverlay .kcsc-mm-box{width:min(850px,96%);background:#fff;border:1px solid #ffffffaa;border-radius:27px;padding:34px;text-align:center;box-shadow:0 28px 80px rgba(59,22,73,.34)}
-#kcscMaintenanceOverlay .kcsc-mm-icon{font-size:54px;line-height:1;margin-bottom:9px}
-#kcscMaintenanceOverlay .kcsc-mm-status{display:inline-flex;align-items:center;gap:8px;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:7px 15px;font-size:12px;font-weight:950;letter-spacing:.8px}
-#kcscMaintenanceOverlay .kcsc-mm-status:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.13)}
-#kcscMaintenanceOverlay h1{margin:16px auto 4px;max-width:760px;font-size:clamp(29px,5vw,44px);line-height:1.08}
-#kcscMaintenanceOverlay h1:after{content:"is being updated";display:block;color:#ec4899;font-size:.48em;margin-top:6px}
-#kcscMaintenanceOverlay p{max-width:680px;margin:15px auto 0;color:#475569;font-size:16px;line-height:1.65}
-#kcscMaintenanceOverlay .kcsc-mm-reopen{display:inline-flex;margin-top:19px;padding:12px 17px;border-radius:13px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;font-weight:900}
-#kcscMaintenanceOverlay .kcsc-live-count{margin:18px auto 0;color:#166534;font-weight:900;font-size:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:13px;padding:11px 14px;max-width:520px}
-@media(max-width:640px){#kcscMaintenanceOverlay{padding:13px}#kcscMaintenanceOverlay .kcsc-mm-box{padding:27px 17px;border-radius:21px}#kcscMaintenanceOverlay p{font-size:15px}}
-</style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🚧⚙️</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}<div class="kcsc-live-count" id="kcscLiveCountdown" style="${data.reopen?'':'display:none'}">⏱ Calculating time remaining...</div><p style="font-size:13px;margin-top:17px">🛡️ Better Security &nbsp; • &nbsp; ⚡ Faster Performance &nbsp; • &nbsp; ⭐ New Features &nbsp; • &nbsp; 🎧 24×7 Support</p></main>`;
-  if(data.reopen){
-    const end=new Date(data.reopen).getTime();
-    const updateCount=()=>{const el=document.getElementById("kcscLiveCountdown");if(!el)return;let n=Math.max(0,end-Date.now()),x=Math.floor(n/1000),d=Math.floor(x/86400);x%=86400;let h=Math.floor(x/3600);x%=3600;let m=Math.floor(x/60),sec=x%60;el.textContent=`⏱ ${String(d).padStart(2,"0")} Days  •  ${String(h).padStart(2,"0")} Hours  •  ${String(m).padStart(2,"0")} Min  •  ${String(sec).padStart(2,"0")} Sec`;};
-    updateCount();clearInterval(window.__kcscMaintenanceTimer);window.__kcscMaintenanceTimer=setInterval(updateCount,1000);
-  }
+#kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:#101216;display:grid;place-items:center;padding:20px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#fff}
+#kcscMaintenanceOverlay .kcsc-mm-box{position:relative;overflow:hidden;width:min(850px,96%);background:#181b21;border:1px solid #ffffff18;border-radius:28px;padding:34px;text-align:center;box-shadow:0 28px 80px #0008}
+#kcscMaintenanceOverlay .kcsc-mm-box:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#fff)}
+#kcscMaintenanceOverlay .kcsc-mm-icon{width:185px;height:108px;margin:0 auto 22px;border:7px solid #e5e7eb;border-radius:13px;background:#090b0e;display:grid;place-items:center;position:relative;font-size:0}
+#kcscMaintenanceOverlay .kcsc-mm-icon:before{content:"UNDER\A MAINTENANCE";white-space:pre;color:#fff;font-size:15px;line-height:1.25;font-weight:950}
+#kcscMaintenanceOverlay .kcsc-mm-icon:after{content:"";position:absolute;width:86px;height:7px;background:#e5e7eb;bottom:-24px;border-radius:9px;box-shadow:0 -9px 0 -1px #d1d5db}
+#kcscMaintenanceOverlay .kcsc-mm-status{display:inline-flex;align-items:center;gap:8px;background:#123c25;color:#86efac;border:1px solid #22c55e;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:950}
+#kcscMaintenanceOverlay h1{margin:16px auto 5px;font-size:clamp(28px,5vw,43px);line-height:1.1;background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6);-webkit-background-clip:text;color:transparent}
+#kcscMaintenanceOverlay p{max-width:680px;margin:13px auto;color:#d1d5db;font-size:16px;line-height:1.6}
+#kcscMaintenanceOverlay .kcsc-mm-reopen{display:inline-flex;margin-top:12px;padding:11px 16px;border-radius:12px;background:#0f1217;color:#facc15;border:1px solid #ffffff18;font-weight:900}
+#kcscMaintenanceOverlay .kcsc-live-count{margin:17px auto 0;background:#fff;color:#111827;border-radius:13px;padding:12px 14px;font-weight:950;max-width:570px;border-bottom:5px solid #22c55e}
+@media(max-width:640px){#kcscMaintenanceOverlay{padding:12px}#kcscMaintenanceOverlay .kcsc-mm-box{padding:28px 16px}#kcscMaintenanceOverlay .kcsc-mm-icon{width:165px;height:96px}}
+</style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🖥️</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}<div class="kcsc-live-count" id="kcscLiveCountdown" style="${data.reopen?'':'display:none'}">⏱ Loading countdown...</div><p style="font-size:13px">🟢 Secure & Safe &nbsp; • &nbsp; 🟡 Fast Service &nbsp; • &nbsp; 🩷 New Features &nbsp; • &nbsp; 🔵 Support</p></main>`;
+  if(data.reopen){const end=new Date(data.reopen).getTime();const tick=()=>{const el=document.getElementById("kcscLiveCountdown");if(!el)return;let n=Math.max(0,end-Date.now()),q=Math.floor(n/1000),d=Math.floor(q/86400);q%=86400;let h=Math.floor(q/3600);q%=3600;let m=Math.floor(q/60),sec=q%60;el.textContent=`🟢 ${String(d).padStart(2,"0")} Days  •  🟡 ${String(h).padStart(2,"0")} Hours  •  🩷 ${String(m).padStart(2,"0")} Min  •  🔵 ${String(sec).padStart(2,"0")} Sec`;};tick();clearInterval(window.__kcscMaintenanceTimer);window.__kcscMaintenanceTimer=setInterval(tick,1000);}
   document.documentElement.style.overflow="hidden";
 }
 

@@ -1,29 +1,25 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Maintenance Preview | Khobragade Computer Service Centre</title>
-<style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#111827;background:linear-gradient(135deg,#f43f5e 0%,#b832d9 48%,#4f46e5 100%);display:grid;place-items:center;padding:28px}
-.shell{width:min(900px,96%)}.back{display:inline-block;margin-bottom:14px;text-decoration:none;color:#fff;font-weight:850;background:#ffffff20;border:1px solid #ffffff55;padding:9px 14px;border-radius:12px}
-.card{background:#fff;border-radius:27px;padding:34px 34px 28px;text-align:center;box-shadow:0 28px 80px #3b164955;border:1px solid #ffffffaa}
-.art{font-size:58px;line-height:1;margin-bottom:8px}.status{display:inline-flex;align-items:center;gap:8px;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:7px 15px;font-size:12px;font-weight:950;letter-spacing:.8px}.status:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 5px #22c55e20}
-h1{font-size:clamp(28px,5vw,44px);line-height:1.08;margin:16px 0 3px}.sub{color:#ec4899;font-size:21px;font-weight:900}.message{color:#475569;font-size:16px;line-height:1.65;margin:15px auto 20px;max-width:680px}
-.info{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #f0c5dc;background:#fff7fb;border-radius:15px;padding:16px;max-width:720px;margin:0 auto}.info>div{padding:3px 18px}.info>div+div{border-left:1px solid #edc6d9}.label{font-size:11px;font-weight:900;color:#475569;margin-bottom:6px}.value{font-size:16px;font-weight:900}.green{color:#16833a}
-.count-title{font-size:12px;font-weight:900;color:#166534;margin:20px 0 8px}.countdown{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}.time{min-width:78px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:13px;padding:10px 8px;color:#166534}.time b{display:block;font-size:24px}.time span{font-size:10px;font-weight:850;text-transform:uppercase}
-.thanks{margin:18px 0 13px;color:#334155}.features{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.feature{border:1px solid #f1d6e3;background:#fff9fc;border-radius:13px;padding:11px 7px;font-size:11px;font-weight:850}.feature b{display:block;font-size:21px;margin-bottom:3px}.footer{color:#fff;text-align:center;font-size:12px;margin-top:14px}
-@media(max-width:650px){body{padding:14px}.card{padding:27px 17px;border-radius:21px}.info{grid-template-columns:1fr}.info>div+div{border-left:0;border-top:1px solid #edc6d9;margin-top:12px;padding-top:14px}.features{grid-template-columns:1fr 1fr}.time{min-width:65px}h1{font-size:30px}}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maintenance Preview | KCSC</title><style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:#101216;color:#fff;display:grid;place-items:center;padding:22px}
+.shell{width:min(900px,96%)}.back{display:inline-block;color:#fff;text-decoration:none;font-weight:800;margin-bottom:13px;padding:8px 13px;border:1px solid #ffffff35;border-radius:10px}
+.card{position:relative;overflow:hidden;background:#181b21;border:1px solid #ffffff18;border-radius:28px;padding:34px;text-align:center;box-shadow:0 28px 80px #0008}
+.card:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#fff)}
+.monitor{width:190px;height:112px;margin:0 auto 18px;border:7px solid #e5e7eb;border-radius:13px;background:#090b0e;display:grid;place-items:center;position:relative;box-shadow:0 0 0 3px #3b82f633,0 14px 35px #0008}
+.monitor:before{content:"";position:absolute;width:46px;height:17px;background:#d1d5db;bottom:-23px;border-radius:0 0 5px 5px}.monitor:after{content:"";position:absolute;width:92px;height:7px;background:#e5e7eb;bottom:-29px;border-radius:9px}
+.monitor span{font-size:15px;line-height:1.25;font-weight:950;color:#fff}.monitor b{display:block;color:#facc15;font-size:12px;margin-top:4px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:#123c25;color:#86efac;border:1px solid #22c55e;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:950;letter-spacing:.8px}.badge:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 5px #22c55e22}
+h1{font-size:clamp(28px,5vw,44px);margin:17px 0 5px}.rainbow{background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6);-webkit-background-clip:text;color:transparent}.msg{color:#d1d5db;max-width:680px;margin:10px auto 20px;line-height:1.65}
+.info{max-width:720px;margin:auto;padding:14px;border-radius:14px;background:#0f1217;border:1px solid #ffffff18}.reopen{font-weight:900;color:#fff}.reopen strong{color:#facc15}
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:650px;margin:18px auto}.unit{background:#fff;border-radius:14px;padding:12px 8px;color:#111827;font-weight:900}.unit:nth-child(1){border-bottom:5px solid #22c55e}.unit:nth-child(2){border-bottom:5px solid #facc15}.unit:nth-child(3){border-bottom:5px solid #ec4899}.unit:nth-child(4){border-bottom:5px solid #3b82f6}.unit b{display:block;font-size:27px}.unit span{font-size:10px;color:#475569}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:17px}.f{border-radius:12px;padding:10px 6px;background:#20242b;border:1px solid #ffffff15;font-size:11px;font-weight:800}.f:nth-child(1){color:#86efac}.f:nth-child(2){color:#fde047}.f:nth-child(3){color:#f9a8d4}.f:nth-child(4){color:#93c5fd}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:15px}
+@media(max-width:620px){.card{padding:28px 16px}.count,.features{grid-template-columns:1fr 1fr}.monitor{width:170px;height:100px}}
 </style></head><body><main class="shell"><a class="back" href="dashboard.html">← Admin Dashboard</a><section class="card">
-<div class="art">🚧⚙️</div><div class="status" id="status">UPDATE IN PROGRESS</div>
-<h1 id="title">Khobragade Computer Service Centre</h1><div class="sub">is being updated</div>
-<p class="message" id="message">We are improving our website to serve you better.</p>
-<div class="info"><div><div class="label">📅 EXPECTED TO BE BACK</div><div class="value green" id="reopen">Time will be announced</div></div><div><div class="label">STATUS</div><div class="value green">● <span id="status2">Update In Progress</span></div></div></div>
-<div id="countWrap"><div class="count-title">⏱ TIME REMAINING</div><div class="countdown"><div class="time"><b id="days">00</b><span>Days</span></div><div class="time"><b id="hours">00</b><span>Hours</span></div><div class="time"><b id="minutes">00</b><span>Minutes</span></div><div class="time"><b id="seconds">00</b><span>Seconds</span></div></div></div>
-<div class="thanks">Thank you for your patience and support.</div>
-<div class="features"><div class="feature"><b>🛡️</b>Better Security</div><div class="feature"><b>⚡</b>Faster Performance</div><div class="feature"><b>⭐</b>New Features</div><div class="feature"><b>🎧</b>24×7 Support</div></div>
-</section><div class="footer">© 2026 Khobragade Computer Service Centre. All rights reserved.</div></main>
-<script>
-const def={title:"Khobragade Computer Service Centre",message:"We are improving our website to serve you better.",statusText:"UPDATE IN PROGRESS",reopen:""};let d=def;try{d={...def,...JSON.parse(sessionStorage.getItem("kcsc_maintenance_preview_v1")||"{}")}}catch(e){}
-document.getElementById("title").textContent=d.title||def.title;document.getElementById("message").textContent=d.message||def.message;document.getElementById("status").textContent=d.statusText||def.statusText;document.getElementById("status2").textContent=d.statusText||def.statusText;
-if(d.reopen)document.getElementById("reopen").textContent=new Date(d.reopen).toLocaleString();
-function tick(){if(!d.reopen){document.getElementById("countWrap").style.display="none";return}let n=Math.max(0,new Date(d.reopen).getTime()-Date.now()),x=Math.floor(n/1000);document.getElementById("days").textContent=String(Math.floor(x/86400)).padStart(2,"0");x%=86400;document.getElementById("hours").textContent=String(Math.floor(x/3600)).padStart(2,"0");x%=3600;document.getElementById("minutes").textContent=String(Math.floor(x/60)).padStart(2,"0");document.getElementById("seconds").textContent=String(x%60).padStart(2,"0")}
-tick();setInterval(tick,1000);
-</script></body></html>
+<div class="monitor"><span>UNDER<br>MAINTENANCE<b>🛠 SYSTEM UPDATE</b></span></div><div class="badge" id="status">UPDATE IN PROGRESS</div>
+<h1 id="title" class="rainbow">Khobragade Computer Service Centre</h1><p class="msg" id="message">We are improving our website to serve you better.</p>
+<div class="info"><div class="reopen">Expected Reopen: <strong id="reopen">Time will be announced</strong></div></div>
+<div class="count" id="count"><div class="unit"><b id="d">00</b><span>DAYS</span></div><div class="unit"><b id="h">00</b><span>HOURS</span></div><div class="unit"><b id="m">00</b><span>MINUTES</span></div><div class="unit"><b id="s">00</b><span>SECONDS</span></div></div>
+<div class="features"><div class="f">🛡 Secure & Safe</div><div class="f">⚡ Fast Service</div><div class="f">⚙ New Features</div><div class="f">🎧 Support</div></div></section><div class="footer">© 2026 Khobragade Computer Service Centre</div></main>
+<script>let x={};try{x=JSON.parse(sessionStorage.getItem("kcsc_maintenance_preview_v1")||"{}")}catch(e){}
+if(x.title)title.textContent=x.title;if(x.message)message.textContent=x.message;if(x.statusText)status.textContent=x.statusText;
+if(x.reopen)reopen.textContent=new Date(x.reopen).toLocaleString();else count.style.display="none";
+function tick(){if(!x.reopen)return;let n=Math.max(0,new Date(x.reopen)-Date.now()),q=Math.floor(n/1000);d.textContent=String(Math.floor(q/86400)).padStart(2,"0");q%=86400;h.textContent=String(Math.floor(q/3600)).padStart(2,"0");q%=3600;m.textContent=String(Math.floor(q/60)).padStart(2,"0");s.textContent=String(q%60).padStart(2,"0")}tick();setInterval(tick,1000)</script></body></html>
