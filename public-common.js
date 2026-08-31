@@ -26,16 +26,16 @@ function kcscMaintenanceOverlay(data={}){
   const status=data.statusText||"UPDATE IN PROGRESS";
   const reopen=data.reopen?`<div class="kcsc-mm-reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`:"";
   box.innerHTML=`<style>
-  #kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 12% 18%,rgba(37,99,235,.18),transparent 28%),radial-gradient(circle at 88% 12%,rgba(236,72,153,.16),transparent 30%),linear-gradient(135deg,#eef4ff 0%,#fff8ef 52%,#f8fafc 100%);display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0f172a}
-  #kcscMaintenanceOverlay .kcsc-mm-box{width:min(780px,100%);background:rgba(255,255,255,.97);border:1px solid #e2e8f0;border-radius:28px;padding:44px 34px;text-align:center;box-shadow:0 28px 80px rgba(15,23,42,.16);backdrop-filter:blur(10px)}
-  #kcscMaintenanceOverlay .kcsc-mm-icon{width:76px;height:76px;border-radius:22px;margin:0 auto 16px;display:grid;place-items:center;font-size:36px;background:linear-gradient(135deg,#dbeafe,#fce7f3);box-shadow:inset 0 0 0 1px #e2e8f0}
-  #kcscMaintenanceOverlay .kcsc-mm-status{display:inline-flex;align-items:center;gap:8px;margin:4px 0 8px;padding:8px 14px;border-radius:999px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase}
-  #kcscMaintenanceOverlay .kcsc-mm-status:before{content:"";width:8px;height:8px;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.14)}
-  #kcscMaintenanceOverlay h1{margin:16px auto 10px;max-width:720px;font-size:clamp(30px,5vw,48px);line-height:1.08}
-  #kcscMaintenanceOverlay p{max-width:660px;margin:0 auto;color:#64748b;font-size:18px;line-height:1.7}
-  #kcscMaintenanceOverlay .kcsc-mm-reopen{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:12px 16px;border-radius:14px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:850}
-  @media(max-width:640px){#kcscMaintenanceOverlay{padding:16px}#kcscMaintenanceOverlay .kcsc-mm-box{padding:32px 20px;border-radius:22px}#kcscMaintenanceOverlay p{font-size:16px}}
-  </style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🛠️</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}</main>`;
+#kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(ellipse at 7% 5%,#eef7df 0 12%,transparent 12.5%),radial-gradient(ellipse at 92% 5%,#d8edb4 0 18%,transparent 18.5%),linear-gradient(180deg,#fff 0%,#fbfff5 68%,#eef8e2 100%);display:grid;place-items:center;padding:20px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#12351d}
+#kcscMaintenanceOverlay .kcsc-mm-box{width:min(850px,96%);background:rgba(255,255,255,.72);border:1px solid #e3eed7;border-radius:28px;padding:42px 30px;text-align:center;box-shadow:0 22px 60px rgba(46,95,42,.12)}
+#kcscMaintenanceOverlay .kcsc-mm-icon{width:82px;height:82px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-size:36px;background:#f2f9e9;border:4px solid #dfefce}
+#kcscMaintenanceOverlay .kcsc-mm-status{display:inline-flex;align-items:center;padding:6px 17px;border-radius:999px;background:#e8f5da;color:#23752c;font-weight:900;font-size:12px;letter-spacing:.8px}
+#kcscMaintenanceOverlay h1{margin:16px auto 5px;max-width:760px;font-size:clamp(31px,5vw,49px);line-height:1.08;color:#124522}
+#kcscMaintenanceOverlay h1:after{content:"is being updated";display:block;color:#198b2b;font-size:.52em;margin-top:5px}
+#kcscMaintenanceOverlay p{max-width:680px;margin:20px auto 0;color:#334b39;font-size:17px;line-height:1.65}
+#kcscMaintenanceOverlay .kcsc-mm-reopen{display:inline-flex;margin-top:22px;padding:13px 18px;border-radius:13px;background:#edf7e0;color:#1e6429;border:1px solid #dcecca;font-weight:850}
+@media(max-width:640px){#kcscMaintenanceOverlay{padding:14px}#kcscMaintenanceOverlay .kcsc-mm-box{padding:30px 18px;border-radius:22px}#kcscMaintenanceOverlay p{font-size:15px}}
+</style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🖥️⚙</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}<p style="font-size:14px;margin-top:18px">🛡️ Secure & Safe &nbsp; • &nbsp; ⚡ Fast & Reliable &nbsp; • &nbsp; ⚙️ New Features &nbsp; • &nbsp; 👥 Dedicated Support</p></main>`;
   document.documentElement.style.overflow="hidden";
 }
 
