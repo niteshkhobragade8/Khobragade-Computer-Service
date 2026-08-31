@@ -30,7 +30,9 @@
 </div>
 </section>
 </main>
-<script>
+<script type="module">
+import { DATA_API_URL } from '../supabase-config.js';
+
 const q=new URLSearchParams(location.search);
 const applicationId=q.get('applicationId')||'';
 const txnid=q.get('txnid')||'';
@@ -40,7 +42,7 @@ document.getElementById('txnid').textContent=txnid||'—';
   const note=document.getElementById('statusNote');
   if(!txnid){note.textContent='Transaction ID missing. My Applications me status check karein.';return;}
   try{
-    const r=await fetch('https://kcsc-payu-backend.onrender.com/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});
+    const r=await fetch(DATA_API_URL + '/reconcile-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({txnid,applicationId})});
     const j=await r.json();
     if(r.ok&&j.paymentStatus==='Paid'){note.textContent='Payment verified ✅ Portal status Paid update ho gaya.';}
     else if(r.ok){note.textContent='Payment verification complete. Current status: '+(j.paymentStatus||'Pending');}

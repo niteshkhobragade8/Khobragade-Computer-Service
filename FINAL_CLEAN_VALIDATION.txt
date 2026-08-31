@@ -1,0 +1,38 @@
+KCSC FINAL CLEAN VALIDATION
+===========================
+Base: Khobragade-Computer-Service-main(20260831-135341).zip
+Policy: Minimum-change / no layout / no color / no working-flow redesign
+
+CHANGED:
+- portal/payment-success.html
+  Replaced obsolete hardcoded PayU reconcile backend with existing DATA_API_URL from supabase-config.js.
+
+NOT CHANGED:
+- Layout / colors / CSS design
+- Admin Dashboard / Admin Dashboard CMS / Website CMS
+- Normal User / Commission User UI and flow
+- Supabase schema/configuration
+- Maintenance design/settings
+- Services/actions/forms/catalog IDs
+- Existing routes
+- Firebase/stale legacy files were NOT deleted because removal could affect unknown deployment history.
+- Security/RLS/backend policy was NOT altered because that can change working behavior.
+
+VALIDATION:
+- JavaScript files checked: 71
+- JS syntax failures: 0
+- JSON parse failures: 0
+- Active Admin/Public/Portal missing local refs: 0
+- Old hardcoded PayU backend remaining inside /portal: 0
+
+JS failures:
+None
+
+JSON failures:
+None
+
+Active missing refs:
+None
+
+Old PayU refs:
+None
