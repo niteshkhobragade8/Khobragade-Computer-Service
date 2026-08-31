@@ -88,21 +88,12 @@ async function remove() {
 
 function preview() {
   const data = values();
-  const w = window.open("", "_blank", "noopener");
-  if (!w) {
-    setMessage("Preview popup blocked. Browser popup allow karein.", "error");
-    return;
+  try {
+    sessionStorage.setItem("kcsc_maintenance_preview_v1", JSON.stringify(data));
+  } catch (error) {
+    console.warn("Preview data save failed:", error);
   }
-  const reopen = data.reopen
-    ? `<div class="reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`
-    : "";
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${data.title}</title><style>
-  *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef4ff,#fff8ec);color:#0f172a;min-height:100vh;display:grid;place-items:center;padding:24px}
-  .box{width:min(680px,100%);background:#fff;padding:36px 28px;border-radius:24px;box-shadow:0 24px 70px rgba(15,23,42,.15);text-align:center;border:1px solid #e2e8f0}
-  .icon{font-size:48px}.status{display:inline-block;margin:12px 0 6px;padding:7px 14px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900;letter-spacing:.8px}
-  h1{margin:12px 0;font-size:clamp(25px,5vw,38px)}p{color:#475569;font-size:17px;line-height:1.65}.reopen{margin-top:18px;font-weight:800;color:#1d4ed8}
-  </style></head><body><main class="box"><div class="icon">🛠️</div><div class="status">${data.statusText}</div><h1>${data.title}</h1><p>${data.message}</p>${reopen}</main></body></html>`);
-  w.document.close();
+  window.location.href = "maintenance-preview.html";
 }
 
 window.addEventListener("DOMContentLoaded", () => {

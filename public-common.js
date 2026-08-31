@@ -26,13 +26,15 @@ function kcscMaintenanceOverlay(data={}){
   const status=data.statusText||"UPDATE IN PROGRESS";
   const reopen=data.reopen?`<div class="kcsc-mm-reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`:"";
   box.innerHTML=`<style>
-  #kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:linear-gradient(135deg,#eef4ff,#fff8ec);display:grid;place-items:center;padding:22px;font-family:Arial,sans-serif;color:#0f172a}
-  #kcscMaintenanceOverlay .kcsc-mm-box{width:min(680px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 24px 70px rgba(15,23,42,.16)}
-  #kcscMaintenanceOverlay .kcsc-mm-icon{font-size:50px}
-  #kcscMaintenanceOverlay .kcsc-mm-status{display:inline-block;margin:12px 0 6px;padding:7px 14px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:900;letter-spacing:.8px}
-  #kcscMaintenanceOverlay h1{margin:12px 0;font-size:clamp(25px,5vw,38px)}
-  #kcscMaintenanceOverlay p{margin:0;color:#475569;font-size:17px;line-height:1.65}
-  #kcscMaintenanceOverlay .kcsc-mm-reopen{margin-top:18px;font-weight:800;color:#1d4ed8}
+  #kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 12% 18%,rgba(37,99,235,.18),transparent 28%),radial-gradient(circle at 88% 12%,rgba(236,72,153,.16),transparent 30%),linear-gradient(135deg,#eef4ff 0%,#fff8ef 52%,#f8fafc 100%);display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0f172a}
+  #kcscMaintenanceOverlay .kcsc-mm-box{width:min(780px,100%);background:rgba(255,255,255,.97);border:1px solid #e2e8f0;border-radius:28px;padding:44px 34px;text-align:center;box-shadow:0 28px 80px rgba(15,23,42,.16);backdrop-filter:blur(10px)}
+  #kcscMaintenanceOverlay .kcsc-mm-icon{width:76px;height:76px;border-radius:22px;margin:0 auto 16px;display:grid;place-items:center;font-size:36px;background:linear-gradient(135deg,#dbeafe,#fce7f3);box-shadow:inset 0 0 0 1px #e2e8f0}
+  #kcscMaintenanceOverlay .kcsc-mm-status{display:inline-flex;align-items:center;gap:8px;margin:4px 0 8px;padding:8px 14px;border-radius:999px;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase}
+  #kcscMaintenanceOverlay .kcsc-mm-status:before{content:"";width:8px;height:8px;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.14)}
+  #kcscMaintenanceOverlay h1{margin:16px auto 10px;max-width:720px;font-size:clamp(30px,5vw,48px);line-height:1.08}
+  #kcscMaintenanceOverlay p{max-width:660px;margin:0 auto;color:#64748b;font-size:18px;line-height:1.7}
+  #kcscMaintenanceOverlay .kcsc-mm-reopen{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:12px 16px;border-radius:14px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-weight:850}
+  @media(max-width:640px){#kcscMaintenanceOverlay{padding:16px}#kcscMaintenanceOverlay .kcsc-mm-box{padding:32px 20px;border-radius:22px}#kcscMaintenanceOverlay p{font-size:16px}}
   </style><main class="kcsc-mm-box"><div class="kcsc-mm-icon">🛠️</div><div class="kcsc-mm-status">${status}</div><h1>${title}</h1><p>${message}</p>${reopen}</main>`;
   document.documentElement.style.overflow="hidden";
 }
