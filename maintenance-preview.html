@@ -14,17 +14,15 @@ background:linear-gradient(145deg,rgba(17,24,39,.95),rgba(48,20,64,.94) 42%,rgba
 border:1px solid #ffffff30;border-radius:28px;padding:34px;text-align:center;
 box-shadow:0 28px 80px #0008,0 0 45px #ec489922}
 .card:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#fff)}
-.monitor{width:190px;height:112px;margin:0 auto 18px;border:7px solid transparent;border-radius:13px;
-background:
-linear-gradient(#0b1020,#101827) padding-box,
-linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#ffffff) border-box;
-display:grid;place-items:center;position:relative;
-box-shadow:0 0 18px #22c55e44,0 0 28px #3b82f633,0 14px 35px #0008}
-.monitor:before{content:"";position:absolute;width:46px;height:17px;
-background:linear-gradient(180deg,#3b82f6,#22c55e);bottom:-23px;border-radius:0 0 5px 5px}
-.monitor:after{content:"";position:absolute;width:92px;height:7px;
-background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6);bottom:-29px;border-radius:9px}
-.monitor span{font-size:15px;line-height:1.25;font-weight:950;color:#fff}.monitor b{display:block;color:#facc15;font-size:12px;margin-top:4px}
+.monitor{width:190px;height:112px;margin:0 auto 30px;border:6px solid transparent;border-radius:11px;
+background:linear-gradient(145deg,#07111f,#111827) padding-box,
+linear-gradient(135deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#fff) border-box;
+display:flex;align-items:center;justify-content:center;position:relative;
+box-shadow:inset 0 0 0 2px #ffffff12,inset 0 0 22px #3b82f622,0 10px 28px #0009}
+.monitor .screen-text{width:100%;padding:0 12px;text-align:center;font-size:16px;line-height:1.15;font-weight:950;letter-spacing:.35px;color:#fff;text-shadow:0 1px 3px #000}
+.monitor .screen-text b{display:block;margin-top:7px;font-size:10px;line-height:1.1;letter-spacing:1px;color:#86efac}
+.monitor:before{content:"";position:absolute;left:50%;transform:translateX(-50%);width:36px;height:18px;bottom:-23px;background:linear-gradient(180deg,#94a3b8,#475569);border-radius:0 0 4px 4px}
+.monitor:after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:88px;height:7px;bottom:-29px;background:linear-gradient(90deg,#3b82f6,#22c55e,#facc15,#ec4899);border-radius:8px;box-shadow:0 3px 7px #0007}
 .badge{display:inline-flex;align-items:center;gap:8px;background:#123c25;color:#86efac;border:1px solid #22c55e;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:950;letter-spacing:.8px}.badge:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 5px #22c55e22}
 h1{font-size:clamp(28px,5vw,44px);margin:17px 0 5px}.rainbow{background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6);-webkit-background-clip:text;color:transparent}.msg{color:#d1d5db;max-width:680px;margin:10px auto 20px;line-height:1.65}
 .info{max-width:720px;margin:auto;padding:14px;border-radius:14px;
@@ -34,7 +32,7 @@ border:1px solid #ffffff30}.reopen{font-weight:900;color:#fff}.reopen strong{col
 .features{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:17px}.f{border-radius:12px;padding:10px 6px;background:#20242b;border:1px solid #ffffff15;font-size:11px;font-weight:800}.f:nth-child(1){color:#86efac}.f:nth-child(2){color:#fde047}.f:nth-child(3){color:#f9a8d4}.f:nth-child(4){color:#93c5fd}.footer{text-align:center;color:#9ca3af;font-size:12px;margin-top:15px}
 @media(max-width:620px){.card{padding:28px 16px}.count,.features{grid-template-columns:1fr 1fr}.monitor{width:170px;height:100px}}
 </style></head><body><main class="shell"><a class="back" href="dashboard.html">← Admin Dashboard</a><section class="card">
-<div class="monitor"><span>UNDER<br>MAINTENANCE<b>🛠 SYSTEM UPDATE</b></span></div><div class="badge" id="status">UPDATE IN PROGRESS</div>
+<div class="monitor"><div class="screen-text">UNDER<br>MAINTENANCE<b>UPDATE IN PROGRESS</b></div></div><div class="badge" id="status">UPDATE IN PROGRESS</div>
 <h1 id="title" class="rainbow">Khobragade Computer Service Centre</h1><p class="msg" id="message">We are improving our website to serve you better.</p>
 <div class="info"><div class="reopen">Expected Reopen: <strong id="reopen">Time will be announced</strong></div></div>
 <div class="count" id="count"><div class="unit"><b id="d">00</b><span>DAYS</span></div><div class="unit"><b id="h">00</b><span>HOURS</span></div><div class="unit"><b id="m">00</b><span>MINUTES</span></div><div class="unit"><b id="s">00</b><span>SECONDS</span></div></div>
