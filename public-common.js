@@ -26,17 +26,24 @@ function kcscMaintenanceOverlay(data={}){
   const status=data.statusText||"UPDATE IN PROGRESS";
   const reopen=data.reopen?`<div class="kcsc-mm-reopen">Expected Reopen: ${new Date(data.reopen).toLocaleString()}</div>`:"";
   box.innerHTML=`<style>
-#kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 12% 18%,#22c55e55 0 10%,transparent 24%),radial-gradient(circle at 88% 16%,#3b82f655 0 11%,transparent 25%),radial-gradient(circle at 18% 82%,#facc1555 0 12%,transparent 27%),radial-gradient(circle at 82% 78%,#ec489955 0 12%,transparent 27%),linear-gradient(135deg,#171717 0%,#2a1645 28%,#123a5b 52%,#4b1d3f 75%,#1f2937 100%);display:grid;place-items:center;padding:20px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#fff}
-#kcscMaintenanceOverlay .kcsc-mm-box{position:relative;overflow:hidden;width:min(850px,96%);background:linear-gradient(145deg,rgba(17,24,39,.95),rgba(48,20,64,.94) 42%,rgba(15,55,77,.94) 72%,rgba(44,24,24,.94));border:1px solid #ffffff30;border-radius:28px;padding:34px;text-align:center;box-shadow:0 28px 80px #0008}
+#kcscMaintenanceOverlay{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(circle at 10% 15%,rgba(34,197,94,.18),transparent 24%),radial-gradient(circle at 88% 16%,rgba(59,130,246,.22),transparent 25%),radial-gradient(circle at 82% 82%,rgba(236,72,153,.18),transparent 25%),radial-gradient(circle at 18% 82%,rgba(250,204,21,.13),transparent 25%),linear-gradient(135deg,#07111f 0%,#101c31 42%,#20162d 72%,#0b1523 100%);display:grid;place-items:center;padding:20px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#fff}
+#kcscMaintenanceOverlay .kcsc-mm-box{position:relative;overflow:hidden;width:min(850px,96%);background:linear-gradient(145deg,rgba(15,23,42,.96),rgba(19,31,52,.95) 52%,rgba(29,20,43,.95));border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:34px;text-align:center;box-shadow:0 28px 80px #0008}
 #kcscMaintenanceOverlay .kcsc-mm-box:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#fff)}
-#kcscMaintenanceOverlay .kcsc-mm-icon{width:185px;height:108px;margin:0 auto 30px;border:6px solid transparent;border-radius:11px;
-background:linear-gradient(145deg,#07111f,#111827) padding-box,linear-gradient(135deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6,#fff) border-box;
-display:flex;align-items:center;justify-content:center;position:relative;font-size:0;
-box-shadow:inset 0 0 0 2px #ffffff12,inset 0 0 22px #3b82f622,0 10px 28px #0009}
-#kcscMaintenanceOverlay .kcsc-mm-icon:before{content:"UNDER\A MAINTENANCE\A\A UPDATE IN PROGRESS";white-space:pre;text-align:center;color:#fff;font-size:15px;line-height:1.05;font-weight:950;letter-spacing:.3px;text-shadow:0 1px 3px #000}
-#kcscMaintenanceOverlay .kcsc-mm-icon:after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:88px;height:7px;bottom:-29px;background:linear-gradient(90deg,#3b82f6,#22c55e,#facc15,#ec4899);border-radius:8px;box-shadow:0 -10px 0 -2px #64748b,0 3px 7px #0007}
+#kcscMaintenanceOverlay .kcsc-mm-icon{
+width:198px;height:116px;margin:0 auto 34px;position:relative;
+border:8px solid #111827;border-radius:12px;
+background:linear-gradient(120deg,rgba(255,255,255,.10) 0 18%,transparent 18% 58%,rgba(255,255,255,.04) 58% 66%,transparent 66%),linear-gradient(160deg,#0b1220,#111c30 52%,#07101d);
+display:flex;align-items:center;justify-content:center;font-size:0;
+box-shadow:0 0 0 1px #475569,0 0 0 3px rgba(59,130,246,.18),inset 0 0 34px rgba(59,130,246,.10),0 16px 35px rgba(0,0,0,.55)}
+#kcscMaintenanceOverlay .kcsc-mm-icon:before{
+content:"UNDER\A MAINTENANCE\A\A UPDATE IN PROGRESS";white-space:pre;text-align:center;color:#fff;
+font-size:15px;line-height:1.08;font-weight:950;letter-spacing:.45px;text-shadow:0 2px 5px #000}
+#kcscMaintenanceOverlay .kcsc-mm-icon:after{
+content:"";position:absolute;left:50%;transform:translateX(-50%);width:94px;height:8px;bottom:-34px;
+background:linear-gradient(180deg,#475569,#1f2937);border-radius:50% 50% 6px 6px;
+box-shadow:0 -11px 0 -3px #475569,0 5px 10px rgba(0,0,0,.45)}
 #kcscMaintenanceOverlay .kcsc-mm-status{display:inline-flex;align-items:center;gap:8px;background:#123c25;color:#86efac;border:1px solid #22c55e;border-radius:999px;padding:7px 16px;font-size:12px;font-weight:950}
-#kcscMaintenanceOverlay h1{margin:16px auto 5px;font-size:clamp(28px,5vw,43px);line-height:1.1;background:linear-gradient(90deg,#22c55e,#facc15,#ec4899,#ef4444,#3b82f6);-webkit-background-clip:text;color:transparent}
+#kcscMaintenanceOverlay h1{margin:16px auto 5px;font-size:clamp(28px,5vw,43px);line-height:1.1;color:#f8fafc;text-shadow:0 2px 16px rgba(0,0,0,.30)}
 #kcscMaintenanceOverlay p{max-width:680px;margin:13px auto;color:#d1d5db;font-size:16px;line-height:1.6}
 #kcscMaintenanceOverlay .kcsc-mm-reopen{display:inline-flex;margin-top:12px;padding:11px 16px;border-radius:12px;background:linear-gradient(90deg,#172554cc,#3b0764cc,#4c0519cc,#14532dcc);color:#facc15;border:1px solid #ffffff30;font-weight:900}
 #kcscMaintenanceOverlay .kcsc-live-count{margin:17px auto 0;background:#fff;color:#111827;border-radius:13px;padding:12px 14px;font-weight:950;max-width:570px;border-bottom:5px solid #22c55e}
